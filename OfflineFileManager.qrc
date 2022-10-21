@@ -1,4 +1,8 @@
 <RCC>
-    <qresource prefix="OfflineFileManager">
+    <qresource prefix="/OfflineFileManager">
+        <file>res/icons/fast-back-double-left-arrows-symbol.png</file>
+        <file>res/icons/fast-forward-double-right-arrows-symbol.png</file>
+        <file>res/icons/house.png</file>
+        <file>res/icons/upload.png</file>
     </qresource>
 </RCC>

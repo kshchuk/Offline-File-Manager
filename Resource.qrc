@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>res/fast-back-double-left-arrows-symbol.png</file>
+        <file>res/fast-forward-double-right-arrows-symbol.png</file>
+        <file>res/house.png</file>
+        <file>res/upload.png</file>
+    </qresource>
+</RCC>
