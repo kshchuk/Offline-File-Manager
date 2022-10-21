@@ -2,6 +2,7 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_OfflineFileManager.h"
+#include <QFileSystemModel>
 
 class OfflineFileManager : public QMainWindow
 {
@@ -11,6 +12,10 @@ public:
     OfflineFileManager(QWidget *parent = nullptr);
     ~OfflineFileManager();
 
+private slots:
+    void set_AddresLineText(const QModelIndex&);
+
 private:
     Ui::OfflineFileManagerClass ui;
+    QFileSystemModel model;
 };

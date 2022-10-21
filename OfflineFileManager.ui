@@ -19,7 +19,7 @@
      <rect>
       <x>0</x>
       <y>50</y>
-      <width>251</width>
+      <width>681</width>
       <height>361</height>
      </rect>
     </property>
@@ -37,7 +37,7 @@
      <enum>Qt::Horizontal</enum>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -103,16 +103,6 @@ image: url(:/OfflineFileManager/res/icons/upload.png);</string>
      </item>
     </layout>
    </widget>
-   <widget class="QListView" name="objectViewList">
-    <property name="geometry">
-     <rect>
-      <x>255</x>
-      <y>51</y>
-      <width>421</width>
-      <height>361</height>
-     </rect>
-    </property>
-   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -127,7 +117,8 @@ image: url(:/OfflineFileManager/res/icons/upload.png);</string>
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionOpen_new_window"/>
+    <addaction name="actionOpen"/>
+    <addaction name="actionSave"/>
     <addaction name="separator"/>
     <addaction name="actionClose"/>
    </widget>
@@ -135,12 +126,27 @@ image: url(:/OfflineFileManager/res/icons/upload.png);</string>
   </widget>
   <action name="actionOpen_new_window">
    <property name="text">
-    <string>Open new window</string>
+    <string>Open...</string>
    </property>
   </action>
   <action name="actionClose">
    <property name="text">
     <string>Close</string>
+   </property>
+  </action>
+  <action name="actionLoad_tree_file">
+   <property name="text">
+    <string>Load tree file</string>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="text">
+    <string>Open</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>Save</string>
    </property>
   </action>
  </widget>
