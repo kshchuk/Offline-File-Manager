@@ -55,6 +55,19 @@
       </widget>
      </item>
      <item>
+      <widget class="QToolButton" name="updateButton">
+       <property name="styleSheet">
+        <string notr="true">background: rgb(204, 204, 204);
+image: url(:/OfflineFileManager/res/icons/refresh_update_icon_142975.png);
+
+</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QToolButton" name="backButton">
        <property name="styleSheet">
         <string notr="true">background: rgb(204, 204, 204);
