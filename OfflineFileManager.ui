@@ -14,7 +14,7 @@
    <string>OfflineFileManager</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QTreeView" name="fileSystemModelView">
+   <widget class="QTreeView" name="fileSystemTree">
     <property name="geometry">
      <rect>
       <x>0</x>
