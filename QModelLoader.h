@@ -1,32 +1,31 @@
 #pragma once
 #include <QFileSystemModel>
+#include <QTreeView>
 #include <QString>
+#include <QFile>
 
-#include "QJsonModel.h"
+// #include "QJsonModel.h"
 
 
 class QModelLoader
 {
-	QAbstractItemModel* model;
-
 public:
-	QModelLoader(QAbstractItemModel* model)
-	{
-		this->model = model;
-	};
-	//~QModelLoader();
+	QModelLoader() {};
+	QModelLoader(QAbstractItemModel* model) : model(model) {};
 
-	void readModel(QString fileName, QList<QString> headers);
-	void writeModel(QString fileName);
+	QAbstractItemModel* getModel() const;
 
-	void makeFileSystemModel(QString root = "", int maxLoadedDepth = 10);
+	QAbstractItemModel* readModel(QString fileName);
+	void writeModel(QString fileName, size_t maxDepth = 20) const;
 
-	QAbstractItemModel* getModel();
+	QAbstractItemModel* genExternalDrivesModel(size_t maxDepth = 20);
+	QAbstractItemModel* genStaticSystemModel(size_t maxDepth = 20);
+
 
 private:
-	std::string convertRecursively(QModelIndex parent = QModelIndex());
-	std::string toJson(const std::string& str); // converts to json style
-	void loadRecursively(int currentDepth = 0, int maxDepth = 5, 
-		QModelIndex parent = QModelIndex());
+	QAbstractItemModel* model = nullptr;
+
+	void readHierarchyRecursive(QModelIndex parent, const QString& path,
+		size_t maxDepth = 20, size_t curDepth = 1);
 };
 

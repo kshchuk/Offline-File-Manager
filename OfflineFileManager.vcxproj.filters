@@ -40,9 +40,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="QJsonModel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="QModelLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -51,10 +48,14 @@
     <ClInclude Include="QModelLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <QtMoc Include="QJsonModel.h">
+    <ClInclude Include="system_depend_functions.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </ClInclude>
+    <ClInclude Include="BasicTraits.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelSerializer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

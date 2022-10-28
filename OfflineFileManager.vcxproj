@@ -83,7 +83,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="QJsonModel.cpp" />
     <ClCompile Include="QModelLoader.cpp" />
     <QtRcc Include="OfflineFileManager.qrc" />
     <QtUic Include="OfflineFileManager.ui" />
@@ -92,8 +91,10 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BasicTraits.h" />
+    <ClInclude Include="ModelSerializer.h" />
     <ClInclude Include="QModelLoader.h" />
-    <QtMoc Include="QJsonModel.h" />
+    <ClInclude Include="system_depend_functions.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

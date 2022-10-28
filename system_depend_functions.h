@@ -30,6 +30,7 @@ QList<QString> removableDrives()
 #endif
 		}
 	}
+	return drives;
 }
 
 #endif

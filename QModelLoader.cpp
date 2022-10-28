@@ -1,110 +1,122 @@
 #include "QModelLoader.h"
 
-#include <cassert>
+#include <stdexcept>
 
 #include <QFile>
 #include <QFileSystemModel>
+#include <QStandardItemModel>
+#include <QDirIterator>
+
+#include "ModelSerializer.h"
+#include "system_depend_functions.h"
 
 
-
-void QModelLoader::readModel(QString fileName, QList<QString> headers)
+QAbstractItemModel* QModelLoader::readModel(QString fileName)
 {
-	QJsonModel* jmodel = new QJsonModel;
-	for (size_t i = 0; i < headers.size(); i++)
-	{
-		jmodel->setHeaderData(i, Qt::Horizontal, headers[i]);
-	}
+	QFile file(fileName);
+	if (file.open(QIODevice::ReadOnly)) {
+		QDataStream stream(&file);
 
-	jmodel->load(fileName);
-	model = jmodel;
-}
+		delete model;
+		model = new QStandardItemModel;
 
-void QModelLoader::writeModel(QString fileName)
-{
-	QFile* file = new QFile(fileName);
-	file->open(QIODeviceBase::WriteOnly);
+		ModelSerializer<> ser;
+		ser.load(stream, model);
 
-	QFileSystemModel* fmodel = dynamic_cast<QFileSystemModel*>(model);
-	if (fmodel != nullptr)
-	{
-		std::string json = this->convertRecursively();
-		file->write(QByteArray::fromStdString(json));
+		file.close();
 	}
 	else
-	{
-		QJsonModel* jmodel = dynamic_cast<QJsonModel*>(model);
+		throw std::runtime_error("Unable to open file" + fileName.toStdString());
+}
 
-		assert(jmodel != nullptr);
+void QModelLoader::writeModel(QString fileName, size_t maxDepth) const
+{
+	QFile file(fileName);
+	if (file.open(QIODevice::WriteOnly)) {
+		QDataStream stream(&file);
+		
+		ModelSerializer<> ser;
+		ser.save(stream, model);
 
-		file->write(jmodel->json());
+		file.flush();
+		file.close();
 	}
-
-	file->close();
-	delete file;
+	throw std::runtime_error("Unable to open file" + fileName.toStdString());
 }
 
-void QModelLoader::makeFileSystemModel(QString root, int maxLoadedDepth)
+QAbstractItemModel* QModelLoader::genExternalDrivesModel(size_t maxDepth)
 {
-	QFileSystemModel* fmodel = new QFileSystemModel;
-	fmodel->setRootPath(root);
+	if (!model) delete model;
 
-	model = fmodel;
+	QStandardItemModel* smodel = new QStandardItemModel; model = smodel;
 
-	//QObject::connect(fmodel, &QFileSystemModel::directoryLoaded,
-	//	this, &QModelLoader::loadRecursively);
+	QModelIndex root = smodel->invisibleRootItem()->index();
 
-	// loadRecursively(); // force load file system model into ram
-}
-
-
-
-QAbstractItemModel* QModelLoader::getModel()
-{
-	QAbstractItemModel* res = model;
-	model = nullptr;
-	return res;
-}
-
-std::string QModelLoader::convertRecursively(QModelIndex parent)
-{
-	std::string str;
-	for (int r = 0; r < model->rowCount(parent); ++r) 
+	QList<QString> externalDrives = removableDrives();
+	foreach(auto drive, externalDrives)
 	{
-		QModelIndex index = model->index(r, 0, parent);
-		QVariant name = model->data(index);
-		qDebug() << name;
+		QDirIterator it(drive);
 
-		str =  name.toString().toStdString() + " | ";
+		int row = smodel->rowCount(root);
+		smodel->insertRow(row, root);
 
-		model->fetchMore(index);
-
-		if (model->hasChildren(index)) {
-			convertRecursively(index);
-		}
+		QModelIndex index = smodel->index(row, 0, root);
+		smodel->setData(index, QVariant::fromValue(it.fileInfo()));
+		
+		readHierarchyRecursive(index, it.path(), maxDepth);
 	}
-		return str;
+	return model;
 }
 
-std::string QModelLoader::toJson(const std::string& str)
+QAbstractItemModel* QModelLoader::genStaticSystemModel(size_t maxDepth)
 {
-	std::string json;
-		return json;
-}
+	if (!model) delete model;
 
-void QModelLoader::loadRecursively(int currentDepth, int maxDepth, QModelIndex parent)
-{
-	for (int r = 0; r < model->rowCount(parent); ++r)
+	QStandardItemModel* smodel = new QStandardItemModel; model = smodel;
+	QModelIndex root = smodel->invisibleRootItem()->index();
+
+	foreach(auto drive, QDir::drives())
 	{
-		QModelIndex index = model->index(r, 0, parent);
+		QDirIterator it(drive.absolutePath());
 
-		if (model->canFetchMore(index) && currentDepth < maxDepth) {
-			model->fetchMore(index);
-			loadRecursively(currentDepth + 1, maxDepth, index);
-		}
+		int row = model->rowCount(root);
+		model->insertRow(row, root);
 
-		//if (model->hasChildren(index) && currentDepth < maxDepth) {
-		//	loadRecursively(currentDepth + 1, maxDepth, index);
-		//}
+		QModelIndex index = model->index(row, 0, root);
+		model->setData(index, QVariant::fromValue(it.fileInfo()));
+
+		readHierarchyRecursive(index, it.filePath(), maxDepth);
+	}
+	return model;
+}
+
+QAbstractItemModel* QModelLoader::getModel() const
+{
+	return model;
+}
+
+void QModelLoader::readHierarchyRecursive(QModelIndex parent, const QString& path,
+	size_t maxDepth, size_t curDepth)
+{
+	if (curDepth > maxDepth)
+		return;
+
+	QStandardItemModel* smodel = dynamic_cast<QStandardItemModel*> (model);
+	Q_ASSERT(smodel != nullptr);
+
+	QDirIterator it(path, QDir::NoDotAndDotDot | QDir::AllEntries);
+	while (it.hasNext())
+	{
+		it.next();
+
+		int row = model->rowCount(parent);
+		smodel->insertRow(row, parent);
+
+		QModelIndex index = model->index(row, 0, parent);
+		model->setData(index, QVariant::fromValue(it.fileInfo()));
+
+		if (it.fileInfo().isDir())
+			readHierarchyRecursive(index, it.filePath(), maxDepth, curDepth + 1);
 	}
 }
 

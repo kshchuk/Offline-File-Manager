@@ -5,9 +5,10 @@
 #include <QScreen>
 #include <Qscroller>
 #include <QStringList>
+#include <QThread>
 
-#include "QJsonModel.h"
 #include "QModelLoader.h"
+
 
 
 OfflineFileManager::OfflineFileManager(QWidget *parent)
@@ -15,25 +16,14 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
 {
     ui.setupUi(this);
 
-    QModelLoader loader(model);
-    loader.makeFileSystemModel();
-    model = loader.getModel();
+    QModelLoader loader;
+    model = loader.genExternalDrivesModel();
 
-    ui.fileSystemModelView->setModel(model);
+    treeViewInit(ui.fileSystemTree, model);
 
-    ui.fileSystemModelView->setAnimated(false);
-    ui.fileSystemModelView->setIndentation(20);
-    ui.fileSystemModelView->setSortingEnabled(true);
-    const QSize availableSize = ui.fileSystemModelView->screen()->availableGeometry().size();
-    ui.fileSystemModelView->setColumnWidth(0, ui.fileSystemModelView->width() / 2);
-    QScroller::grabGesture(ui.fileSystemModelView, QScroller::TouchGesture);
-
-    connect(ui.fileSystemModelView, &QTreeView::clicked, this, &OfflineFileManager::on_treeView_clicked);
     connect(ui.actionClose, &QAction::triggered, this, &OfflineFileManager::close);
     connect(ui.updateButton, &QToolButton::clicked, this, &OfflineFileManager::on_updateButton_clicked);
-
-    connect(dynamic_cast<QFileSystemModel*> (model), &QFileSystemModel::directoryLoaded, 
-        this, &OfflineFileManager::makeOffline);
+    connect(ui.fileSystemTree, &QTreeView::activated, this, &OfflineFileManager::on_treeWidget_clicked);
 }
 
 OfflineFileManager::~OfflineFileManager()
@@ -41,32 +31,68 @@ OfflineFileManager::~OfflineFileManager()
     delete model;
 }
 
-void OfflineFileManager::on_treeView_clicked(const QModelIndex & index)
+void OfflineFileManager::on_treeWidget_clicked(QModelIndex index)
 {
-    //QFileSystemModel* fmodel = dynamic_cast<QFileSystemModel*> (model);
-    //if (fmodel != nullptr);
-    //{
-    //    QString path = fmodel->filePath(index);
-    //    ui.addressLine->setText(path);
-    //}
+    QList<QString> path;
+    while (index.isValid())
+    {
+        path.append(index.data().toString());
+        index = index.parent();
+    }
+    path.reserve(path.size());
+
+    QString spath;
+    foreach(auto file, path)
+        spath +=  '/' + file;
+
+    ui.addressLine->setText(spath);
 }
 
 void OfflineFileManager::on_updateButton_clicked()
 {
-    //QModelLoader loader(&model);
-    //loader.makeFileSystemModel();
-    
-    // this->makeOffline();
+    switch (regime)
+    {
+    case OfflineFileManager::FILESYSTEM:
+    {
+        treeViewInit(ui.fileSystemTree, new QFileSystemModel);
+
+        QThread* thread = QThread::create([&] {
+            QModelLoader loader;
+            this->model = loader.genStaticSystemModel(maxDepth);
+            delete ui.fileSystemTree->model();
+            treeViewInit(ui.fileSystemTree, model);
+            });
+        
+        thread->start();
+        break;
+    }
+    case OfflineFileManager::EXTERNAL_DRIVES:
+    {
+        QThread* thread = QThread::create([&] {
+            QModelLoader loader;
+            this->model = loader.genExternalDrivesModel(maxDepth);
+            treeViewInit(ui.fileSystemTree, model);
+
+            });
+
+        thread->start();
+        break;
+    }
+    default:
+        break;
+    }
 }
 
-void OfflineFileManager::makeOffline()
+void OfflineFileManager::treeViewInit(QTreeView* tree, QAbstractItemModel* model)
 {
-    //QModelLoader loader(&this->model);
-    //loader.writeModel("tmp.json");
+    tree->setModel(model);
 
-    //QStringList headers;
-    //for (size_t i = 0; i < 4 /*sections count*/; i++)
-    //    headers.append(model->headerData(i, Qt::Horizontal).toString());
+    tree->setAnimated(false);
+    tree->setIndentation(20);
+    tree->setSortingEnabled(true);
+    const QSize availableSize = tree->screen()->availableGeometry().size();
+    tree->setColumnWidth(0, tree->width() / 2);
+    QScroller::grabGesture(tree, QScroller::TouchGesture);
 
-    //loader.readModel("tmp.json", headers);
+    connect(tree, &QTreeView::clicked, this, &OfflineFileManager::on_treeWidget_clicked);
 }
