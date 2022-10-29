@@ -63,7 +63,9 @@ QAbstractItemModel* QModelLoader::genExternalDrivesModel(size_t maxDepth)
 		smodel->insertRow(row, root);
 
 		QModelIndex index = smodel->index(row, 0, root);
-		smodel->setData(index, QVariant::fromValue(it.fileInfo()));
+		// smodel->setData(index, QVariant::fromValue(it.fileInfo()));
+		smodel->setData(index, it.path());
+
 		
 		readHierarchyRecursive(index, it.path(), maxDepth);
 	}
@@ -76,6 +78,12 @@ QAbstractItemModel* QModelLoader::genStaticSystemModel(size_t maxDepth)
 
 	QStandardItemModel* smodel = new QStandardItemModel; model = smodel;
 	QModelIndex root = smodel->invisibleRootItem()->index();
+
+	QFileSystemModel temp;
+	for (size_t i = 0; i < 4; i++)
+	{
+
+	}
 
 	smodel->insertColumn(0, root);
 
@@ -121,7 +129,8 @@ void QModelLoader::readHierarchyRecursive(QModelIndex parent, const QString& pat
 		QString str = it.fileName();
 
 		QModelIndex index = model->index(row, 0, parent);
-		model->setData(index, QVariant::fromValue(it.fileInfo()));
+		// model->setData(index, QVariant::fromValue(it.fileInfo()));
+		smodel->setData(index, it.fileName());
 
 		if (it.fileInfo().isDir())
 			readHierarchyRecursive(index, it.filePath(), maxDepth, curDepth + 1);

@@ -39,11 +39,13 @@ void OfflineFileManager::on_treeWidget_clicked(QModelIndex index)
         path.append(index.data().toString());
         index = index.parent();
     }
-    path.reserve(path.size());
+    std::reverse(path.begin(), path.end());
 
     QString spath;
     foreach(auto file, path)
         spath +=  '/' + file;
+
+    spath.remove(0, 1);
 
     ui.addressLine->setText(spath);
 }
@@ -72,7 +74,6 @@ void OfflineFileManager::on_updateButton_clicked()
             QModelLoader loader;
             this->model = loader.genExternalDrivesModel(maxDepth);
             treeViewInit(ui.fileSystemTree, model);
-
             });
 
         thread->start();
