@@ -4,7 +4,6 @@
 
 #include <QFile>
 #include <QFileSystemModel>
-#include <QStandardItemModel>
 #include <QDirIterator>
 
 #include "ModelSerializer.h"
@@ -47,7 +46,6 @@ void QModelLoader::writeModel(QString fileName, size_t maxDepth) const
 QAbstractItemModel* QModelLoader::genExternalDrivesModel(size_t maxDepth)
 {
 	if (!model) delete model;
-
 	QStandardItemModel* smodel = new QStandardItemModel; model = smodel;
 
 	QModelIndex root = smodel->invisibleRootItem()->index();
@@ -63,10 +61,14 @@ QAbstractItemModel* QModelLoader::genExternalDrivesModel(size_t maxDepth)
 		smodel->insertRow(row, root);
 
 		QModelIndex index = smodel->index(row, 0, root);
-		smodel->setData(index, QVariant::fromValue(it.fileInfo()));
+		// smodel->setData(index, QVariant::fromValue(it.fileInfo()));
+		smodel->setData(index, it.path());
+
 		
 		readHierarchyRecursive(index, it.path(), maxDepth);
 	}
+	initFileModel(smodel);
+
 	return model;
 }
 
@@ -75,7 +77,9 @@ QAbstractItemModel* QModelLoader::genStaticSystemModel(size_t maxDepth)
 	if (!model) delete model;
 
 	QStandardItemModel* smodel = new QStandardItemModel; model = smodel;
+	initFileModel(smodel);
 	QModelIndex root = smodel->invisibleRootItem()->index();
+
 
 	smodel->insertColumn(0, root);
 
@@ -87,9 +91,10 @@ QAbstractItemModel* QModelLoader::genStaticSystemModel(size_t maxDepth)
 		model->insertRow(row, root);
 
 		QModelIndex index = model->index(row, 0, root);
-		model->setData(index, QVariant::fromValue(it.fileInfo()));
+		// smodel->setData(index, QVariant::fromValue(it.fileInfo()));
+		model->setData(index, it.path());
 
-		readHierarchyRecursive(index, it.filePath(), maxDepth);
+		readHierarchyRecursive(index, it.path(), maxDepth);
 	}
 	return model;
 }
@@ -97,6 +102,18 @@ QAbstractItemModel* QModelLoader::genStaticSystemModel(size_t maxDepth)
 QAbstractItemModel* QModelLoader::getModel() const
 {
 	return model;
+}
+
+void QModelLoader::initFileModel(QStandardItemModel* model)
+{
+	QFileSystemModel temp;
+	for (size_t i = 0; i < temp.columnCount(); i++)
+	{
+		QStandardItem* header = new QStandardItem(
+			temp.headerData(i, Qt::Horizontal).toString());
+
+		model->setHorizontalHeaderItem(i, header);
+	}
 }
 
 void QModelLoader::readHierarchyRecursive(QModelIndex parent, const QString& path,
@@ -121,7 +138,8 @@ void QModelLoader::readHierarchyRecursive(QModelIndex parent, const QString& pat
 		QString str = it.fileName();
 
 		QModelIndex index = model->index(row, 0, parent);
-		model->setData(index, QVariant::fromValue(it.fileInfo()));
+		// model->setData(index, QVariant::fromValue(it.fileInfo()));
+		smodel->setData(index, it.fileName());
 
 		if (it.fileInfo().isDir())
 			readHierarchyRecursive(index, it.filePath(), maxDepth, curDepth + 1);

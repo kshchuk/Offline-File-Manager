@@ -1,6 +1,6 @@
 #pragma once
-#include <QFileSystemModel>
-#include <QTreeView>
+
+#include <QStandardItemModel>
 #include <QString>
 #include <QFile>
 
@@ -25,6 +25,7 @@ public:
 private:
 	QAbstractItemModel* model = nullptr;
 
+	void initFileModel(QStandardItemModel* model);
 	void readHierarchyRecursive(QModelIndex parent, const QString& path,
 		size_t maxDepth = 20, size_t curDepth = 1);
 };
