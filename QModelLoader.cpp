@@ -52,6 +52,8 @@ QAbstractItemModel* QModelLoader::genExternalDrivesModel(size_t maxDepth)
 
 	QModelIndex root = smodel->invisibleRootItem()->index();
 
+	smodel->insertColumn(0, root);
+
 	QList<QString> externalDrives = removableDrives();
 	foreach(auto drive, externalDrives)
 	{
@@ -74,6 +76,8 @@ QAbstractItemModel* QModelLoader::genStaticSystemModel(size_t maxDepth)
 
 	QStandardItemModel* smodel = new QStandardItemModel; model = smodel;
 	QModelIndex root = smodel->invisibleRootItem()->index();
+
+	smodel->insertColumn(0, root);
 
 	foreach(auto drive, QDir::drives())
 	{
@@ -104,6 +108,8 @@ void QModelLoader::readHierarchyRecursive(QModelIndex parent, const QString& pat
 	QStandardItemModel* smodel = dynamic_cast<QStandardItemModel*> (model);
 	Q_ASSERT(smodel != nullptr);
 
+	smodel->insertColumn(0, parent);
+
 	QDirIterator it(path, QDir::NoDotAndDotDot | QDir::AllEntries);
 	while (it.hasNext())
 	{
@@ -111,6 +117,8 @@ void QModelLoader::readHierarchyRecursive(QModelIndex parent, const QString& pat
 
 		int row = model->rowCount(parent);
 		smodel->insertRow(row, parent);
+
+		QString str = it.fileName();
 
 		QModelIndex index = model->index(row, 0, parent);
 		model->setData(index, QVariant::fromValue(it.fileInfo()));
