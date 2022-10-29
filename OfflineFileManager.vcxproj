@@ -84,7 +84,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="QFileInfoModel.cpp" />
-    <ClCompile Include="QModelLoader.cpp" />
     <QtRcc Include="OfflineFileManager.qrc" />
     <QtUic Include="OfflineFileManager.ui" />
     <QtMoc Include="OfflineFileManager.h" />
@@ -95,7 +94,6 @@
     <ClInclude Include="BasicTraits.h" />
     <ClInclude Include="ModelSerializer.h" />
     <QtMoc Include="QFileInfoModel.h" />
-    <ClInclude Include="QModelLoader.h" />
     <ClInclude Include="system_depend_functions.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
