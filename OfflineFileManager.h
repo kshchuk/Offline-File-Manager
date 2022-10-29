@@ -2,10 +2,10 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_OfflineFileManager.h"
-#include <QFileSystemModel>
 #include <QTreeView>
 
-// #include "qjsonmodel.h"
+#include "QFileInfoModel.h"
+
 
 
 class OfflineFileManager : public QMainWindow
@@ -24,7 +24,7 @@ private slots:
 
 private:
     Ui::OfflineFileManagerClass ui;
-    QAbstractItemModel* model = nullptr;
+    QFileInfoModel* model = nullptr;
     Regime regime = EXTERNAL_DRIVES;
     size_t maxDepth = 20;
 

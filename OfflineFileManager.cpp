@@ -7,17 +7,15 @@
 #include <QStringList>
 #include <QThread>
 
-#include "QModelLoader.h"
-
 
 
 OfflineFileManager::OfflineFileManager(QWidget *parent)
     : QMainWindow(parent)
 {
     ui.setupUi(this);
-
-    QModelLoader loader;
-    model = loader.genExternalDrivesModel();
+    
+    model = new QFileInfoModel();
+    model->genExternalDrivesModel(maxDepth);
 
     treeViewInit(ui.fileSystemTree, model);
 
@@ -58,25 +56,14 @@ void OfflineFileManager::on_updateButton_clicked()
     {
         treeViewInit(ui.fileSystemTree, new QFileSystemModel);
 
-        QThread* thread = QThread::create([&] {
-            QModelLoader loader;
-            this->model = loader.genStaticSystemModel(maxDepth);
-            delete ui.fileSystemTree->model();
-            treeViewInit(ui.fileSystemTree, model);
-            });
-        
-        thread->start();
+        this->model->genStaticSystemModel(maxDepth);
+        treeViewInit(ui.fileSystemTree, model);
         break;
     }
     case OfflineFileManager::EXTERNAL_DRIVES:
     {
-        QThread* thread = QThread::create([&] {
-            QModelLoader loader;
-            this->model = loader.genExternalDrivesModel(maxDepth);
-            treeViewInit(ui.fileSystemTree, model);
-            });
-
-        thread->start();
+        this->model->genExternalDrivesModel(maxDepth);
+        treeViewInit(ui.fileSystemTree, model);
         break;
     }
     default:

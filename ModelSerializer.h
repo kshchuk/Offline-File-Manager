@@ -25,6 +25,8 @@ template <class Tr = BasicTraits> class ModelSerializer {
             if (!st(s >> data)) return st;
             if (!st.model(m_traits.setHeaderData(model, i, ori, data))) return st;
         }
+        //for (size_t i = 0; i < model->columnCount(); i++)
+        //    QString s = model->headerData(i, Qt::Horizontal).toString();
         return st;
     }
 
@@ -73,15 +75,17 @@ public:
     Status save(QDataStream& stream, const typename Tr::Model* model) {
         Status st;
         auto version = stream.version();
-        stream.setVersion(QDataStream::Qt_5_4);
+        stream.setVersion(QDataStream::Qt_6_4);
         if (!st(stream << (quint8)0)) return st; // format
         if (!st(stream << m_traits.modelConfig(model))) return st;
         if (!st(saveData(stream, model, QModelIndex()))) return st;
         auto hor = m_traits.doHorizontalHeaderData();
         if (!st(stream << hor)) return st;
         if (hor && !st(saveHeaders(stream, model, model->rowCount(), Qt::Horizontal))) return st;
+        // if (hor && !st(saveHeaders(stream, model, model->columnCount(), Qt::Horizontal))) return st;
         auto ver = m_traits.doVerticalHeaderData();
         if (!st(stream << ver)) return st;
+        // if (ver && !st(saveHeaders(stream, model, model->rowCount(), Qt::Vertical))) return st;
         if (ver && !st(saveHeaders(stream, model, model->columnCount(), Qt::Vertical))) return st;
         stream.setVersion(version);
         return st;
@@ -89,7 +93,7 @@ public:
 
     Status load(QDataStream& stream, typename Tr::Model* model, Status st = Status()) {
         auto version = stream.version();
-        stream.setVersion(QDataStream::Qt_5_4);
+        stream.setVersion(QDataStream::Qt_6_4);
         quint8 format;
         if (!st(stream >> format)) return st;
         if (!st.stream(format == 0)) return st;

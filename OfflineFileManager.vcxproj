@@ -83,6 +83,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="QFileInfoModel.cpp" />
     <ClCompile Include="QModelLoader.cpp" />
     <QtRcc Include="OfflineFileManager.qrc" />
     <QtUic Include="OfflineFileManager.ui" />
@@ -93,6 +94,7 @@
   <ItemGroup>
     <ClInclude Include="BasicTraits.h" />
     <ClInclude Include="ModelSerializer.h" />
+    <QtMoc Include="QFileInfoModel.h" />
     <ClInclude Include="QModelLoader.h" />
     <ClInclude Include="system_depend_functions.h" />
   </ItemGroup>
