@@ -27,6 +27,19 @@ QFileInfoModel::QFileInfoModel(QObject *parent)
 QFileInfoModel::~QFileInfoModel()
 {}
 
+QList<QString> QFileInfoModel::getPath(QModelIndex index) const
+{
+	QList<QString> path;
+	while (index.isValid())
+	{
+		path.append(index.data().toString());
+		index = index.parent();
+	}
+	std::reverse(path.begin(), path.end());
+
+	return path;
+}
+
 QAbstractItemModel* QFileInfoModel::readFile(QString fileName)
 {
 	QFile file(fileName);

@@ -20,6 +20,8 @@ public:
 	QFileInfoModel(QObject *parent = nullptr);
 	~QFileInfoModel();
 
+	QList<QString> getPath(QModelIndex index) const;
+
 	QAbstractItemModel* readFile(QString fileName);
 	void writeFile(QString fileName, size_t maxDepth) const;
 
@@ -37,5 +39,4 @@ private:
 	QList<QStandardItem*> fromFileInfo(const QFileInfo& info) const;
 	void initFileModelHeaders(QFileInfoModel* model) const;
 	QString fileSize(const QFileInfo& info) const;
-
 };
