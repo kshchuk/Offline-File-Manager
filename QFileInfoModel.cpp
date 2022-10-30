@@ -2,6 +2,7 @@
 
 #include <QFileSystemModel>
 #include <QMimeDatabase>
+#include <QException>
 #include <QApplication>
 #include <QMimeType>
 #include <QLocale>
@@ -48,13 +49,14 @@ QAbstractItemModel* QFileInfoModel::readFile(QString fileName)
 		this->clear();
 
 		ModelSerializer<> ser;
-		ser.load(stream, this);
+		Status st = ser.load(stream, this);
+		if (!st.ok()) throw std::runtime_error("Reading error:" + fileName.toStdString());
 		this->initFileModelHeaders(this);
 		file.close();
 		return this;
 	}
 	else
-		throw std::runtime_error("Unable to open file" + fileName.toStdString());
+		throw std::runtime_error("Unable to open file:" + fileName.toStdString());
 
 	return nullptr;
 }
@@ -66,13 +68,14 @@ void QFileInfoModel::writeFile(QString fileName, size_t maxDepth) const
 		QDataStream stream(&file);
 
 		ModelSerializer<> ser;
-		ser.save(stream, this);
+		Status st = ser.save(stream, this);
+		if (!st.ok()) throw std::runtime_error("Writing error:" + fileName.toStdString());
 
 		file.flush();
 		file.close();
 	}
 	else
-		throw std::runtime_error("Unable to open file" + fileName.toStdString());
+		throw std::runtime_error("Unable to open file: " + fileName.toStdString());
 }
 
 QAbstractItemModel* QFileInfoModel::genStaticSystemModel(size_t maxDepth)
