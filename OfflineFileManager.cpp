@@ -2,12 +2,16 @@
 #include <QCommandLineParser>
 #include <QFileIconProvider>
 #include <QFileSystemModel>
+#include <QMessageBox>
+#include <QFileDialog>
 #include <QScreen>
 #include <Qscroller>
 #include <QStringList>
 #include <QThread>
 
-const QString savingFile = "tmp.bin";
+#include <qexception.h>
+
+const QString savingFile = "static.fsh";
 
 
 OfflineFileManager::OfflineFileManager(QWidget *parent)
@@ -17,14 +21,19 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
     
     model = new QFileInfoModel();
     //model->writeFile("", maxDepth);
-
-    model->readFile(savingFile);
+    
+    try {
+        model->readFile(savingFile);
+    }
+    catch (...) {};
 
     treeViewInit(ui.fileSystemTree, model);
 
     connect(ui.actionClose, &QAction::triggered, this, &OfflineFileManager::close);
     connect(ui.updateButton, &QToolButton::clicked, this, &OfflineFileManager::on_updateButton_clicked);
     connect(ui.fileSystemTree, &QTreeView::activated, this, &OfflineFileManager::on_treeWidget_clicked);
+    connect(ui.actionSave, &QAction::triggered, this, &OfflineFileManager::on_saveAction_triggered);
+    connect(ui.actionOpen, &QAction::triggered, this, &OfflineFileManager::on_openAction_triggered);
 }
 
 OfflineFileManager::~OfflineFileManager()
@@ -35,18 +44,9 @@ OfflineFileManager::~OfflineFileManager()
 
 void OfflineFileManager::on_treeWidget_clicked(QModelIndex index)
 {
-    QList<QString> path;
-    while (index.isValid())
-    {
-        path.append(index.data().toString());
-        index = index.parent();
-    }
-    std::reverse(path.begin(), path.end());
-
+    QList<QString> path = model->getPath(index);
     QString spath;
-    foreach(auto file, path)
-        spath +=  '/' + file;
-
+    foreach(auto file, path) spath += '/' + file;
     spath.remove(0, 1);
 
     ui.addressLine->setText(spath);
@@ -74,6 +74,35 @@ void OfflineFileManager::on_updateButton_clicked()
     default:
         break;
     }
+}
+
+void OfflineFileManager::on_saveAction_triggered() 
+{
+    QString fileName = QFileDialog::getSaveFileName(this, 
+        ("Save File"),"", ("File system hierarchy (*.fsh)"));
+
+    try {
+        model->writeFile(fileName, maxDepth);
+    }
+    catch (const std::exception& e) {
+        QMessageBox::critical(this, tr("Offline File Manager"),
+            tr(e.what()), QMessageBox::Close);
+    }
+}
+
+void OfflineFileManager::on_openAction_triggered()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, ("Open File"),
+        "", ("File system hierarchy (*.fsh)"));
+    
+    try {
+        model->readFile(fileName);
+    }
+    catch(const std::exception &e) {
+        QMessageBox::critical(this, tr("Offline File Manager"),
+            tr(e.what()), QMessageBox::Close);
+    }
+    treeViewInit(ui.fileSystemTree, model);
 }
 
 void OfflineFileManager::treeViewInit(QTreeView* tree, QAbstractItemModel* model)
