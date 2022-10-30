@@ -7,6 +7,7 @@
 #include <QStringList>
 #include <QThread>
 
+const QString savingFile = "tmp.bin";
 
 
 OfflineFileManager::OfflineFileManager(QWidget *parent)
@@ -15,7 +16,9 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
     ui.setupUi(this);
     
     model = new QFileInfoModel();
-    model->genExternalDrivesModel(maxDepth);
+    //model->writeFile("", maxDepth);
+
+    model->readFile(savingFile);
 
     treeViewInit(ui.fileSystemTree, model);
 
@@ -26,6 +29,7 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
 
 OfflineFileManager::~OfflineFileManager()
 {
+    model->writeFile(savingFile, maxDepth);
     delete model;
 }
 
@@ -63,6 +67,7 @@ void OfflineFileManager::on_updateButton_clicked()
     case OfflineFileManager::EXTERNAL_DRIVES:
     {
         this->model->genExternalDrivesModel(maxDepth);
+        // treeViewInit(ui.fileSystemTree, model->readFile("tmp.bin"));
         treeViewInit(ui.fileSystemTree, model);
         break;
     }
