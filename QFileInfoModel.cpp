@@ -29,8 +29,6 @@ QFileInfoModel::~QFileInfoModel()
 
 QAbstractItemModel* QFileInfoModel::readFile(QString fileName)
 {
-	this->clear();
-
 	QFile file(fileName);
 	if (file.open(QIODevice::ReadOnly)) {
 		QDataStream stream(&file);
@@ -38,6 +36,7 @@ QAbstractItemModel* QFileInfoModel::readFile(QString fileName)
 
 		ModelSerializer<> ser;
 		ser.load(stream, this);
+		this->initFileModelHeaders(this);
 		file.close();
 		return this;
 	}

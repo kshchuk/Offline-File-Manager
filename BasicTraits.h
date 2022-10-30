@@ -1,7 +1,8 @@
 #pragma once
 
-// https://github.com/KubaO/stackoverflown/tree/master/questions/model-serialization-32176887
 #include <QtGui>
+#include <QStandardItemModel>
+
 
 struct BasicTraits {
     BasicTraits() {}
@@ -38,7 +39,7 @@ struct BasicTraits {
     /// Sets the number of rows and columns for children on a given parent item.
     bool setRowsColumns(Model* model, const QModelIndex& parent, int rows, int columns) {
         bool rc = model->insertRows(0, rows, parent);
-        if (columns > 1) rc = rc && model->insertColumns(1, columns - 1, parent);
+        rc = rc && model->insertColumns(0, columns, parent);
         return rc;
     }
     /// Returns a streamable representation of the model's configuration.

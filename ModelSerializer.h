@@ -33,8 +33,10 @@ template <class Tr = BasicTraits> class ModelSerializer {
     Status saveData(QDataStream& s, const typename Tr::Model* model, const QModelIndex& parent) {
         Status st;
         ItemTypes types;
-        if (parent.isValid()) types |= HasData;
-        if (model->hasChildren(parent)) types |= HasChildren;
+        if (parent.isValid()) 
+            types |= HasData;
+        if (model->hasChildren(parent)) 
+            types |= HasChildren;
         if (!st(s << (quint8)types)) return st;
         if (types & HasData) s << m_traits.itemData(model, parent);
         if (!(types & HasChildren)) return st;
