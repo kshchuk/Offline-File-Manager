@@ -2,7 +2,10 @@
 
 #include <QFileSystemModel>
 #include <QMimeDatabase>
+#include <QApplication>
 #include <QMimeType>
+#include <QLocale>
+#include <QStyle>
 
 #include "ModelSerializer.h"
 #include "system_depend_functions.h"
@@ -64,22 +67,21 @@ QAbstractItemModel* QFileInfoModel::genStaticSystemModel(size_t maxDepth)
 {
 	this->clear();
 
-	QModelIndex root = this->invisibleRootItem()->index();
-	this->insertColumn(0, root);
+	QStandardItem* root = this->invisibleRootItem();
 
 	foreach(auto drive, QDir::drives())
 	{
-		QDirIterator it(drive.absolutePath());
+		QDirIterator it(drive.absoluteFilePath());
 
-		int row = this->rowCount(root);
-		this->insertRow(row, root);
+		QList<QStandardItem*> preparedRow = packDrive(it);
+		root->appendRow(preparedRow);
 
-		QModelIndex index = this->index(row, 0, root);
-		this->setData(index, it.fileName());
-		// smodel->setItemData(index, fromFileInfo(it.fileInfo()));
+		int row = root->rowCount() - 1;
+		QModelIndex index = root->child(row)->index();
 
 		readHierarchyRecursive(index, it.path(), maxDepth);
 	}
+	initFileModelHeaders(this);
 	return this;
 }
 
@@ -87,23 +89,18 @@ QAbstractItemModel* QFileInfoModel::genExternalDrivesModel(size_t maxDepth)
 {
 	this->clear();
 
-	QModelIndex root = this->invisibleRootItem()->index();
-
-	this->insertColumn(0, root);
+	QStandardItem* root = this->invisibleRootItem();
 
 	QList<QString> externalDrives = removableDrives();
 	foreach(auto drive, externalDrives)
 	{
 		QDirIterator it(drive);
 
-		int row = this->rowCount(root);
-		this->insertRow(row, root);
+		QList<QStandardItem*> preparedRow = packDrive(it);
+		root->appendRow(preparedRow);
 
-		QModelIndex index = this->index(row, 0, root);
-
-		this->setData(index, it.path());
-
-		// smodel->setItemData(index, fromFileInfo(it.fileInfo()));
+		int row = root->rowCount() - 1;
+		QModelIndex index = root->child(row)->index();
 
 		readHierarchyRecursive(index, it.path(), maxDepth);
 	}
@@ -116,22 +113,19 @@ void QFileInfoModel::readHierarchyRecursive(QModelIndex parent, const QString& p
 	if (curDepth > maxDepth)
 		return;
 
-	this->insertColumn(0, parent);
+	QStandardItem* parentItem = this->itemFromIndex(parent);
 
 	QDirIterator it(path, QDir::NoDotAndDotDot | QDir::AllEntries);
 	while (it.hasNext())
 	{
 		it.next();
 
-		int row = this->rowCount(parent);
-		this->insertRow(row, parent);
+		QList<QStandardItem*> preparedRow = fromFileInfo(it.fileInfo());
+		parentItem->appendRow(preparedRow);
 
-		QString str = it.fileName();
+		int row = parentItem->rowCount() - 1;
+		QModelIndex index = parentItem->child(row)->index();
 
-		QModelIndex index = this->index(row, 0, parent);
-		// model->setData(index, it.fileName());
-		// QStandardItem* item = new QStandardItem(1, 4);
-		this->setData(index, it.fileInfo().fileName());
 
 		if (it.fileInfo().isDir())
 			readHierarchyRecursive(index, it.filePath(), maxDepth, curDepth + 1);
@@ -150,16 +144,58 @@ void QFileInfoModel::initFileModelHeaders(QFileInfoModel* model) const
 	}
 }
 
-QVariantMap QFileInfoModel::fromFileInfo(const QFileInfo& info) const
+QString QFileInfoModel::fileSize(const QFileInfo& info) const
 {
-	QVariantMap mapvar;
+	if (info.isFile())
+	{
+		quint64 size = info.size();
+		QLocale locale;
+		return locale.formattedDataSize(size);
+	}
+	return QString();
+}
 
-	mapvar.insert("Name", info.fileName());
-	mapvar.insert("Size", info.size());
+QList<QStandardItem*> QFileInfoModel::packDrive(const QDirIterator& drive) const
+{
+	// Is drive?
+	Q_ASSERT(([&]() -> bool {
+		foreach(auto curDrive, QDir::drives())
+		{
+			QString p1 = curDrive.absolutePath(), p2 = drive.path();
+			if (p1 == p2) return true;
+		}
+		QStringList d = removableDrives();
+		foreach(auto curDrive, d)
+		{
+			curDrive[curDrive.size() - 1] = '/';
+			QString p1 = curDrive, p2 = drive.path();
+			if (p1 == p2) return true;
+		}
+		return false;
+		})());
 
-	QMimeDatabase db; QMimeType mime = db.mimeTypeForFile(info);
-	mapvar.insert("Type", mime.name());
-	mapvar.insert("Date Modified", info.lastModified());
+	QList<QStandardItem*> row;
+	
+	row.append(new QStandardItem(this->iconProvider.icon(drive.fileInfo()), drive.path()));
+	row.append(new QStandardItem(fileSize(drive.fileInfo())));
 
-	return mapvar;
+	QMimeType mime = db.mimeTypeForFile(drive.path());
+	row.append(new QStandardItem(mime.comment()));
+	row.append(new QStandardItem(drive.fileInfo().lastModified().toString()));
+
+	return row;
+}
+
+QList<QStandardItem*> QFileInfoModel::fromFileInfo(const QFileInfo& info) const
+{
+	QList<QStandardItem*> row;
+
+	row.append(new QStandardItem(this->iconProvider.icon(info), info.fileName()));
+	row.append(new QStandardItem(fileSize(info)));
+
+	QMimeType mime = db.mimeTypeForFile(info);
+	row.append(new QStandardItem(mime.comment()));
+	row.append(new QStandardItem(info.lastModified().toString()));
+
+	return row;
 }

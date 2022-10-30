@@ -1,9 +1,16 @@
 #pragma once
 
 #include <QStandardItemModel>
-#include <QVariantMap>
+#include <QFileIconProvider>
+#include <QMimeDatabase>
+#include <QStandardItem>
+#include <QDirIterator>
 #include <QFileInfo>
 #include <QString>
+#include <QList>
+#include <QIcon>
+
+
 
 class QFileInfoModel  : public QStandardItemModel
 {
@@ -20,8 +27,15 @@ public:
 	QAbstractItemModel* genExternalDrivesModel(size_t maxDepth);
 
 private:
+	QMimeDatabase db;
+	QFileIconProvider iconProvider;
+
 	void readHierarchyRecursive(QModelIndex parent, const QString& path,
 		size_t maxDepth, size_t curDepth = 1);
-	QVariantMap fromFileInfo(const QFileInfo& info) const;
+
+	QList<QStandardItem*> packDrive(const QDirIterator& drive) const;
+	QList<QStandardItem*> fromFileInfo(const QFileInfo& info) const;
 	void initFileModelHeaders(QFileInfoModel* model) const;
+	QString fileSize(const QFileInfo& info) const;
+
 };
