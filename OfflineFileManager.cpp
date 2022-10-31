@@ -10,6 +10,8 @@
 #include <QStringList>
 #include <QThread>
 #include <QUrl>
+#include <QMenu>
+
 
 #include <qexception.h>
 
@@ -26,16 +28,19 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
     try {
         model->readFile(savingFile);
     }
-    catch (...) {};
+    catch (const std::exception &e) {
+        QMessageBox::warning(this, tr("Offline File Manager"),
+            tr(e.what()), QMessageBox::Close);
+    };
 
     treeViewInit(ui.fileSystemTree, model);
 
     connect(ui.actionClose, &QAction::triggered, this, &OfflineFileManager::close);
     connect(ui.updateButton, &QToolButton::clicked, this, &OfflineFileManager::on_updateButton_clicked);
-    connect(ui.fileSystemTree, &QTreeView::activated, this, &OfflineFileManager::on_treeWidget_clicked);
     connect(ui.actionSave, &QAction::triggered, this, &OfflineFileManager::on_saveAction_triggered);
     connect(ui.actionOpen, &QAction::triggered, this, &OfflineFileManager::on_openAction_triggered);
-    connect(ui.fileSystemTree, &QTreeView::doubleClicked, this, &OfflineFileManager::on_treeWidget_doubleclicked);
+
+    connect(ui.fileSystemTree, &QTreeView::doubleClicked, ui.fileSystemTree, &QTreeView::expand);
 }
 
 OfflineFileManager::~OfflineFileManager()
@@ -54,8 +59,10 @@ void OfflineFileManager::on_treeWidget_clicked(QModelIndex index)
     ui.addressLine->setText(spath);
 }
 
-void OfflineFileManager::on_treeWidget_doubleclicked(QModelIndex index)
+void OfflineFileManager::action_openInFileExplorer()
 {
+    QModelIndex index = ui.fileSystemTree->currentIndex();
+
     QList<QString> path = model->getPath(index);
     QString spath;
     foreach(auto file, path) spath += '/' + file;
@@ -64,6 +71,24 @@ void OfflineFileManager::on_treeWidget_doubleclicked(QModelIndex index)
     if (!QDesktopServices::openUrl(QUrl::fromLocalFile(spath)))
         QMessageBox::critical(this, tr("Offline File Manager"),
             tr("No access"), QMessageBox::Close);
+}
+
+void OfflineFileManager::action_Properties()
+{
+    
+}
+
+void OfflineFileManager::on_customContextMenu(const QPoint& point)
+{
+    QPoint globalPos = ui.fileSystemTree->mapToGlobal(point);
+
+    QMenu menu(this);
+    menu.addAction("Open in file explorer",
+        this, &OfflineFileManager::action_openInFileExplorer);
+    menu.addAction("Properties",
+        this, &OfflineFileManager::action_Properties);
+
+    menu.exec(globalPos);
 }
 
 void OfflineFileManager::on_updateButton_clicked()
@@ -132,6 +157,10 @@ void OfflineFileManager::treeViewInit(QTreeView* tree, QAbstractItemModel* model
     const QSize availableSize = tree->screen()->availableGeometry().size();
     tree->setColumnWidth(0, tree->width() / 2);
     QScroller::grabGesture(tree, QScroller::TouchGesture);
+    ui.fileSystemTree->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui.fileSystemTree->setContextMenuPolicy(Qt::CustomContextMenu);
 
+    connect(ui.fileSystemTree, &QTreeView::activated, this, &OfflineFileManager::on_treeWidget_clicked);
+    connect(ui.fileSystemTree, &QTreeView::customContextMenuRequested, this, &OfflineFileManager::on_customContextMenu);
     connect(tree, &QTreeView::clicked, this, &OfflineFileManager::on_treeWidget_clicked);
 }

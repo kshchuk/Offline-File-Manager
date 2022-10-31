@@ -20,7 +20,9 @@ public:
 
 private slots:
     void on_treeWidget_clicked(QModelIndex index);
-    void on_treeWidget_doubleclicked(QModelIndex index);
+    void action_openInFileExplorer();
+    void action_Properties();
+    void on_customContextMenu(const QPoint& point);
     void on_updateButton_clicked();
     void on_saveAction_triggered();
     void on_openAction_triggered();
@@ -30,7 +32,6 @@ private:
     QFileInfoModel* model = nullptr;
     Regime regime = EXTERNAL_DRIVES;
     size_t maxDepth = 20;
-
 
    void treeViewInit(QTreeView* tree, QAbstractItemModel* model);
 };

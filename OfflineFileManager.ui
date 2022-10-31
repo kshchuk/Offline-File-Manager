@@ -162,6 +162,16 @@ image: url(:/OfflineFileManager/res/icons/upload.png);</string>
     <string>Save</string>
    </property>
   </action>
+  <action name="actionOpen_in_file_explorer">
+   <property name="text">
+    <string>Open in file explorer</string>
+   </property>
+  </action>
+  <action name="actionProperties">
+   <property name="text">
+    <string>Properties</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
