@@ -156,7 +156,8 @@ void QFileInfoModel::setIcons(const QModelIndex& index, int depth)
 	//	setIcons(this->index(i, 0, index), depth + 1);
 }
 
-void QFileInfoModel::readHierarchyRecursive(QModelIndex parent, const QString& path, size_t maxDepth, size_t curDepth)
+void QFileInfoModel::readHierarchyRecursive(QModelIndex parent, const QString& path, 
+	size_t maxDepth, size_t curDepth)
 {
 	if (curDepth > maxDepth)
 		return;
@@ -207,8 +208,9 @@ QList<QStandardItem*> QFileInfoModel::packInfo(const QModelIndex& index) const
 {
 	QList<QStandardItem*> row;
 
-	row.append(new QStandardItem(QIcon::fromTheme(this->itemData(index)[4/*iconName pos*/].toString()), 
-		this->itemData(index)[0].toString()));
+	row.append(new QStandardItem(QIcon::fromTheme(
+		this->itemData(index)[(int)ColunmsOrder::ICON_NAME].toString()),
+		this->itemData(index)[(int)ColunmsOrder::NAME].toString()));
 	for (size_t i = 1; i < this->columnCount(index); i++)
 		row.append(new QStandardItem(this->itemData(index)[i].toString()));
 
@@ -235,19 +237,21 @@ QList<QStandardItem*> QFileInfoModel::packDrive(const QDirIterator& drive) const
 		})());
 
 	QList<QStandardItem*> row;
+	row.reserve(columnsNumber);
 	
-	row.append(new QStandardItem(this->iconProvider.icon(drive.fileInfo()), drive.path()));
-	row.append(new QStandardItem(fileSize(drive.fileInfo())));
+	row.insert(int(ColunmsOrder::NAME), new QStandardItem(this->iconProvider.icon(drive.fileInfo()), drive.path()));
+	row.insert(int(ColunmsOrder::SIZE), new QStandardItem(fileSize(drive.fileInfo())));
 
 	QMimeType mime = db.mimeTypeForFile(drive.path());
-	row.append(new QStandardItem(mime.comment()));
-	row.append(new QStandardItem(drive.fileInfo().lastModified().toString()));
+	row.insert(int(ColunmsOrder::TYPE), new QStandardItem(mime.comment()));
+	row.insert(int(ColunmsOrder::DATE_MODIDFIED), new QStandardItem(drive.fileInfo().lastModified().toString()));
 
-	row.append(new QStandardItem(mime.iconName()));
-	row.append(new QStandardItem(drive.fileInfo().birthTime().toString()));
-	row.append(new QStandardItem(drive.fileInfo().group()));
-	row.append(new QStandardItem(drive.fileInfo().owner()));
-	row.append(new QStandardItem(QString::number(drive.fileInfo().ownerId())));
+	row.insert(int(ColunmsOrder::ICON_NAME), new QStandardItem(mime.iconName()));
+	row.insert(int(ColunmsOrder::DATE_CREATED), new QStandardItem(drive.fileInfo().birthTime().toString()));
+	row.insert(int(ColunmsOrder::GROUP), new QStandardItem(drive.fileInfo().group()));
+	row.insert(int(ColunmsOrder::OWNER), new QStandardItem(drive.fileInfo().owner()));
+	row.insert(int(ColunmsOrder::OWNER_ID), new QStandardItem(QString::number(drive.fileInfo().ownerId())));
+	row.insert(int(ColunmsOrder::CUSTOM_METHADATA), new QStandardItem(QString()));
 
 	return row;
 }
@@ -256,21 +260,22 @@ QList<QStandardItem*> QFileInfoModel::fromFileInfo(const QFileInfo& info) const
 {
 	QList<QStandardItem*> row;
 
-	// visible data
-	row.append(new QStandardItem(this->iconProvider.icon(info), info.fileName()));
-	row.append(new QStandardItem(fileSize(info)));
+	// visible data 
+	row.reserve(columnsNumber);
+	row.insert(int(ColunmsOrder::NAME), new QStandardItem(this->iconProvider.icon(info), info.fileName()));
+	row.insert(int(ColunmsOrder::SIZE), new QStandardItem(fileSize(info)));
 
 	QMimeType mime = db.mimeTypeForFile(info);
-	row.append(new QStandardItem(mime.comment()));
-	row.append(new QStandardItem(info.lastModified().toString()));
+	row.insert(int(ColunmsOrder::TYPE), new QStandardItem(mime.comment()));
+	row.insert(int(ColunmsOrder::DATE_MODIDFIED), new QStandardItem(info.lastModified().toString()));
 	
 	//unvisible data
-	row.append(new QStandardItem(mime.iconName()));
-	row.append(new QStandardItem(info.birthTime().toString()));
-	row.append(new QStandardItem(info.group()));
-	row.append(new QStandardItem(info.owner()));
-	row.append(new QStandardItem(QString::number(info.ownerId())));
-
+	row.insert(int(ColunmsOrder::ICON_NAME), new QStandardItem(mime.iconName()));
+	row.insert(int(ColunmsOrder::DATE_CREATED), new QStandardItem(info.birthTime().toString()));
+	row.insert(int(ColunmsOrder::GROUP), new QStandardItem(info.group()));
+	row.insert(int(ColunmsOrder::OWNER), new QStandardItem(info.owner()));
+	row.insert(int(ColunmsOrder::OWNER_ID), new QStandardItem(QString::number(info.ownerId())));
+	row.insert(int(ColunmsOrder::CUSTOM_METHADATA), new QStandardItem(QString()));
 
 	return row;
 }

@@ -11,6 +11,20 @@
 #include <QIcon>
 
 
+enum class ColunmsOrder
+{
+	NAME,
+	SIZE,
+	TYPE,
+	DATE_MODIDFIED,
+	ICON_NAME,
+	DATE_CREATED,
+	GROUP,
+	OWNER,
+	OWNER_ID,
+	CUSTOM_METHADATA
+};
+
 
 class QFileInfoModel  : public QStandardItemModel
 {
@@ -31,6 +45,9 @@ public:
 	void setIcons(const QModelIndex& index = QModelIndex(), int depth = 0);
 
 private:
+
+	const size_t columnsNumber = 9;
+
 	QMimeDatabase db;
 	QFileIconProvider iconProvider;
 
@@ -39,7 +56,7 @@ private:
 
 	QList<QStandardItem*> packDrive(const QDirIterator& drive) const;
 	// List of columns:
-	// Name | Size | Type | Date Modified | Icon Name | Birth Time | Group | Owner | OwnerID
+	// Name | Size | Type | Date Modified | Icon Name | Birth Time | Group | Owner | OwnerID | Custom metadata
 	QList<QStandardItem*> fromFileInfo(const QFileInfo& info) const;
 	QList<QStandardItem*> packInfo(const QModelIndex& index) const;
 	void initFileModelHeaders(QFileInfoModel* model) const;
