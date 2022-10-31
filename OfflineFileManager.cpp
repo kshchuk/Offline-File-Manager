@@ -109,6 +109,9 @@ void OfflineFileManager::treeViewInit(QTreeView* tree, QAbstractItemModel* model
 {
     tree->setModel(model);
 
+    for (size_t i = 4; i < tree->model()->columnCount(); i++)
+        tree->hideColumn(i); // only 4 columns need to be displayed
+
     tree->setAnimated(false);
     tree->setIndentation(20);
     tree->setSortingEnabled(true);

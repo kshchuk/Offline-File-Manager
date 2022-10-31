@@ -8,6 +8,8 @@
 #include <QLocale>
 #include <QStyle>
 
+#include <functional>
+
 #include "ModelSerializer.h"
 #include "system_depend_functions.h"
 
@@ -47,11 +49,13 @@ QAbstractItemModel* QFileInfoModel::readFile(QString fileName)
 	if (file.open(QIODevice::ReadOnly)) {
 		QDataStream stream(&file);
 		this->clear();
-
 		ModelSerializer<> ser;
 		Status st = ser.load(stream, this);
 		if (!st.ok()) throw std::runtime_error("Reading error:" + fileName.toStdString());
 		this->initFileModelHeaders(this);
+
+		setIcons();
+
 		file.close();
 		return this;
 	}
@@ -123,6 +127,35 @@ QAbstractItemModel* QFileInfoModel::genExternalDrivesModel(size_t maxDepth)
 	return this;
 }
 
+void QFileInfoModel::setIcons(const QModelIndex& index, int depth)
+{
+	// TODO: Restore icons
+	//if (index.isValid())
+	//{
+	//	QString name = index.data().toString();
+	//	QString iconName = index.siblingAtColumn(4).data().toString();
+
+	//	QStandardItem* oldItem = this->itemFromIndex(index);
+
+	// 	QList<QStandardItem*> newItem = packInfo(index);
+
+	//	for (size_t i = 0; i < oldItem->rowCount(); i++)
+	//	newItem[0]->setChild(i, oldItem->child(i));
+
+	//	QModelIndex parent = index.parent();
+	//	QStandardItem* pItem = this->itemFromIndex(index);
+	//	pItem->appendRow(newItem);
+	//	pItem->removeRow(oldItem->row());
+	//}
+
+	//if ((index.flags() & Qt::ItemNeverHasChildren) || !this->hasChildren(index)) return;
+	//
+	//int rows = this->rowCount(index);
+
+	//for (int i = 0; i < rows; ++i)
+	//	setIcons(this->index(i, 0, index), depth + 1);
+}
+
 void QFileInfoModel::readHierarchyRecursive(QModelIndex parent, const QString& path, size_t maxDepth, size_t curDepth)
 {
 	if (curDepth > maxDepth)
@@ -170,6 +203,18 @@ QString QFileInfoModel::fileSize(const QFileInfo& info) const
 	return QString();
 }
 
+QList<QStandardItem*> QFileInfoModel::packInfo(const QModelIndex& index) const
+{
+	QList<QStandardItem*> row;
+
+	row.append(new QStandardItem(QIcon::fromTheme(this->itemData(index)[4/*iconName pos*/].toString()), 
+		this->itemData(index)[0].toString()));
+	for (size_t i = 1; i < this->columnCount(index); i++)
+		row.append(new QStandardItem(this->itemData(index)[i].toString()));
+
+	return row;
+}
+
 QList<QStandardItem*> QFileInfoModel::packDrive(const QDirIterator& drive) const
 {
 	// Is drive?
@@ -198,6 +243,12 @@ QList<QStandardItem*> QFileInfoModel::packDrive(const QDirIterator& drive) const
 	row.append(new QStandardItem(mime.comment()));
 	row.append(new QStandardItem(drive.fileInfo().lastModified().toString()));
 
+	row.append(new QStandardItem(mime.iconName()));
+	row.append(new QStandardItem(drive.fileInfo().birthTime().toString()));
+	row.append(new QStandardItem(drive.fileInfo().group()));
+	row.append(new QStandardItem(drive.fileInfo().owner()));
+	row.append(new QStandardItem(QString::number(drive.fileInfo().ownerId())));
+
 	return row;
 }
 
@@ -205,12 +256,21 @@ QList<QStandardItem*> QFileInfoModel::fromFileInfo(const QFileInfo& info) const
 {
 	QList<QStandardItem*> row;
 
+	// visible data
 	row.append(new QStandardItem(this->iconProvider.icon(info), info.fileName()));
 	row.append(new QStandardItem(fileSize(info)));
 
 	QMimeType mime = db.mimeTypeForFile(info);
 	row.append(new QStandardItem(mime.comment()));
 	row.append(new QStandardItem(info.lastModified().toString()));
+	
+	//unvisible data
+	row.append(new QStandardItem(mime.iconName()));
+	row.append(new QStandardItem(info.birthTime().toString()));
+	row.append(new QStandardItem(info.group()));
+	row.append(new QStandardItem(info.owner()));
+	row.append(new QStandardItem(QString::number(info.ownerId())));
+
 
 	return row;
 }

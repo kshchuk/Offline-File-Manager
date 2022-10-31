@@ -28,6 +28,8 @@ public:
 	QAbstractItemModel* genStaticSystemModel(size_t maxDepth);
 	QAbstractItemModel* genExternalDrivesModel(size_t maxDepth);
 
+	void setIcons(const QModelIndex& index = QModelIndex(), int depth = 0);
+
 private:
 	QMimeDatabase db;
 	QFileIconProvider iconProvider;
@@ -36,7 +38,10 @@ private:
 		size_t maxDepth, size_t curDepth = 1);
 
 	QList<QStandardItem*> packDrive(const QDirIterator& drive) const;
+	// List of columns:
+	// Name | Size | Type | Date Modified | Icon Name | Birth Time | Group | Owner | OwnerID
 	QList<QStandardItem*> fromFileInfo(const QFileInfo& info) const;
+	QList<QStandardItem*> packInfo(const QModelIndex& index) const;
 	void initFileModelHeaders(QFileInfoModel* model) const;
 	QString fileSize(const QFileInfo& info) const;
 };
