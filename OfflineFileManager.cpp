@@ -2,12 +2,14 @@
 #include <QCommandLineParser>
 #include <QFileIconProvider>
 #include <QFileSystemModel>
+#include <QDesktopServices>
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QScreen>
 #include <Qscroller>
 #include <QStringList>
 #include <QThread>
+#include <QUrl>
 
 #include <qexception.h>
 
@@ -20,7 +22,6 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
     ui.setupUi(this);
     
     model = new QFileInfoModel();
-    //model->writeFile("", maxDepth);
     
     try {
         model->readFile(savingFile);
@@ -34,6 +35,7 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
     connect(ui.fileSystemTree, &QTreeView::activated, this, &OfflineFileManager::on_treeWidget_clicked);
     connect(ui.actionSave, &QAction::triggered, this, &OfflineFileManager::on_saveAction_triggered);
     connect(ui.actionOpen, &QAction::triggered, this, &OfflineFileManager::on_openAction_triggered);
+    connect(ui.fileSystemTree, &QTreeView::doubleClicked, this, &OfflineFileManager::on_treeWidget_doubleclicked);
 }
 
 OfflineFileManager::~OfflineFileManager()
@@ -50,6 +52,18 @@ void OfflineFileManager::on_treeWidget_clicked(QModelIndex index)
     spath.remove(0, 1);
 
     ui.addressLine->setText(spath);
+}
+
+void OfflineFileManager::on_treeWidget_doubleclicked(QModelIndex index)
+{
+    QList<QString> path = model->getPath(index);
+    QString spath;
+    foreach(auto file, path) spath += '/' + file;
+    spath.remove(0, 1);
+
+    if (!QDesktopServices::openUrl(QUrl::fromLocalFile(spath)))
+        QMessageBox::critical(this, tr("Offline File Manager"),
+            tr("No access"), QMessageBox::Close);
 }
 
 void OfflineFileManager::on_updateButton_clicked()
