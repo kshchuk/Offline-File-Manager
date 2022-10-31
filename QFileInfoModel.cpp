@@ -129,31 +129,28 @@ QAbstractItemModel* QFileInfoModel::genExternalDrivesModel(size_t maxDepth)
 
 void QFileInfoModel::setIcons(const QModelIndex& index, int depth)
 {
-	// TODO: Restore icons
-	//if (index.isValid())
-	//{
-	//	QString name = index.data().toString();
-	//	QString iconName = index.siblingAtColumn(4).data().toString();
+	if (index.isValid())
+	{
+		QString name = index.data().toString();
+		// QString iconName = index.siblingAtColumn((int)ColunmsOrder::ICON_NAME).data().toString();
+		QStandardItem* item = this->itemFromIndex(index);
+		
+		QFileInfo info(name);
+		item->setData(iconProvider.icon(info), Qt::DecorationRole);
+	}
 
-	//	QStandardItem* oldItem = this->itemFromIndex(index);
+	if ((index.flags() & Qt::ItemNeverHasChildren) || !this->hasChildren(index));
 
-	// 	QList<QStandardItem*> newItem = packInfo(index);
+	// Foulder
+	if (this->hasChildren(index) && index.parent().isValid()) {
+		QStandardItem* item = this->itemFromIndex(index);
+		item->setData(iconProvider.icon(QFileIconProvider::Folder), Qt::DecorationRole);
+	}
+	
+	int rows = this->rowCount(index);
 
-	//	for (size_t i = 0; i < oldItem->rowCount(); i++)
-	//	newItem[0]->setChild(i, oldItem->child(i));
-
-	//	QModelIndex parent = index.parent();
-	//	QStandardItem* pItem = this->itemFromIndex(index);
-	//	pItem->appendRow(newItem);
-	//	pItem->removeRow(oldItem->row());
-	//}
-
-	//if ((index.flags() & Qt::ItemNeverHasChildren) || !this->hasChildren(index)) return;
-	//
-	//int rows = this->rowCount(index);
-
-	//for (int i = 0; i < rows; ++i)
-	//	setIcons(this->index(i, 0, index), depth + 1);
+	for (int i = 0; i < rows; ++i)
+		setIcons(this->index(i, 0, index), depth + 1);
 }
 
 void QFileInfoModel::readHierarchyRecursive(QModelIndex parent, const QString& path, 
@@ -256,7 +253,7 @@ QList<QStandardItem*> QFileInfoModel::packDrive(const QDirIterator& drive) const
 	return row;
 }
 
-QList<QStandardItem*> QFileInfoModel::fromFileInfo(const QFileInfo& info) const
+QList<QStandardItem*> QFileInfoModel::fromFileInfo(const QFileInfo& info) const	
 {
 	QList<QStandardItem*> row;
 
@@ -270,7 +267,7 @@ QList<QStandardItem*> QFileInfoModel::fromFileInfo(const QFileInfo& info) const
 	row.insert(int(ColunmsOrder::DATE_MODIDFIED), new QStandardItem(info.lastModified().toString()));
 	
 	//unvisible data
-	row.insert(int(ColunmsOrder::ICON_NAME), new QStandardItem(mime.iconName()));
+	row.insert(int(ColunmsOrder::ICON_NAME), new QStandardItem(iconProvider.icon(info).name()));
 	row.insert(int(ColunmsOrder::DATE_CREATED), new QStandardItem(info.birthTime().toString()));
 	row.insert(int(ColunmsOrder::GROUP), new QStandardItem(info.group()));
 	row.insert(int(ColunmsOrder::OWNER), new QStandardItem(info.owner()));
