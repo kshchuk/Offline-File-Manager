@@ -165,6 +165,10 @@ void OfflineFileManager::action_Properties()
     layout->addWidget(buttonOk);
     widget->setLayout(layout);
     widget->exec();
+
+    delete properties_window;
+    delete properties;
+    delete widget;
 }
 
 void OfflineFileManager::on_customContextMenu(const QPoint& point)
