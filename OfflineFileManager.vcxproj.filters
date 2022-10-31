@@ -43,7 +43,10 @@
     <ClCompile Include="QFileInfoModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Properties.cpp">
+    <ClCompile Include="PropertiesLogic.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PropertiesWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -57,12 +60,15 @@
     <ClInclude Include="ModelSerializer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Properties.h">
+    <ClInclude Include="PropertiesLogic.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="QFileInfoModel.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="PropertiesWindow.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

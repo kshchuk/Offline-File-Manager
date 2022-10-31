@@ -3,17 +3,20 @@
 #include <QFileIconProvider>
 #include <QFileSystemModel>
 #include <QDesktopServices>
+#include <QTableWidgetItem>
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QScreen>
 #include <Qscroller>
 #include <QStringList>
+#include <QVBoxLayout>
+#include <QPushButton>
 #include <QThread>
 #include <QUrl>
 #include <QMenu>
 
-
-#include <qexception.h>
+#include "PropertiesWindow.h"
+#include "PropertiesLogic.h"
 
 const QString savingFile = "static.fsh";
 
@@ -39,8 +42,7 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
     connect(ui.updateButton, &QToolButton::clicked, this, &OfflineFileManager::on_updateButton_clicked);
     connect(ui.actionSave, &QAction::triggered, this, &OfflineFileManager::on_saveAction_triggered);
     connect(ui.actionOpen, &QAction::triggered, this, &OfflineFileManager::on_openAction_triggered);
-
-    connect(ui.fileSystemTree, &QTreeView::doubleClicked, ui.fileSystemTree, &QTreeView::expand);
+    connect(ui.fileSystemTree, &QTreeView::doubleClicked, model, &QFileInfoModel::fetchMore);
 }
 
 OfflineFileManager::~OfflineFileManager()
@@ -75,7 +77,94 @@ void OfflineFileManager::action_openInFileExplorer()
 
 void OfflineFileManager::action_Properties()
 {
-    
+    QModelIndex index = ui.fileSystemTree->currentIndex();
+    PropertiesLogic* properties = new PropertiesLogic(index, model);
+
+    QDialog* widget = new QDialog(this);
+    QVBoxLayout* layout = new QVBoxLayout(widget);
+    PropertiesWindow* properties_window = new PropertiesWindow(widget);
+    widget->setWindowTitle("Properties");
+    QPushButton* buttonOk = new QPushButton(widget);
+    QPushButton* buttonCancel = new QPushButton(widget);
+    QPushButton* buttonSave = new QPushButton(widget);
+    buttonCancel->setText("Cancel");
+    buttonOk->setText("OK");
+    buttonSave->setText("Save");
+    connect(buttonCancel, &QPushButton::clicked, widget, &QWidget::close);
+    connect(buttonOk, &QPushButton::clicked, widget, &QWidget::close);
+    connect(buttonOk, &QPushButton::clicked, properties_window, &PropertiesWindow::saveTextSlot);
+    connect(buttonSave, &QPushButton::clicked, properties_window, &PropertiesWindow::saveTextSlot);
+    connect(properties_window, &PropertiesWindow::saveTextSignal, this, &OfflineFileManager::saveMeta);
+
+    properties_window->setFixedHeight(this->height() / 1.6);
+    properties_window->setFixedWidth(this->width() / 2);
+    properties_window->setColumnCount(2);
+    properties_window->setRowCount(10);
+    properties_window->setColumnWidth(0, 2 * properties_window->width() / 6);
+    properties_window->setColumnWidth(1, 3 * properties_window->width() / 5);
+
+    for (size_t i = 0; i < properties_window->rowCount(); i++)
+        properties_window->setRowHeight(i, properties_window->height() / 70);
+
+    properties_window->setRowHeight((int)ColunmsOrder::CUSTOM_METHADATA, properties_window->height() / 8);
+    properties_window->setAttribute(Qt::WA_DeleteOnClose);
+    this->setCursor(QCursor(Qt::ArrowCursor));
+
+    properties_window->setItem((int)ColunmsOrder::NAME, 0, new QTableWidgetItem("Name:"));
+    properties_window->setItem((int)ColunmsOrder::NAME, 1, new QTableWidgetItem(properties->getName()));
+
+    properties_window->setItem((int)ColunmsOrder::TYPE, 0, new QTableWidgetItem("Type:"));
+    properties_window->setItem((int)ColunmsOrder::TYPE, 1, new QTableWidgetItem(properties->getType()));
+
+    properties_window->setItem((int)ColunmsOrder::SIZE, 0, new QTableWidgetItem("Size:"));
+    properties_window->setItem((int)ColunmsOrder::SIZE, 1, new QTableWidgetItem(properties->getSize()));
+
+    properties_window->setItem((int)ColunmsOrder::ICON_NAME, 0, new QTableWidgetItem("Icon name:"));
+    properties_window->setItem((int)ColunmsOrder::ICON_NAME, 1, new QTableWidgetItem(properties->getIconName()));
+
+    properties_window->setItem((int)ColunmsOrder::GROUP, 0, new QTableWidgetItem("Group:"));
+    properties_window->setItem((int)ColunmsOrder::GROUP, 1, new QTableWidgetItem(properties->getGroup()));
+
+    properties_window->setItem((int)ColunmsOrder::OWNER, 0, new QTableWidgetItem("Owner:"));
+    properties_window->setItem((int)ColunmsOrder::OWNER, 1, new QTableWidgetItem(properties->getOwner()));
+
+    properties_window->setItem((int)ColunmsOrder::OWNER_ID, 0, new QTableWidgetItem("Owner ID:"));
+    properties_window->setItem((int)ColunmsOrder::OWNER_ID, 1, new QTableWidgetItem(properties->getOwnerid()));
+
+    properties_window->setItem((int)ColunmsOrder::DATE_CREATED, 0, new QTableWidgetItem("Date created:"));
+    properties_window->setItem((int)ColunmsOrder::DATE_CREATED, 1, new QTableWidgetItem(properties->getCreated()));
+
+    properties_window->setItem((int)ColunmsOrder::DATE_MODIDFIED, 0, new QTableWidgetItem("Date modified:"));
+    properties_window->setItem((int)ColunmsOrder::DATE_MODIDFIED, 1, new QTableWidgetItem(properties->getLastModified()));
+
+    properties_window->setItem((int)ColunmsOrder::CUSTOM_METHADATA, 0, new QTableWidgetItem("Custom metadata:"));
+    properties_window->setItem((int)ColunmsOrder::CUSTOM_METHADATA, 1, new QTableWidgetItem(properties->getCustomMethadata()));
+
+    properties_window->setHorizontalHeaderItem(0, new QTableWidgetItem("Property"));
+    properties_window->setHorizontalHeaderItem(1, new QTableWidgetItem("Value"));
+    properties_window->verticalHeader()->hide();
+
+
+    QTableWidgetItem* customItem = properties_window->item(properties_window->rowCount() - 1, 
+                                                            properties_window->columnCount() - 1);
+    Qt::ItemFlags writeFlag = customItem->flags();
+
+    // Make readonly
+    for (size_t i = 0; i < properties_window->rowCount(); ++i)
+        for (size_t j = 0; j < properties_window->columnCount(); ++j) {
+            QTableWidgetItem* item = properties_window->item(i, j);
+            item->setFlags(item->flags() ^ Qt::ItemIsEditable);
+        }
+
+    // Set custom meta editable
+    customItem->setFlags(writeFlag);
+
+    layout->addWidget(properties_window, 0);
+    layout->addWidget(buttonCancel);
+    layout->addWidget(buttonSave);
+    layout->addWidget(buttonOk);
+    widget->setLayout(layout);
+    widget->exec();
 }
 
 void OfflineFileManager::on_customContextMenu(const QPoint& point)
@@ -142,6 +231,14 @@ void OfflineFileManager::on_openAction_triggered()
             tr(e.what()), QMessageBox::Close);
     }
     treeViewInit(ui.fileSystemTree, model);
+}
+
+void OfflineFileManager::saveMeta(const QString& str)
+{
+    QModelIndex index = ui.fileSystemTree->currentIndex();
+    index = index.siblingAtColumn((int)ColunmsOrder::CUSTOM_METHADATA);
+    QStandardItem* item = model->itemFromIndex(index);
+    item->setData(str, 0);
 }
 
 void OfflineFileManager::treeViewInit(QTreeView* tree, QAbstractItemModel* model)

@@ -83,7 +83,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Properties.cpp" />
+    <ClCompile Include="PropertiesLogic.cpp" />
+    <ClCompile Include="PropertiesWindow.cpp" />
     <ClCompile Include="QFileInfoModel.cpp" />
     <QtRcc Include="OfflineFileManager.qrc" />
     <QtUic Include="OfflineFileManager.ui" />
@@ -95,7 +96,8 @@
     <ClInclude Include="BasicTraits.h" />
     <ClInclude Include="ModelSerializer.h" />
     <QtMoc Include="QFileInfoModel.h" />
-    <ClInclude Include="Properties.h" />
+    <ClInclude Include="PropertiesLogic.h" />
+    <QtMoc Include="PropertiesWindow.h" />
     <ClInclude Include="system_depend_functions.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

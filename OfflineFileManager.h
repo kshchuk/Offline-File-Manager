@@ -26,6 +26,8 @@ private slots:
     void on_updateButton_clicked();
     void on_saveAction_triggered();
     void on_openAction_triggered();
+    void 
+        saveMeta(const QString&);
 
 private:
     Ui::OfflineFileManagerClass ui;
