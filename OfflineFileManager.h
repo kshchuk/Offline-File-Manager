@@ -21,13 +21,14 @@ public:
 private slots:
     void on_treeWidget_clicked(QModelIndex index);
     void action_openInFileExplorer();
+    void action_openFile();
     void action_Properties();
     void on_customContextMenu(const QPoint& point);
     void on_updateButton_clicked();
     void on_saveAction_triggered();
     void on_openAction_triggered();
-    void 
-        saveMeta(const QString&);
+    void on_homeAction_editingFinished();
+    void saveMeta(const QString&);
 
 private:
     Ui::OfflineFileManagerClass ui;

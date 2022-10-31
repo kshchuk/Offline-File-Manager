@@ -43,6 +43,7 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
     connect(ui.actionSave, &QAction::triggered, this, &OfflineFileManager::on_saveAction_triggered);
     connect(ui.actionOpen, &QAction::triggered, this, &OfflineFileManager::on_openAction_triggered);
     connect(ui.fileSystemTree, &QTreeView::doubleClicked, model, &QFileInfoModel::fetchMore);
+    connect(ui.addressLine, &QLineEdit::editingFinished, this, &OfflineFileManager::on_homeAction_editingFinished);
 }
 
 OfflineFileManager::~OfflineFileManager()
@@ -62,6 +63,23 @@ void OfflineFileManager::on_treeWidget_clicked(QModelIndex index)
 }
 
 void OfflineFileManager::action_openInFileExplorer()
+{
+    QModelIndex index = ui.fileSystemTree->currentIndex();
+
+    QList<QString> path = model->getPath(index); path.removeLast();
+    QString spath;
+    foreach(auto file, path) spath += '/' + file;
+    spath.remove(0, 1);
+
+    if (path.isEmpty())
+        QDesktopServices::openUrl(QUrl::fromLocalFile(""));
+    else
+    if (!QDesktopServices::openUrl(QUrl::fromLocalFile(spath)))
+        QMessageBox::critical(this, tr("Offline File Manager"),
+            tr("No access"), QMessageBox::Close);
+}
+
+void OfflineFileManager::action_openFile()
 {
     QModelIndex index = ui.fileSystemTree->currentIndex();
 
@@ -176,6 +194,8 @@ void OfflineFileManager::on_customContextMenu(const QPoint& point)
     QPoint globalPos = ui.fileSystemTree->mapToGlobal(point);
 
     QMenu menu(this);
+    menu.addAction("Open",
+        this, &OfflineFileManager::action_openFile);
     menu.addAction("Open in file explorer",
         this, &OfflineFileManager::action_openInFileExplorer);
     menu.addAction("Properties",
@@ -235,6 +255,17 @@ void OfflineFileManager::on_openAction_triggered()
             tr(e.what()), QMessageBox::Close);
     }
     treeViewInit(ui.fileSystemTree, model);
+}
+
+void OfflineFileManager::on_homeAction_editingFinished()
+{
+    QString path = ui.addressLine->text();
+
+
+    /*QList<QString> path = model->getPath(index);
+    QString spath;
+    foreach(auto file, path) spath += '/' + file;
+    spath.remove(0, 1);*/
 }
 
 void OfflineFileManager::saveMeta(const QString& str)
