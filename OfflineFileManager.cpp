@@ -309,31 +309,10 @@ void OfflineFileManager::on_addFolderButton_clicked()
 {
     QModelIndex cur = model->byPath(ui.addressLine->text());
     QString name = "New folder";
-    QModelIndex appended =  model->appendFile(QFileInfo(name), cur);
+    QModelIndex appended =  model->appendFolder(QFileInfo(name), cur);
     ui.fileSystemTree->expand(appended);
+    ui.fileSystemTree->expand(appended.parent());
     editFileName(appended);
-/*    QModelIndex toInsert;
-    QFileInfo info(cur.data().toString());
-    if (!cur.isValid()) {
-        toInsert = cur;
-        model->appendRow(new QStandardItem(p.icon(QFileIconProvider::Folder), tr("New folder")));
-        ui.fileSystemTree->expand(model->index(model->rowCount() - 1, 0, toInsert));
-        editFileName(model->index(model->rowCount(), 0, toInsert));
-        return;
-    }
-    else
-        if (info.isDir()) {
-            toInsert = cur;
-        }
-        else {
-            toInsert = cur.parent();
-        }
-
-    QStandardItem* item = model->itemFromIndex(toInsert);
-    item->appendRow(new QStandardItem(p.icon(QFileIconProvider::Folder), tr("New folder")));
-    int row = item->rowCount() - 1;
-    ui.fileSystemTree->expand(item->index());
-    editFileName(item->child(row)->index());  */ 
 }
 
 void OfflineFileManager::saveMeta(const QString& str)

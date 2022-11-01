@@ -26,6 +26,9 @@ enum class ColunmsOrder
 };
 
 
+const QString virtualFolderType = "virtual folder";
+
+
 class QFileInfoModel  : public QStandardItemModel
 {
 	Q_OBJECT
@@ -42,6 +45,7 @@ public:
 	QAbstractItemModel* genStaticSystemModel(size_t maxDepth);
 	QAbstractItemModel* genExternalDrivesModel(size_t maxDepth);
 
+	QModelIndex appendFolder(const QFileInfo& info, QModelIndex parent);
 	void setName(QString newName, QModelIndex index);
 	QModelIndex byPath(QString path) const;
 

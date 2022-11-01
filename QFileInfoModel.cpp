@@ -127,6 +127,27 @@ QAbstractItemModel* QFileInfoModel::genExternalDrivesModel(size_t maxDepth)
 	return this;
 }
 
+QModelIndex QFileInfoModel::appendFolder(const QFileInfo& info, QModelIndex parent)
+{
+	QList<QStandardItem*> erow = fromFileInfo(info);
+	erow[(int)ColunmsOrder::NAME]->setData(iconProvider.icon(QFileIconProvider::Folder), Qt::DecorationRole);
+	erow[(int)ColunmsOrder::ICON_NAME]->setData(iconProvider.icon(QFileIconProvider::Folder).name(), Qt::DisplayRole);
+	erow[(int)ColunmsOrder::TYPE]->setData(virtualFolderType, Qt::DisplayRole);
+
+	if (parent.isValid())
+	{
+		QStandardItem* iparent = this->itemFromIndex(parent);
+		iparent->appendRow(erow);
+		int row = iparent->rowCount() - 1;
+		return iparent->child(row)->index();
+	}
+	else {
+		this->appendRow(erow);
+		int row = this->rowCount() - 1;
+		return this->index(row, 0);
+	}
+}
+
 void QFileInfoModel::setName(QString newName, QModelIndex index)
 {
 	QStandardItem* item = this->itemFromIndex(index);
@@ -161,18 +182,27 @@ void QFileInfoModel::setIcons(const QModelIndex& index, int depth)
 		QStandardItem* item = this->itemFromIndex(index);
 		
 		QFileInfo info(name);
-		item->setData(iconProvider.icon(info), Qt::DecorationRole);
+		if (!index.siblingAtColumn((int)ColunmsOrder::TYPE).data().toString().compare(virtualFolderType))
+			item->setData(iconProvider.icon(QFileIconProvider::Folder), Qt::DecorationRole);
+		else
+			item->setData(iconProvider.icon(info), Qt::DecorationRole);
 	}
 
 	if ((index.flags() & Qt::ItemNeverHasChildren) || !this->hasChildren(index));
 
-	// Foulder
+	int rows = this->rowCount(index);
+
+	// Folders
 	if (this->hasChildren(index) && index.parent().isValid()) {
 		QStandardItem* item = this->itemFromIndex(index);
 		item->setData(iconProvider.icon(QFileIconProvider::Folder), Qt::DecorationRole);
 	}
-	
-	int rows = this->rowCount(index);
+	//else if (index.siblingAtColumn((int)ColunmsOrder::DATE_MODIDFIED).data().toString().isEmpty() &&
+	//	!index.parent().isValid() && index.isValid())
+	//{
+	//	QStandardItem* item = this->item(rows - 1);
+	//	item->setData(iconProvider.icon(QFileIconProvider::Folder), Qt::DecorationRole);
+	//}
 
 	for (int i = 0; i < rows; ++i)
 		setIcons(this->index(i, 0, index), depth + 1);
