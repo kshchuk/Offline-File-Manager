@@ -42,7 +42,8 @@ public:
 	QAbstractItemModel* genStaticSystemModel(size_t maxDepth);
 	QAbstractItemModel* genExternalDrivesModel(size_t maxDepth);
 
-	void setIcons(const QModelIndex& index = QModelIndex(), int depth = 0);
+	QModelIndex byPath(QString::iterator start,
+		QString::iterator end, QModelIndex parent = QModelIndex()) const;
 
 private:
 
@@ -61,4 +62,5 @@ private:
 	QList<QStandardItem*> packInfo(const QModelIndex& index) const;
 	void initFileModelHeaders(QFileInfoModel* model) const;
 	QString fileSize(const QFileInfo& info) const;
+	void setIcons(const QModelIndex& index = QModelIndex(), int depth = 0);
 };

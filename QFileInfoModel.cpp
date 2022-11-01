@@ -127,6 +127,46 @@ QAbstractItemModel* QFileInfoModel::genExternalDrivesModel(size_t maxDepth)
 	return this;
 }
 
+QModelIndex QFileInfoModel::byPath(QString::iterator cur,
+								QString::iterator end, QModelIndex parent) const
+{
+	// FIX: Wrong index returned
+	if (parent.isValid())
+	{
+		if (cur == end) return parent;
+
+		QStandardItem* item = this->itemFromIndex(parent);
+
+		if (!item->hasChildren()) return QModelIndex();
+
+		QString file;
+		while (cur != end && cur < end)
+		{
+			if (*cur == QChar('/') || *cur == QChar('\\')) break;
+			file.append(*(cur++));
+		}
+		if (cur < end)
+			cur++;
+		int rows = this->rowCount(parent);
+		for (size_t i = 0; i < rows; ++i)
+		{
+			QString child = parent.siblingAtRow(i).data().toString();
+			child.removeIf([](QChar i) {return ((i) == QChar('/') || (i) == QChar('\\'));});
+
+			if (!QString::compare(file, child, Qt::CaseInsensitive))
+				return byPath(cur, end, this->index(i, 0, parent));
+		}
+	}
+	if ((parent.flags() & Qt::ItemNeverHasChildren) || !this->hasChildren(parent));
+
+	int rows = this->rowCount(parent);
+	for (size_t i = 0; i < rows; ++i)
+	{
+		return byPath(cur, end, this->index(i, 0, parent));
+	}
+	return QModelIndex();
+}
+
 void QFileInfoModel::setIcons(const QModelIndex& index, int depth)
 {
 	if (index.isValid())
