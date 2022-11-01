@@ -44,8 +44,13 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
     connect(ui.homeButton, &QToolButton::clicked, this, &OfflineFileManager::on_homeButton_clicked);
     connect(ui.actionSave, &QAction::triggered, this, &OfflineFileManager::on_saveAction_triggered);
     connect(ui.actionOpen, &QAction::triggered, this, &OfflineFileManager::on_openAction_triggered);
+    connect(ui.addFolderButton, &QToolButton::triggered, this, &OfflineFileManager::on_addFolderButton_clicked);
     connect(ui.fileSystemTree, &QTreeView::doubleClicked, model, &QFileInfoModel::fetchMore);
     connect(ui.addressLine, &QLineEdit::editingFinished, this, &OfflineFileManager::on_editLine_editingFinished);
+    connect(ui.fileSystemTree, &QTreeView::activated, this, &OfflineFileManager::on_treeWidget_clicked);
+    connect(ui.fileSystemTree, &QTreeView::customContextMenuRequested, this, &OfflineFileManager::on_customContextMenu);
+    connect(ui.fileSystemTree, &QTreeView::clicked, this, &OfflineFileManager::on_treeWidget_clicked);
+    // connect(ui.fileSystemTree, &QTreeView::pressed, this, &OfflineFileManager::editFileName);
 }
 
 OfflineFileManager::~OfflineFileManager()
@@ -300,12 +305,48 @@ void OfflineFileManager::on_upButton_clicked()
     ui.addressLine->blockSignals(false);
 }
 
+void OfflineFileManager::on_addFolderButton_clicked()
+{
+    QModelIndex cur = model->byPath(ui.addressLine->text());
+    QString name = "New folder";
+    QModelIndex appended =  model->appendFile(QFileInfo(name), cur);
+    ui.fileSystemTree->expand(appended);
+    editFileName(appended);
+/*    QModelIndex toInsert;
+    QFileInfo info(cur.data().toString());
+    if (!cur.isValid()) {
+        toInsert = cur;
+        model->appendRow(new QStandardItem(p.icon(QFileIconProvider::Folder), tr("New folder")));
+        ui.fileSystemTree->expand(model->index(model->rowCount() - 1, 0, toInsert));
+        editFileName(model->index(model->rowCount(), 0, toInsert));
+        return;
+    }
+    else
+        if (info.isDir()) {
+            toInsert = cur;
+        }
+        else {
+            toInsert = cur.parent();
+        }
+
+    QStandardItem* item = model->itemFromIndex(toInsert);
+    item->appendRow(new QStandardItem(p.icon(QFileIconProvider::Folder), tr("New folder")));
+    int row = item->rowCount() - 1;
+    ui.fileSystemTree->expand(item->index());
+    editFileName(item->child(row)->index());  */ 
+}
+
 void OfflineFileManager::saveMeta(const QString& str)
 {
     QModelIndex index = ui.fileSystemTree->currentIndex();
     index = index.siblingAtColumn((int)ColunmsOrder::CUSTOM_METHADATA);
     QStandardItem* item = model->itemFromIndex(index);
     item->setData(str, 0);
+}
+
+void OfflineFileManager::editFileName(QModelIndex index)
+{
+    ui.fileSystemTree->edit(index);
 }
 
 void OfflineFileManager::treeViewInit(QTreeView* tree, QAbstractItemModel* model)
@@ -323,8 +364,4 @@ void OfflineFileManager::treeViewInit(QTreeView* tree, QAbstractItemModel* model
     QScroller::grabGesture(tree, QScroller::TouchGesture);
     ui.fileSystemTree->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui.fileSystemTree->setContextMenuPolicy(Qt::CustomContextMenu);
-
-    connect(ui.fileSystemTree, &QTreeView::activated, this, &OfflineFileManager::on_treeWidget_clicked);
-    connect(ui.fileSystemTree, &QTreeView::customContextMenuRequested, this, &OfflineFileManager::on_customContextMenu);
-    connect(tree, &QTreeView::clicked, this, &OfflineFileManager::on_treeWidget_clicked);
 }

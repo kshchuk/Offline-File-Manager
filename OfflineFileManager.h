@@ -30,7 +30,9 @@ private slots:
     void on_homeButton_clicked();
     void on_editLine_editingFinished();
     void on_upButton_clicked();
+    void on_addFolderButton_clicked();
     void saveMeta(const QString&);
+    void editFileName(QModelIndex index);
 
 private:
     Ui::OfflineFileManagerClass ui;
