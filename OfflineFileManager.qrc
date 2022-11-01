@@ -5,5 +5,8 @@
         <file>res/icons/house.png</file>
         <file>res/icons/upload.png</file>
         <file>res/icons/refresh_update_icon_142975.png</file>
+        <file>res/css/Combinear.qss</file>
+        <file>res/css/VisualScript.qss</file>
+        <file>res/css/Webmas.qss</file>
     </qresource>
 </RCC>
