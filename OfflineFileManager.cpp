@@ -40,10 +40,12 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
 
     connect(ui.actionClose, &QAction::triggered, this, &OfflineFileManager::close);
     connect(ui.updateButton, &QToolButton::clicked, this, &OfflineFileManager::on_updateButton_clicked);
+    connect(ui.upButton, &QToolButton::clicked, this, &OfflineFileManager::on_upButton_clicked);
+    connect(ui.homeButton, &QToolButton::clicked, this, &OfflineFileManager::on_homeButton_clicked);
     connect(ui.actionSave, &QAction::triggered, this, &OfflineFileManager::on_saveAction_triggered);
     connect(ui.actionOpen, &QAction::triggered, this, &OfflineFileManager::on_openAction_triggered);
     connect(ui.fileSystemTree, &QTreeView::doubleClicked, model, &QFileInfoModel::fetchMore);
-    connect(ui.addressLine, &QLineEdit::editingFinished, this, &OfflineFileManager::on_homeAction_editingFinished);
+    connect(ui.addressLine, &QLineEdit::editingFinished, this, &OfflineFileManager::on_editLine_editingFinished);
 }
 
 OfflineFileManager::~OfflineFileManager()
@@ -59,7 +61,12 @@ void OfflineFileManager::on_treeWidget_clicked(QModelIndex index)
     foreach(auto file, path) spath += '/' + file;
     spath.remove(0, 1);
 
+    if (spath.count() > 3) 
+        spath.remove(2, 1);
+
+    ui.addressLine->blockSignals(true);
     ui.addressLine->setText(spath);
+    ui.addressLine->blockSignals(false);
 }
 
 void OfflineFileManager::action_openInFileExplorer()
@@ -257,15 +264,27 @@ void OfflineFileManager::on_openAction_triggered()
     treeViewInit(ui.fileSystemTree, model);
 }
 
-void OfflineFileManager::on_homeAction_editingFinished()
+void OfflineFileManager::on_homeButton_clicked()
+{
+    ui.addressLine->setText("");
+    ui.fileSystemTree->setCurrentIndex(QModelIndex());
+}
+
+void OfflineFileManager::on_editLine_editingFinished()
 {
     QString path = ui.addressLine->text();
+    QModelIndex index = model->byPath(path.begin(), path.end());
+    
+    ui.fileSystemTree->expand(index);
+    ui.fileSystemTree->setCurrentIndex(index);
+}
 
-
-    /*QList<QString> path = model->getPath(index);
-    QString spath;
-    foreach(auto file, path) spath += '/' + file;
-    spath.remove(0, 1);*/
+void OfflineFileManager::on_upButton_clicked()
+{
+    QString path = ui.addressLine->text();
+    QModelIndex index = model->byPath(path.begin(), path.end());
+    
+    ui.fileSystemTree->setCurrentIndex(index.parent());
 }
 
 void OfflineFileManager::saveMeta(const QString& str)

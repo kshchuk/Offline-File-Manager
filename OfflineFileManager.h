@@ -27,7 +27,9 @@ private slots:
     void on_updateButton_clicked();
     void on_saveAction_triggered();
     void on_openAction_triggered();
-    void on_homeAction_editingFinished();
+    void on_homeButton_clicked();
+    void on_editLine_editingFinished();
+    void on_upButton_clicked();
     void saveMeta(const QString&);
 
 private:
