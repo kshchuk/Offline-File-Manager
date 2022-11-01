@@ -127,6 +127,12 @@ QAbstractItemModel* QFileInfoModel::genExternalDrivesModel(size_t maxDepth)
 	return this;
 }
 
+void QFileInfoModel::setName(QString newName, QModelIndex index)
+{
+	QStandardItem* item = this->itemFromIndex(index);
+	item->setData(newName, 0);
+}
+
 QModelIndex QFileInfoModel::byPath(QString path) const
 {
 	QStringList pieces = path.split("/");
