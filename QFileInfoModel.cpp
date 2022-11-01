@@ -127,6 +127,22 @@ QAbstractItemModel* QFileInfoModel::genExternalDrivesModel(size_t maxDepth)
 	return this;
 }
 
+QModelIndex QFileInfoModel::appendFile(const QFileInfo& info, QModelIndex parent)
+{
+	if (parent.isValid())
+	{
+		QStandardItem* iparent = this->itemFromIndex(parent);
+		iparent->appendRow(fromFileInfo(info));
+		int row = iparent->rowCount() - 1;
+		return iparent->child(row)->index();
+	}
+	else {
+		this->appendRow(fromFileInfo(info));
+		int row = this->rowCount() - 1;
+		return this->index(row, 0);
+	}
+}
+
 void QFileInfoModel::setName(QString newName, QModelIndex index)
 {
 	QStandardItem* item = this->itemFromIndex(index);
@@ -161,7 +177,11 @@ void QFileInfoModel::setIcons(const QModelIndex& index, int depth)
 		QStandardItem* item = this->itemFromIndex(index);
 		
 		QFileInfo info(name);
-		item->setData(iconProvider.icon(info), Qt::DecorationRole);
+		if (index.siblingAtColumn((int)ColunmsOrder::DATE_MODIDFIED).data().toString().isEmpty() &&
+			index.parent().isValid())
+			item->setData(iconProvider.icon(QFileIconProvider::Folder), Qt::DecorationRole);
+		else
+			item->setData(iconProvider.icon(info), Qt::DecorationRole);
 	}
 
 	if ((index.flags() & Qt::ItemNeverHasChildren) || !this->hasChildren(index));

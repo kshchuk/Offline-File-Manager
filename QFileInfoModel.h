@@ -42,6 +42,7 @@ public:
 	QAbstractItemModel* genStaticSystemModel(size_t maxDepth);
 	QAbstractItemModel* genExternalDrivesModel(size_t maxDepth);
 
+	QModelIndex appendFile(const QFileInfo& info, QModelIndex parent);
 	void setName(QString newName, QModelIndex index);
 	QModelIndex byPath(QString path) const;
 
