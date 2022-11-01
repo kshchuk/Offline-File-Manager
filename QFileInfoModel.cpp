@@ -127,42 +127,21 @@ QAbstractItemModel* QFileInfoModel::genExternalDrivesModel(size_t maxDepth)
 	return this;
 }
 
-QModelIndex QFileInfoModel::byPath(QString::iterator cur,
-								QString::iterator end, QModelIndex parent) const
+QModelIndex QFileInfoModel::byPath(QString path) const
 {
-	// FIX: Wrong index returned
-	if (parent.isValid())
-	{
-		if (cur == end) return parent;
+	QStringList pieces = path.split("/");
+	pieces.removeAll(QString(""));
 
-		QStandardItem* item = this->itemFromIndex(parent);
-
-		if (!item->hasChildren()) return QModelIndex();
-
-		QString file;
-		while (cur != end && cur < end)
-		{
-			if (*cur == QChar('/') || *cur == QChar('\\')) break;
-			file.append(*(cur++));
-		}
-		if (cur < end)
-			cur++;
-		int rows = this->rowCount(parent);
-		for (size_t i = 0; i < rows; ++i)
-		{
-			QString child = parent.siblingAtRow(i).data().toString();
-			child.removeIf([](QChar i) {return ((i) == QChar('/') || (i) == QChar('\\'));});
-
-			if (!QString::compare(file, child, Qt::CaseInsensitive))
-				return byPath(cur, end, this->index(i, 0, parent));
-		}
-	}
-	if ((parent.flags() & Qt::ItemNeverHasChildren) || !this->hasChildren(parent));
-
-	int rows = this->rowCount(parent);
+	if (pieces.isEmpty()) return QModelIndex();
+	
+	int rows = this->rowCount();
 	for (size_t i = 0; i < rows; ++i)
 	{
-		return byPath(cur, end, this->index(i, 0, parent));
+		QString drive = this->index(i, 0).data().toString();
+		drive.removeIf([](QChar c) { return c == QChar('/') || c == QChar('\\'); });
+		if (!QString::compare(*pieces.constBegin(), drive))
+			return byPathRecursive(pieces.constBegin() + 1, 
+				pieces.constEnd(), this->index(i, 0));
 	}
 	return QModelIndex();
 }
@@ -191,6 +170,24 @@ void QFileInfoModel::setIcons(const QModelIndex& index, int depth)
 
 	for (int i = 0; i < rows; ++i)
 		setIcons(this->index(i, 0, index), depth + 1);
+}
+
+QModelIndex QFileInfoModel::byPathRecursive(QStringList::const_iterator piece, 
+	QStringList::const_iterator end, const QModelIndex& parent) const
+{
+	if (piece == end) return parent;
+
+	if (parent.isValid())
+	{
+		int rows = this->rowCount(parent);
+		for (size_t i = 0; i < rows; i++)
+		{
+			QString childData = this->index(i, 0, parent).data().toString();
+			if (!QString::compare(*piece, childData, Qt::CaseInsensitive))
+				return byPathRecursive(piece + 1, end, this->index(i, 0, parent));
+		}
+	}
+	return parent;
 }
 
 void QFileInfoModel::readHierarchyRecursive(QModelIndex parent, const QString& path, 
