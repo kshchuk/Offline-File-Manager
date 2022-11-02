@@ -86,17 +86,16 @@ QAbstractItemModel* QFileInfoModel::genStaticSystemModel(size_t maxDepth)
 {
 	this->clear();
 
-	QStandardItem* root = this->invisibleRootItem();
-
 	foreach(auto drive, QDir::drives())
 	{
 		QDirIterator it(drive.absoluteFilePath());
 
 		QList<QStandardItem*> preparedRow = packDrive(it);
-		root->appendRow(preparedRow);
+		this->appendRow(preparedRow);
 
-		int row = root->rowCount() - 1;
-		QModelIndex index = root->child(row)->index();
+		int row = this->rowCount() - 1;
+		QModelIndex index = this->index(row, 0);
+			//root->child(row)->index();
 
 		readHierarchyRecursive(index, it.path(), maxDepth);
 	}
