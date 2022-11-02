@@ -50,7 +50,6 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
     connect(ui.fileSystemTree, &QTreeView::activated, this, &OfflineFileManager::on_treeWidget_clicked);
     connect(ui.fileSystemTree, &QTreeView::customContextMenuRequested, this, &OfflineFileManager::on_customContextMenu);
     connect(ui.fileSystemTree, &QTreeView::clicked, this, &OfflineFileManager::on_treeWidget_clicked);
-    // connect(ui.fileSystemTree, &QTreeView::pressed, this, &OfflineFileManager::editFileName);
 }
 
 OfflineFileManager::~OfflineFileManager()
@@ -77,31 +76,50 @@ void OfflineFileManager::action_openInFileExplorer()
 {
     QModelIndex index = ui.fileSystemTree->currentIndex();
 
-    QList<QString> path = model->getPath(index); path.removeLast();
+    QList<QString> path = model->getPath(index); 
+    if (!ui.fileSystemTree->model()->hasChildren(index))
+    {
+        path.removeLast();
+    }
     QString spath;
     foreach(auto file, path) spath += '/' + file;
     spath.remove(0, 1);
 
     if (path.isEmpty())
-        QDesktopServices::openUrl(QUrl::fromLocalFile(""));
-    else
-    if (!QDesktopServices::openUrl(QUrl::fromLocalFile(spath)))
-        QMessageBox::critical(this, tr("Offline File Manager"),
-            tr("No access"), QMessageBox::Close);
+        QDesktopServices::openUrl(QUrl::fromLocalFile("/"));
+    else {
+        QFileInfo info(spath);
+        if (info.exists())
+            QDesktopServices::openUrl(QUrl::fromLocalFile(spath));
+        else
+            QMessageBox::critical(this, tr("Offline File Manager"),
+                tr("No access"), QMessageBox::Close);
+    }
 }
 
 void OfflineFileManager::action_openFile()
 {
     QModelIndex index = ui.fileSystemTree->currentIndex();
+    
+    QFileInfo info(index.data().toString());
+    if (ui.fileSystemTree->model()->hasChildren(index))
+    {
+        ui.fileSystemTree->expand(index);
+    }
+    else
+    {
+        QList<QString> path = model->getPath(index);
+        QString spath;
+        foreach(auto file, path) spath += '/' + file;
+        spath.remove(0, 1);
 
-    QList<QString> path = model->getPath(index);
-    QString spath;
-    foreach(auto file, path) spath += '/' + file;
-    spath.remove(0, 1);
-
-    if (!QDesktopServices::openUrl(QUrl::fromLocalFile(spath)))
-        QMessageBox::critical(this, tr("Offline File Manager"),
-            tr("No access"), QMessageBox::Close);
+        QFileInfo info(spath);
+        if (info.exists())
+            QDesktopServices::openUrl(QUrl::fromLocalFile(spath));
+        else
+            QMessageBox::critical(this, tr("Offline File Manager"),
+                tr("No access"), QMessageBox::Close);
+    }
 }
 
 void OfflineFileManager::action_Properties()
@@ -209,6 +227,8 @@ void OfflineFileManager::on_customContextMenu(const QPoint& point)
         this, &OfflineFileManager::action_openFile);
     menu.addAction("Open in file explorer",
         this, &OfflineFileManager::action_openInFileExplorer);
+    menu.addAction("Rename",
+        this, &OfflineFileManager::editFileNameA);
     menu.addAction("Properties",
         this, &OfflineFileManager::action_Properties);
 
@@ -312,7 +332,7 @@ void OfflineFileManager::on_addFolderButton_clicked()
     QModelIndex appended =  model->appendFolder(QFileInfo(name), cur);
     ui.fileSystemTree->expand(appended);
     ui.fileSystemTree->expand(appended.parent());
-    editFileName(appended);
+    editFileNameA();
 }
 
 void OfflineFileManager::saveMeta(const QString& str)
@@ -323,9 +343,14 @@ void OfflineFileManager::saveMeta(const QString& str)
     item->setData(str, 0);
 }
 
-void OfflineFileManager::editFileName(QModelIndex index)
+void OfflineFileManager::editFileName(const QModelIndex& index)
 {
     ui.fileSystemTree->edit(index);
+}
+
+void OfflineFileManager::editFileNameA()
+{
+    editFileName(ui.fileSystemTree->currentIndex());
 }
 
 void OfflineFileManager::treeViewInit(QTreeView* tree, QAbstractItemModel* model)

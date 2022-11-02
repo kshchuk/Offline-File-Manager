@@ -32,7 +32,8 @@ private slots:
     void on_upButton_clicked();
     void on_addFolderButton_clicked();
     void saveMeta(const QString&);
-    void editFileName(QModelIndex index);
+    void editFileName(const QModelIndex& index);
+    void editFileNameA();
 
 private:
     Ui::OfflineFileManagerClass ui;
