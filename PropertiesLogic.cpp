@@ -1,5 +1,6 @@
 #include "propertieslogic.h"
 
+#include <QLocale>
 #include <QStandardItem>
 #include <QStandardItemModel>
 
@@ -18,9 +19,9 @@ PropertiesLogic::PropertiesLogic(const QModelIndex& index, QFileInfoModel* model
     itemIndex = index.siblingAtColumn(int(ColunmsOrder::TYPE));
     item = model->itemFromIndex(itemIndex);
     type = item->data(role).toString();
-    itemIndex = index.siblingAtColumn(int(ColunmsOrder::SIZE));
-    item = model->itemFromIndex(itemIndex);
-    size = item->data(role).toString();
+    quint64 l = model->fileSize(index);
+    QLocale locale;
+    size = locale.formattedDataSize(l);
     itemIndex = index.siblingAtColumn(int(ColunmsOrder::GROUP));
     item = model->itemFromIndex(itemIndex);
     group = item->data(role).toString();

@@ -22,8 +22,11 @@ enum class ColunmsOrder
 	GROUP,
 	OWNER,
 	OWNER_ID,
-	CUSTOM_METHADATA
+	CUSTOM_METHADATA,
+	SIZE_BYTES
 };
+
+const size_t columnsNumber = 10;
 
 
 const QString virtualFolderType = "virtual folder";
@@ -48,11 +51,9 @@ public:
 	QModelIndex appendFolder(const QFileInfo& info, QModelIndex parent);
 	void setName(QString newName, QModelIndex index);
 	QModelIndex byPath(QString path) const;
+	quint64 fileSize(const QModelIndex& index) const;
 
 private:
-
-	const size_t columnsNumber = 9;
-
 	QMimeDatabase db;
 	QFileIconProvider iconProvider;
 

@@ -173,6 +173,29 @@ QModelIndex QFileInfoModel::byPath(QString path) const
 	return QModelIndex();
 }
 
+quint64 QFileInfoModel::fileSize(const QModelIndex& index) const
+{
+	quint64 sum = 0;
+	if (index.isValid())
+	{
+		QStandardItem* item = this->itemFromIndex(index);
+		if (item->hasChildren()) {
+			int rows = item->rowCount();
+			for (size_t i = 0; i < rows; ++i)
+				sum += fileSize(item->child(i)->index());
+		}
+		else {
+			sum = index.siblingAtColumn((int)ColunmsOrder::SIZE_BYTES).data().toLongLong();
+		}
+	}
+	else {
+		int rows = this->rowCount();
+		for (size_t i = 0; i < rows; ++i)
+			sum = fileSize(this->index(i, 0));
+	}
+	return sum;
+}
+
 void QFileInfoModel::setIcons(const QModelIndex& index, int depth)
 {
 	if (index.isValid())
@@ -322,6 +345,7 @@ QList<QStandardItem*> QFileInfoModel::packDrive(const QDirIterator& drive) const
 	row.insert(int(ColunmsOrder::OWNER), new QStandardItem(drive.fileInfo().owner()));
 	row.insert(int(ColunmsOrder::OWNER_ID), new QStandardItem(QString::number(drive.fileInfo().ownerId())));
 	row.insert(int(ColunmsOrder::CUSTOM_METHADATA), new QStandardItem(QString()));
+	row.insert(int(ColunmsOrder::SIZE_BYTES), new QStandardItem(QString::number(drive.fileInfo().size())));
 
 	return row;
 }
@@ -346,6 +370,7 @@ QList<QStandardItem*> QFileInfoModel::fromFileInfo(const QFileInfo& info) const
 	row.insert(int(ColunmsOrder::OWNER), new QStandardItem(info.owner()));
 	row.insert(int(ColunmsOrder::OWNER_ID), new QStandardItem(QString::number(info.ownerId())));
 	row.insert(int(ColunmsOrder::CUSTOM_METHADATA), new QStandardItem(QString()));
+	row.insert(int(ColunmsOrder::SIZE_BYTES), new QStandardItem(QString::number(info.size())));
 
 	return row;
 }
