@@ -47,6 +47,7 @@ public:
 
 	QAbstractItemModel* readFile(QString fileName);
 	void writeFile(QString fileName, size_t maxDepth) const;
+	void deleteFile(const QModelIndex& index);
 
 	QAbstractItemModel* genStaticSystemModel(size_t maxDepth);
 	QAbstractItemModel* genExternalDrivesModel(size_t maxDepth);

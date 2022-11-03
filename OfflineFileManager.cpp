@@ -81,22 +81,20 @@ void OfflineFileManager::action_openInFileExplorer()
         index = model->byPath(path);
     }
 
-    QList<QString> path = model->getPath(index); 
+    QString path = model->getPathfFromInfo(index);
     if (!ui.fileSystemTree->model()->hasChildren(index))
     {
-        path.removeLast();
+        int i = path.length() - 1, j = 0;
+        while (i >= 0 && path[i] != QChar('/') && path[i] != QChar('\\')) { j++; i--; }
+        path.remove(i, j+1);
     }
-    QString spath;
-    foreach(auto file, path) spath += '/' + file;
-    spath.remove(0, 1);
-
 
     if (path.isEmpty())
         QDesktopServices::openUrl(QUrl::fromLocalFile("/"));
     else {
-        QFileInfo info(spath);
+        QFileInfo info(path);
         if (info.exists())
-            QDesktopServices::openUrl(QUrl::fromLocalFile(spath));
+            QDesktopServices::openUrl(QUrl::fromLocalFile(path));
         else
             QMessageBox::critical(this, tr("Offline File Manager"),
                 tr("No access"), QMessageBox::Close);
@@ -285,6 +283,8 @@ void OfflineFileManager::on_customContextMenu(const QPoint& point)
         menu.addAction("Add data",
             this, &OfflineFileManager::action_addDataToVirtualFolder);
 
+    menu.addAction("Remove",
+        this, &OfflineFileManager::removeElement);
     menu.addAction("Rename",
         this, &OfflineFileManager::editFileNameA);
     menu.addAction("Properties",
@@ -418,6 +418,29 @@ void OfflineFileManager::addDataToVirtualFolder(QModelIndexList list)
     foreach(auto ind, list) {
         model->insertFileLinkToTheFolder(ind, cur);
         QString s = ind.data().toString();
+    }
+}
+
+void OfflineFileManager::removeElement()
+{
+    QModelIndex index = ui.fileSystemTree->currentIndex();
+    QMessageBox mes(this);
+    mes.setText("Delete file");
+    mes.setInformativeText("Are you sure you want to delete this record?");
+    mes.setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
+    mes.setDefaultButton(QMessageBox::Yes);
+
+    int ret = mes.exec();
+    switch (ret) {
+    case QMessageBox::Yes:
+        model->deleteFile(index);
+        break;
+    case QMessageBox::Cancel:
+        break;
+    case QMessageBox::Close:
+        break;
+    default:
+        Q_ASSERT(1 == 0);
     }
 }
 

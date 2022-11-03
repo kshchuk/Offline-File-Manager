@@ -87,6 +87,11 @@ void QFileInfoModel::writeFile(QString fileName, size_t maxDepth) const
 		throw std::runtime_error("Unable to open file: " + fileName.toStdString());
 }
 
+void QFileInfoModel::deleteFile(const QModelIndex& index)
+{
+	this->removeRow(index.row(), index.parent());
+}
+
 bool QFileInfoModel::isLink(const QModelIndex& index)
 {
 	return (!index.siblingAtColumn((int)ColunmsOrder::TYPE).data().toString().compare(linkToFileType));

@@ -38,6 +38,7 @@ private slots:
     void editFileName(const QModelIndex& index);
     void editFileNameA();
     void addDataToVirtualFolder(QModelIndexList list);
+    void removeElement();
     void errorString(QString);
 
 private:
