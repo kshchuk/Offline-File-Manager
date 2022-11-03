@@ -30,7 +30,8 @@ enum class ColunmsOrder
 const size_t columnsNumber = 11;
 
 
-const QString virtualFolderType = "virtual folder";
+static const QString virtualFolderType = "virtual folder";
+static const QString linkToFileType = "link to file/folder";
 
 
 class QFileInfoModel  : public QStandardItemModel
@@ -68,7 +69,7 @@ private:
 	// List of columns:
 	// Name | Size | Type | Date Modified | Icon Name | Birth Time | Group | Owner | OwnerID | Custom metadata
 	QList<QStandardItem*> fromFileInfo(const QFileInfo& info) const;
-	QList<QStandardItem*> packInfo(const QModelIndex& index) const;
+	QList<QStandardItem*> packLink(const QModelIndex& index) const;
 	void initFileModelHeaders(QFileInfoModel* model) const;
 	QString fileSize(const QFileInfo& info) const;
 	void setIcons(const QModelIndex& index = QModelIndex(), int depth = 0);

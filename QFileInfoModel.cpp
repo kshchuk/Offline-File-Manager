@@ -198,7 +198,7 @@ quint64 QFileInfoModel::fileSize(const QModelIndex& index) const
 void QFileInfoModel::insertFileLinkToTheFolder(QModelIndex toInsert, QModelIndex destination)
 {
 	QStandardItem* dest = this->itemFromIndex(destination);
-	dest->appendRow(packInfo(toInsert));
+	dest->appendRow(packLink(toInsert));
 }
 
 QString QFileInfoModel::pathFromStringList(const QStringList& list)
@@ -220,7 +220,8 @@ void QFileInfoModel::setIcons(const QModelIndex& index, int depth)
 		QStandardItem* item = this->itemFromIndex(index);
 		
 		QFileInfo info(name);
-		if (!index.siblingAtColumn((int)ColunmsOrder::TYPE).data().toString().compare(virtualFolderType))
+		if (!index.siblingAtColumn((int)ColunmsOrder::TYPE).data().toString().compare(virtualFolderType) ||
+			!index.siblingAtColumn((int)ColunmsOrder::TYPE).data().toString().compare(linkToFileType) && info.suffix().isEmpty())
 			item->setData(iconProvider.icon(QFileIconProvider::Folder), Qt::DecorationRole);
 		else
 			item->setData(iconProvider.icon(info), Qt::DecorationRole);
@@ -312,18 +313,22 @@ QString QFileInfoModel::fileSize(const QFileInfo& info) const
 	return QString();
 }
 
-QList<QStandardItem*> QFileInfoModel::packInfo(const QModelIndex& index) const
+QList<QStandardItem*> QFileInfoModel::packLink(const QModelIndex& index) const
 {
+	QFileInfo info(index.data().toString());
 	QList<QStandardItem*> row;
+	if (!info.suffix().isEmpty())
+		row.append(new QStandardItem(iconProvider.icon(info), 
+			index.siblingAtColumn(0).data(Qt::DisplayRole).toString()));
+	else
+		row.append(new QStandardItem(iconProvider.icon(QFileIconProvider::Folder),
+			index.siblingAtColumn(0).data(Qt::DisplayRole).toString()));
 
-	// row.append(this->itemFromIndex(index.siblingAtColumn(0)));
-
-	for (size_t i = 0; i < this->columnCount(); ++i) {
-		QModelIndex ind = index.siblingAtColumn(i);
-		Q_ASSERT(ind != QModelIndex()); 
-		QStandardItem* item = this->itemFromIndex(ind);
-		row.append(item);
+	for (size_t i = 1; i < this->columnCount(); ++i) 
+	{
+		row.append(new QStandardItem(index.siblingAtColumn(i).data(Qt::DisplayRole).toString()));
 	}
+	row[(int)ColunmsOrder::TYPE]->setData(linkToFileType, Qt::DisplayRole); // For link files
 
 	return row;
 }
