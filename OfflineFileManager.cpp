@@ -25,8 +25,18 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
     : QMainWindow(parent)
 {
     ui.setupUi(this);
-
+    
     model = new QFileInfoModel();
+    
+    try {
+        model->readFile(savingFile);
+    }
+    catch (const std::exception &e) {
+        QMessageBox::warning(this, tr("Offline File Manager"),
+            tr(e.what()), QMessageBox::Close);
+    };
+
+    treeViewInit(ui.fileSystemTree, model);
 
     connect(ui.actionClose, &QAction::triggered, this, &OfflineFileManager::close);
     connect(ui.updateButton, &QToolButton::clicked, this, &OfflineFileManager::on_updateButton_clicked);
@@ -40,17 +50,11 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
     connect(ui.fileSystemTree, &QTreeView::activated, this, &OfflineFileManager::on_treeWidget_clicked);
     connect(ui.fileSystemTree, &QTreeView::customContextMenuRequested, this, &OfflineFileManager::on_customContextMenu);
     connect(ui.fileSystemTree, &QTreeView::clicked, this, &OfflineFileManager::on_treeWidget_clicked);
-
-    connect(model, &QFileInfoModel::finished, this, &OfflineFileManager::treeViewInit);
-
-    model->readFile(savingFile, maxDepth);
-
-    treeViewInit();
 }
 
 OfflineFileManager::~OfflineFileManager()
 {
-    model->writeFile(savingFile);
+    model->writeFile(savingFile, maxDepth);
     delete model;
 }
 
@@ -125,7 +129,7 @@ void OfflineFileManager::action_Properties()
 
     QDialog* widget = new QDialog(this);
     QVBoxLayout* layout = new QVBoxLayout(widget);
-    PropertiesWindow* properties_window = new PropertiesWindow(widget, index);
+    PropertiesWindow* properties_window = new PropertiesWindow(widget);
     widget->setWindowTitle("Properties");
     QPushButton* buttonOk = new QPushButton(widget);
     QPushButton* buttonCancel = new QPushButton(widget);
@@ -188,8 +192,8 @@ void OfflineFileManager::action_Properties()
     properties_window->verticalHeader()->hide();
 
 
-    QTableWidgetItem* customItem = properties_window->item(properties_window->rowCount() - 1,
-        properties_window->columnCount() - 1);
+    QTableWidgetItem* customItem = properties_window->item(properties_window->rowCount() - 1, 
+                                                            properties_window->columnCount() - 1);
     Qt::ItemFlags writeFlag = customItem->flags();
 
     // Make readonly
@@ -212,7 +216,6 @@ void OfflineFileManager::action_Properties()
     delete properties_window;
     delete properties;
     delete widget;
-
 }
 
 void OfflineFileManager::on_customContextMenu(const QPoint& point)
@@ -238,12 +241,17 @@ void OfflineFileManager::on_updateButton_clicked()
     {
     case OfflineFileManager::FILESYSTEM:
     {
-        model->genStaticSystemModel(maxDepth);
+        treeViewInit(ui.fileSystemTree, new QFileSystemModel);
+
+        this->model->genStaticSystemModel(maxDepth);
+        treeViewInit(ui.fileSystemTree, model);
         break;
     }
     case OfflineFileManager::EXTERNAL_DRIVES:
     {
-        model->genExternalDrivesModel(maxDepth);
+        this->model->genExternalDrivesModel(maxDepth);
+        // treeViewInit(ui.fileSystemTree, model->readFile("tmp.bin"));
+        treeViewInit(ui.fileSystemTree, model);
         break;
     }
     default:
@@ -255,14 +263,29 @@ void OfflineFileManager::on_saveAction_triggered()
 {
     QString fileName = QFileDialog::getSaveFileName(this, 
         ("Save File"),"", ("File system hierarchy (*.fsh)"));
-    model->writeFile(fileName);
+
+    try {
+        model->writeFile(fileName, maxDepth);
+    }
+    catch (const std::exception& e) {
+        QMessageBox::critical(this, tr("Offline File Manager"),
+            tr(e.what()), QMessageBox::Close);
+    }
 }
 
 void OfflineFileManager::on_openAction_triggered()
 {
     QString fileName = QFileDialog::getOpenFileName(this, ("Open File"),
         "", ("File system hierarchy (*.fsh)"));
-    model->readFile(fileName, maxDepth);
+    
+    try {
+        model->readFile(fileName);
+    }
+    catch(const std::exception &e) {
+        QMessageBox::critical(this, tr("Offline File Manager"),
+            tr(e.what()), QMessageBox::Close);
+    }
+    treeViewInit(ui.fileSystemTree, model);
 }
 
 void OfflineFileManager::on_homeButton_clicked()
@@ -304,20 +327,19 @@ void OfflineFileManager::on_upButton_clicked()
 
 void OfflineFileManager::on_addFolderButton_clicked()
 {
-    QModelIndex cur = ui.fileSystemTree->currentIndex();
-    
+    QModelIndex cur = model->byPath(ui.addressLine->text());
     QString name = "New folder";
     QModelIndex appended =  model->appendFolder(QFileInfo(name), cur);
     ui.fileSystemTree->expand(appended);
     ui.fileSystemTree->expand(appended.parent());
-    treeViewInit();
-    editFileName(appended);
+    editFileNameA();
 }
 
-void OfflineFileManager::saveMeta(const QString& str, const QModelIndex& index)
+void OfflineFileManager::saveMeta(const QString& str)
 {
-    QModelIndex newindex = index.siblingAtColumn((int)ColunmsOrder::CUSTOM_METHADATA);
-    QStandardItem* item = model->itemFromIndex(newindex);
+    QModelIndex index = ui.fileSystemTree->currentIndex();
+    index = index.siblingAtColumn((int)ColunmsOrder::CUSTOM_METHADATA);
+    QStandardItem* item = model->itemFromIndex(index);
     item->setData(str, 0);
 }
 
@@ -331,26 +353,19 @@ void OfflineFileManager::editFileNameA()
     editFileName(ui.fileSystemTree->currentIndex());
 }
 
-void OfflineFileManager::errorString(QString e)
+void OfflineFileManager::treeViewInit(QTreeView* tree, QAbstractItemModel* model)
 {
-    this->error = e;
-    QMessageBox::critical(this, tr("Error"),
-        e, QMessageBox::Close);
-}
+    tree->setModel(model);
 
-void OfflineFileManager::treeViewInit()   
-{
-    ui.fileSystemTree->setModel(model);
+    for (size_t i = 4; i < tree->model()->columnCount(); i++)
+        tree->hideColumn(i); // only 4 columns need to be displayed
 
-    for (size_t i = 4; i < ui.fileSystemTree->model()->columnCount(); i++)
-        ui.fileSystemTree->hideColumn(i); // only 4 columns need to be displayed
-
-    ui.fileSystemTree->setAnimated(false);
-    ui.fileSystemTree->setIndentation(20);
-    ui.fileSystemTree->setSortingEnabled(true);
-    const QSize availableSize = ui.fileSystemTree->screen()->availableGeometry().size();
-    ui.fileSystemTree->setColumnWidth(0, ui.fileSystemTree->width() / 2);
-    QScroller::grabGesture(ui.fileSystemTree, QScroller::TouchGesture);
+    tree->setAnimated(false);
+    tree->setIndentation(20);
+    tree->setSortingEnabled(true);
+    const QSize availableSize = tree->screen()->availableGeometry().size();
+    tree->setColumnWidth(0, tree->width() / 2);
+    QScroller::grabGesture(tree, QScroller::TouchGesture);
     ui.fileSystemTree->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui.fileSystemTree->setContextMenuPolicy(Qt::CustomContextMenu);
 }

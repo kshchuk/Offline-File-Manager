@@ -1,12 +1,12 @@
 #include "PropertiesWindow.h"
 
-PropertiesWindow::PropertiesWindow(QWidget* parent, QModelIndex index)
-    : QTableWidget(parent), index(index)
+PropertiesWindow::PropertiesWindow(QWidget* parent)
+    : QTableWidget(parent)
 {
 }
 
 void PropertiesWindow::saveTextSlot()
 {
     emit saveTextSignal(this->item(rowCount() - 1, 
-        columnCount() - 1)->data(0).toString(), this->index);
+        columnCount() - 1)->data(0).toString());
 }

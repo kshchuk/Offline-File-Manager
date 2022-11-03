@@ -3,7 +3,6 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_OfflineFileManager.h"
 #include <QTreeView>
-#include <QThread>
 
 #include "QFileInfoModel.h"
 
@@ -20,7 +19,6 @@ public:
     ~OfflineFileManager();
 
 private slots:
-    void treeViewInit();
     void on_treeWidget_clicked(QModelIndex index);
     void action_openInFileExplorer();
     void action_openFile();
@@ -33,16 +31,15 @@ private slots:
     void on_editLine_editingFinished();
     void on_upButton_clicked();
     void on_addFolderButton_clicked();
-    void saveMeta(const QString&, const QModelIndex&);
+    void saveMeta(const QString&);
     void editFileName(const QModelIndex& index);
     void editFileNameA();
-    void errorString(QString);
 
 private:
     Ui::OfflineFileManagerClass ui;
     QFileInfoModel* model = nullptr;
     Regime regime = EXTERNAL_DRIVES;
-    size_t maxDepth = 10;
+    size_t maxDepth = 20;
 
-    QString error;
+   void treeViewInit(QTreeView* tree, QAbstractItemModel* model);
 };
