@@ -10,9 +10,6 @@
 
 #include <functional>
 
-#include "ModelSerializer.h"
-#include "system_depend_functions.h"
-
 
 QFileInfoModel::QFileInfoModel(QObject *parent)
 	: QStandardItemModel(parent)
@@ -43,87 +40,40 @@ QList<QString> QFileInfoModel::getPath(QModelIndex index) const
 	return path;
 }
 
-QAbstractItemModel* QFileInfoModel::readFile(QString fileName)
+void QFileInfoModel::readFile(QString fileName, size_t maxDepth)
 {
-	QFile file(fileName);
-	if (file.open(QIODevice::ReadOnly)) {
-		QDataStream stream(&file);
-		this->clear();
-		ModelSerializer<> ser;
-		Status st = ser.load(stream, this);
-		if (!st.ok()) throw std::runtime_error("Reading error:" + fileName.toStdString());
-		this->initFileModelHeaders(this);
-
-		setIcons();
-
-		file.close();
-		return this;
-	}
-	else
-		throw std::runtime_error("Unable to open file:" + fileName.toStdString());
-
-	return nullptr;
+	ReadThread* readThread = new ReadThread(this, fileName, maxDepth);
+	connect(readThread, &ReadThread::finished, this, &QFileInfoModel::finished);
+	connect(readThread, &ReadThread::error, this, &QFileInfoModel::error);
+	connect(readThread, &ReadThread::finished, readThread, &QObject::deleteLater);
+	readThread->start();
 }
 
-void QFileInfoModel::writeFile(QString fileName, size_t maxDepth) const
+void QFileInfoModel::writeFile(QString fileName)
 {
-	QFile file(fileName);
-	if (file.open(QIODevice::WriteOnly)) {
-		QDataStream stream(&file);
-
-		ModelSerializer<> ser;
-		Status st = ser.save(stream, this);
-		if (!st.ok()) throw std::runtime_error("Writing error:" + fileName.toStdString());
-
-		file.flush();
-		file.close();
-	}
-	else
-		throw std::runtime_error("Unable to open file: " + fileName.toStdString());
+	WriteThread* writeThread = new WriteThread(this, fileName);
+	connect(writeThread, &WriteThread::finished, this, &QFileInfoModel::finished);
+	connect(writeThread, &WriteThread::error, this, &QFileInfoModel::error);
+	connect(writeThread, &WriteThread::finished, writeThread, &QObject::deleteLater);
+	writeThread->start();
 }
 
-QAbstractItemModel* QFileInfoModel::genStaticSystemModel(size_t maxDepth)
+void QFileInfoModel::genStaticSystemModel(size_t maxDepth)
 {
-	this->clear();
-
-	foreach(auto drive, QDir::drives())
-	{
-		QDirIterator it(drive.absoluteFilePath());
-
-		QList<QStandardItem*> preparedRow = packDrive(it);
-		this->appendRow(preparedRow);
-
-		int row = this->rowCount() - 1;
-		QModelIndex index = this->index(row, 0);
-			//root->child(row)->index();
-
-		readHierarchyRecursive(index, it.path(), maxDepth);
-	}
-	initFileModelHeaders(this);
-	return this;
+	SystemModelGenThread* sysThread = new SystemModelGenThread(this, maxDepth);
+	connect(sysThread, &SystemModelGenThread::finished, this, &QFileInfoModel::finished);
+	connect(sysThread, &SystemModelGenThread::error, this, &QFileInfoModel::error);
+	connect(sysThread, &SystemModelGenThread::finished, sysThread, &QObject::deleteLater);
+	sysThread->start();
 }
 
-QAbstractItemModel* QFileInfoModel::genExternalDrivesModel(size_t maxDepth)
+void QFileInfoModel::genExternalDrivesModel(size_t maxDepth)
 {
-	this->clear();
-
-	QStandardItem* root = this->invisibleRootItem();
-
-	QList<QString> externalDrives = removableDrives();
-	foreach(auto drive, externalDrives)
-	{
-		QDirIterator it(drive);
-
-		QList<QStandardItem*> preparedRow = packDrive(it);
-		root->appendRow(preparedRow);
-
-		int row = root->rowCount() - 1;
-		QModelIndex index = root->child(row)->index();
-
-		readHierarchyRecursive(index, it.path(), maxDepth);
-	}
-	initFileModelHeaders(this);
-	return this;
+	ExternalDrivesGenThread* exThread = new ExternalDrivesGenThread(this, maxDepth);
+	connect(exThread, &ExternalDrivesGenThread::finished, this, &QFileInfoModel::finished);
+	connect(exThread, &ExternalDrivesGenThread::error, this, &QFileInfoModel::error);
+	connect(exThread, &ExternalDrivesGenThread::finished, exThread, &QObject::deleteLater);
+	exThread->start();
 }
 
 QModelIndex QFileInfoModel::appendFolder(const QFileInfo& info, QModelIndex parent)
@@ -193,6 +143,16 @@ quint64 QFileInfoModel::fileSize(const QModelIndex& index) const
 			sum = fileSize(this->index(i, 0));
 	}
 	return sum;
+}
+
+void QFileInfoModel::setFileName(const QString& name)
+{
+	fileName = name;
+}
+
+void QFileInfoModel::setMaxDepth(size_t d)
+{
+	maxDepth = d;
 }
 
 void QFileInfoModel::setIcons(const QModelIndex& index, int depth)
