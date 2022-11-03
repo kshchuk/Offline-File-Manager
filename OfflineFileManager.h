@@ -2,6 +2,7 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_OfflineFileManager.h"
+#include <QMessageBox>
 #include <QTreeView>
 #include <QThread>
 #include <QList>
@@ -46,6 +47,7 @@ private:
     QFileInfoModel* model = nullptr;
     Regime regime = EXTERNAL_DRIVES;
     size_t maxDepth = 10;
+    QMessageBox saveMessage;
 
     QString error;
     void treeViewInit(QTreeView* tree, QFileInfoModel* model);

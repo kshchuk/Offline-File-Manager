@@ -19,7 +19,6 @@
 #include "PropertiesLogic.h"
 #include "AddDataToFolder.h"
 
-const QString savingFile = "static.fsh";
 
 
 OfflineFileManager::OfflineFileManager(QWidget *parent)
@@ -29,8 +28,13 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
     
     model = new QFileInfoModel();
 
+    saveMessage.setText("Save data");
+    saveMessage.setInformativeText("You have unsaved changes. Do you want to save it?");
+    saveMessage.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    saveMessage.setDefaultButton(QMessageBox::Yes);
+
     connect(ui.actionClose, &QAction::triggered, this, &OfflineFileManager::close);
-    connect(ui.updateButton, &QToolButton::clicked, this, &OfflineFileManager::on_updateButton_clicked);
+    connect(ui.updateButton, &QToolButton::triggered, this, &OfflineFileManager::on_updateButton_clicked);
     connect(ui.upButton, &QToolButton::triggered, this, &OfflineFileManager::on_upButton_clicked);
     connect(ui.homeButton, &QToolButton::clicked, this, &OfflineFileManager::on_homeButton_clicked);
     connect(ui.actionSave, &QAction::triggered, this, &OfflineFileManager::on_saveAction_triggered);
@@ -42,19 +46,32 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
     connect(ui.fileSystemTree, &QTreeView::customContextMenuRequested, this, &OfflineFileManager::on_customContextMenu);
     connect(ui.fileSystemTree, &QTreeView::clicked, this, &OfflineFileManager::on_treeWidget_clicked);
 
-    try {
-        model->readFile(savingFile);
-    } catch(const std::exception& e) {
-        QMessageBox::warning(this, tr("Offline File Manager"),
-            tr(e.what()), QMessageBox::Close);
-    }
+    //try {
+    //    model->readFile(savingFile);
+    //} catch(const std::exception& e) {
+    //    QMessageBox::warning(this, tr("Offline File Manager"),
+    //        tr(e.what()), QMessageBox::Close);
+    //}
     treeViewInit(ui.fileSystemTree, model);
     on_homeButton_clicked();
 }
 
 OfflineFileManager::~OfflineFileManager()
 {
-    model->writeFile(savingFile, maxDepth);
+    if (model->rowCount() != 0) {
+        int ret = saveMessage.exec();
+        switch (ret) {
+        case QMessageBox::Yes:
+            on_saveAction_triggered();
+            break;
+        case QMessageBox::No:
+            break;
+        case QMessageBox::Close:
+            break;
+        default:
+            Q_ASSERT(1 == 0);
+        }
+    }
     delete model;
 }
 
@@ -250,22 +267,6 @@ void OfflineFileManager::action_addDataToVirtualFolder()
     connect(dialog, &AddDataToFolder::indexesSent, this, &OfflineFileManager::addDataToVirtualFolder);
     connect(dialog, &AddDataToFolder::finished, dialog, &AddDataToFolder::close);
     dialog->exec();
-
-    //QModelIndex index = ui.fileSystemTree->currentIndex();
-    //
-    //QDialog* widget = new QDialog(this);     widget->setWindowTitle("Add Files");
-    //QVBoxLayout* layout = new QVBoxLayout(widget);
-
-    //QLineEdit* lineEdit = new QLineEdit(widget);
-    //QTreeView* tree = new QTreeView(widget); treeViewInit(tree, model);
-    //QPushButton* buttonOk = new QPushButton(widget);
-    //QPushButton* buttonCancel = new QPushButton(widget);
-    //buttonCancel->setText("Cancel");
-    //buttonOk->setText("OK");
-
-    //connect(buttonCancel, &QPushButton::clicked, widget, &QWidget::close);
-    //connect(buttonOk, &QPushButton::clicked, widget, &QWidget::close);
-    //connect(buttonOk, &QPushButton::clicked, this, &OfflineFileManager::);
 }
 
 void OfflineFileManager::on_customContextMenu(const QPoint& point)
@@ -295,6 +296,21 @@ void OfflineFileManager::on_customContextMenu(const QPoint& point)
 
 void OfflineFileManager::on_updateButton_clicked()
 {
+    if (model->rowCount() != 0) {
+        int ret = saveMessage.exec();
+        switch (ret) {
+        case QMessageBox::Yes:
+            on_saveAction_triggered();
+            break;
+        case QMessageBox::No:
+            break;
+        case QMessageBox::Close:
+            break;
+        default:
+            Q_ASSERT(1 == 0);
+        }
+    }
+
     switch (regime)
     {
     case OfflineFileManager::FILESYSTEM:
@@ -315,6 +331,7 @@ void OfflineFileManager::on_updateButton_clicked()
     default:
         break;
     }
+    on_homeButton_clicked();
 }
 
 void OfflineFileManager::on_saveAction_triggered() 
@@ -333,6 +350,21 @@ void OfflineFileManager::on_saveAction_triggered()
 
 void OfflineFileManager::on_openAction_triggered()
 {
+    if (model->rowCount() != 0) {
+        int ret = saveMessage.exec();
+        switch (ret) {
+        case QMessageBox::Yes:
+            on_saveAction_triggered();
+            break;
+        case QMessageBox::No:
+            break;
+        case QMessageBox::Close:
+            break;
+        default:
+            Q_ASSERT(1 == 0);
+        }
+    }
+
     QString fileName = QFileDialog::getOpenFileName(this, ("Open File"),
         "", ("File system hierarchy (*.fsh)"));
     
