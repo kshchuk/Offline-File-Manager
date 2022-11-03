@@ -83,16 +83,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AddDataToFolder.cpp" />
     <ClCompile Include="PropertiesLogic.cpp" />
     <ClCompile Include="PropertiesWindow.cpp" />
     <ClCompile Include="QFileInfoModel.cpp" />
     <QtRcc Include="OfflineFileManager.qrc" />
+    <QtUic Include="AddDataToFolder.ui" />
     <QtUic Include="OfflineFileManager.ui" />
     <QtMoc Include="OfflineFileManager.h" />
     <ClCompile Include="OfflineFileManager.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="AddDataToFolder.h" />
     <ClInclude Include="BasicTraits.h" />
     <ClInclude Include="ModelSerializer.h" />
     <QtMoc Include="QFileInfoModel.h" />

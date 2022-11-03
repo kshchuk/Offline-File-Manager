@@ -4,6 +4,7 @@
 #include "ui_OfflineFileManager.h"
 #include <QTreeView>
 #include <QThread>
+#include <QList>
 
 #include "QFileInfoModel.h"
 
@@ -20,11 +21,11 @@ public:
     ~OfflineFileManager();
 
 private slots:
-    void treeViewInit();
     void on_treeWidget_clicked(QModelIndex index);
     void action_openInFileExplorer();
     void action_openFile();
     void action_Properties();
+    void action_addDataToVirtualFolder();
     void on_customContextMenu(const QPoint& point);
     void on_updateButton_clicked();
     void on_saveAction_triggered();
@@ -36,6 +37,7 @@ private slots:
     void saveMeta(const QString&, const QModelIndex&);
     void editFileName(const QModelIndex& index);
     void editFileNameA();
+    void addDataToVirtualFolder(QModelIndexList list);
     void errorString(QString);
 
 private:
@@ -45,4 +47,5 @@ private:
     size_t maxDepth = 10;
 
     QString error;
+    void treeViewInit(QTreeView* tree, QFileInfoModel* model);
 };

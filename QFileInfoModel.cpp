@@ -195,6 +195,22 @@ quint64 QFileInfoModel::fileSize(const QModelIndex& index) const
 	return sum;
 }
 
+void QFileInfoModel::insertFileLinkToTheFolder(QModelIndex toInsert, QModelIndex destination)
+{
+	QStandardItem* dest = this->itemFromIndex(destination);
+	dest->appendRow(packInfo(toInsert));
+}
+
+QString QFileInfoModel::pathFromStringList(const QStringList& list)
+{
+	QString spath;
+	foreach(auto file, list) {
+		file.removeIf([](QChar c) {return c == QChar('/') || c == QChar('\\'); });
+		spath += '/' + file;
+	};
+	return spath;
+}
+
 void QFileInfoModel::setIcons(const QModelIndex& index, int depth)
 {
 	if (index.isValid())
@@ -300,11 +316,14 @@ QList<QStandardItem*> QFileInfoModel::packInfo(const QModelIndex& index) const
 {
 	QList<QStandardItem*> row;
 
-	row.append(new QStandardItem(QIcon::fromTheme(
-		this->itemData(index)[(int)ColunmsOrder::ICON_NAME].toString()),
-		this->itemData(index)[(int)ColunmsOrder::NAME].toString()));
-	for (size_t i = 1; i < this->columnCount(index); i++)
-		row.append(new QStandardItem(this->itemData(index)[i].toString()));
+	// row.append(this->itemFromIndex(index.siblingAtColumn(0)));
+
+	for (size_t i = 0; i < this->columnCount(); ++i) {
+		QModelIndex ind = index.siblingAtColumn(i);
+		Q_ASSERT(ind != QModelIndex()); 
+		QStandardItem* item = this->itemFromIndex(ind);
+		row.append(item);
+	}
 
 	return row;
 }

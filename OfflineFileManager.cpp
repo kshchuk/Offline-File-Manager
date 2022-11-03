@@ -17,6 +17,7 @@
 
 #include "PropertiesWindow.h"
 #include "PropertiesLogic.h"
+#include "AddDataToFolder.h"
 
 const QString savingFile = "static.fsh";
 
@@ -42,8 +43,8 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
     connect(ui.fileSystemTree, &QTreeView::clicked, this, &OfflineFileManager::on_treeWidget_clicked);
 
     model->readFile(savingFile);
-
-    treeViewInit();
+    treeViewInit(ui.fileSystemTree, model);
+    on_homeButton_clicked();
 }
 
 OfflineFileManager::~OfflineFileManager()
@@ -212,6 +213,30 @@ void OfflineFileManager::action_Properties()
     delete widget;
 }
 
+void OfflineFileManager::action_addDataToVirtualFolder()
+{
+    AddDataToFolder* dialog = new AddDataToFolder(this, model);
+    connect(dialog, &AddDataToFolder::indexesSent, this, &OfflineFileManager::addDataToVirtualFolder);
+    connect(dialog, &AddDataToFolder::finished, dialog, &AddDataToFolder::close);
+    dialog->exec();
+
+    //QModelIndex index = ui.fileSystemTree->currentIndex();
+    //
+    //QDialog* widget = new QDialog(this);     widget->setWindowTitle("Add Files");
+    //QVBoxLayout* layout = new QVBoxLayout(widget);
+
+    //QLineEdit* lineEdit = new QLineEdit(widget);
+    //QTreeView* tree = new QTreeView(widget); treeViewInit(tree, model);
+    //QPushButton* buttonOk = new QPushButton(widget);
+    //QPushButton* buttonCancel = new QPushButton(widget);
+    //buttonCancel->setText("Cancel");
+    //buttonOk->setText("OK");
+
+    //connect(buttonCancel, &QPushButton::clicked, widget, &QWidget::close);
+    //connect(buttonOk, &QPushButton::clicked, widget, &QWidget::close);
+    //connect(buttonOk, &QPushButton::clicked, this, &OfflineFileManager::);
+}
+
 void OfflineFileManager::on_customContextMenu(const QPoint& point)
 {
     QPoint globalPos = ui.fileSystemTree->mapToGlobal(point);
@@ -221,6 +246,12 @@ void OfflineFileManager::on_customContextMenu(const QPoint& point)
         this, &OfflineFileManager::action_openFile);
     menu.addAction("Open in file explorer",
         this, &OfflineFileManager::action_openInFileExplorer);
+    
+    QModelIndex index = ui.fileSystemTree->currentIndex();
+    if (!index.siblingAtColumn((int)ColunmsOrder::TYPE).data().toString().compare(virtualFolderType))
+        menu.addAction("Add data",
+            this, &OfflineFileManager::action_addDataToVirtualFolder);
+
     menu.addAction("Rename",
         this, &OfflineFileManager::editFileNameA);
     menu.addAction("Properties",
@@ -235,17 +266,17 @@ void OfflineFileManager::on_updateButton_clicked()
     {
     case OfflineFileManager::FILESYSTEM:
     {
-        treeViewInit();
+        treeViewInit(ui.fileSystemTree, model);
 
         this->model->genStaticSystemModel(maxDepth);
-        treeViewInit();
+        treeViewInit(ui.fileSystemTree, model);
         break;
     }
     case OfflineFileManager::EXTERNAL_DRIVES:
     {
         this->model->genExternalDrivesModel(maxDepth);
         // treeViewInit(ui.fileSystemTree, model->readFile("tmp.bin"));
-        treeViewInit();
+        treeViewInit(ui.fileSystemTree, model);
         break;
     }
     default:
@@ -279,7 +310,7 @@ void OfflineFileManager::on_openAction_triggered()
         QMessageBox::critical(this, tr("Offline File Manager"),
             tr(e.what()), QMessageBox::Close);
     }
-    treeViewInit();
+    treeViewInit(ui.fileSystemTree, model);
 }
 
 void OfflineFileManager::on_homeButton_clicked()
@@ -324,9 +355,9 @@ void OfflineFileManager::on_addFolderButton_clicked()
     QModelIndex cur = ui.fileSystemTree->currentIndex();
     QString name = "New folder";
     QModelIndex appended =  model->appendFolder(QFileInfo(name), cur);
-    ui.fileSystemTree->expand(appended);
+    //ui.fileSystemTree->expand(appended);
     ui.fileSystemTree->expand(appended.parent());
-    treeViewInit();
+    //treeViewInit(ui.fileSystemTree, model);
     editFileName(appended);
 }
 
@@ -347,6 +378,16 @@ void OfflineFileManager::editFileNameA()
     editFileName(ui.fileSystemTree->currentIndex());
 }
 
+void OfflineFileManager::addDataToVirtualFolder(QModelIndexList list)
+{
+    QModelIndex cur = ui.fileSystemTree->currentIndex();
+
+    foreach(auto ind, list) {
+        model->insertFileLinkToTheFolder(ind, cur);
+        QString s = ind.data().toString();
+    }
+}
+
 void OfflineFileManager::errorString(QString e)
 {
     this->error = e;
@@ -354,19 +395,19 @@ void OfflineFileManager::errorString(QString e)
         e, QMessageBox::Close);
 }
 
-void OfflineFileManager::treeViewInit()
+void OfflineFileManager::treeViewInit(QTreeView* tree, QFileInfoModel* model1)
 {
-    ui.fileSystemTree->setModel(model);
+    tree->setModel(model1);
 
-    for (size_t i = 4; i < ui.fileSystemTree->model()->columnCount(); i++)
-        ui.fileSystemTree->hideColumn(i); // only 4 columns need to be displayed
+    for (size_t i = 4; i < tree->model()->columnCount(); i++)
+        tree->hideColumn(i); // only 4 columns need to be displayed
 
-    ui.fileSystemTree->setAnimated(false);
-    ui.fileSystemTree->setIndentation(20);
-    ui.fileSystemTree->setSortingEnabled(true);
-    const QSize availableSize = ui.fileSystemTree->screen()->availableGeometry().size();
-    ui.fileSystemTree->setColumnWidth(0, ui.fileSystemTree->width() / 2);
-    QScroller::grabGesture(ui.fileSystemTree, QScroller::TouchGesture);
-    ui.fileSystemTree->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    ui.fileSystemTree->setContextMenuPolicy(Qt::CustomContextMenu);
+    tree->setAnimated(false);
+    tree->setIndentation(20);
+    tree->setSortingEnabled(true);
+    const QSize availableSize = tree->screen()->availableGeometry().size();
+    tree->setColumnWidth(0, tree->width() / 2);
+    QScroller::grabGesture(tree, QScroller::TouchGesture);
+    tree->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    tree->setContextMenuPolicy(Qt::CustomContextMenu);
 }

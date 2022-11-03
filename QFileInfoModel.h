@@ -52,6 +52,9 @@ public:
 	void setName(QString newName, QModelIndex index);
 	QModelIndex byPath(QString path) const;
 	quint64 fileSize(const QModelIndex& index) const;
+	void insertFileLinkToTheFolder(QModelIndex toInsert, QModelIndex destination);
+
+	static QString pathFromStringList(const QStringList& list);
 
 private:
 	QMimeDatabase db;

@@ -49,6 +49,9 @@
     <ClCompile Include="PropertiesWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AddDataToFolder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="system_depend_functions.h">
@@ -71,5 +74,13 @@
     <QtMoc Include="PropertiesWindow.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="AddDataToFolder.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="AddDataToFolder.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
   </ItemGroup>
 </Project>
