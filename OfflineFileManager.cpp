@@ -76,6 +76,11 @@ void OfflineFileManager::action_openInFileExplorer()
 {
     QModelIndex index = ui.fileSystemTree->currentIndex();
 
+    if (model->isLink(index)) {
+        QString path = model->getPathfFromInfo(index);
+        index = model->byPath(path);
+    }
+
     QList<QString> path = model->getPath(index); 
     if (!ui.fileSystemTree->model()->hasChildren(index))
     {
@@ -84,6 +89,7 @@ void OfflineFileManager::action_openInFileExplorer()
     QString spath;
     foreach(auto file, path) spath += '/' + file;
     spath.remove(0, 1);
+
 
     if (path.isEmpty())
         QDesktopServices::openUrl(QUrl::fromLocalFile("/"));
@@ -101,18 +107,21 @@ void OfflineFileManager::action_openFile()
 {
     QModelIndex index = ui.fileSystemTree->currentIndex();
     
+    if (model->isLink(index)) {
+        QString path = model->getPathfFromInfo(index);
+        index = model->byPath(path);
+        QString d = index.data().toString();
+    }
+
     QFileInfo info(index.data().toString());
     if (ui.fileSystemTree->model()->hasChildren(index))
     {
         ui.fileSystemTree->expand(index);
+        ui.fileSystemTree->setCurrentIndex(index);
     }
     else
     {
-        QList<QString> path = model->getPath(index);
-        QString spath;
-        foreach(auto file, path) spath += '/' + file;
-        spath.remove(0, 1);
-
+        QString spath = model->getPathfFromInfo(index);
         QFileInfo info(spath);
         if (info.exists())
             QDesktopServices::openUrl(QUrl::fromLocalFile(spath));

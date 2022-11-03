@@ -43,6 +43,11 @@ QList<QString> QFileInfoModel::getPath(QModelIndex index) const
 	return path;
 }
 
+QString QFileInfoModel::getPathfFromInfo(const QModelIndex& index) const
+{
+	return index.siblingAtColumn((int)ColunmsOrder::FULL_PATH).data().toString();
+}
+
 QAbstractItemModel* QFileInfoModel::readFile(QString fileName)
 {
 	QFile file(fileName);
@@ -80,6 +85,17 @@ void QFileInfoModel::writeFile(QString fileName, size_t maxDepth) const
 	}
 	else
 		throw std::runtime_error("Unable to open file: " + fileName.toStdString());
+}
+
+bool QFileInfoModel::isLink(const QModelIndex& index)
+{
+	return (!index.siblingAtColumn((int)ColunmsOrder::TYPE).data().toString().compare(linkToFileType));
+}
+
+bool QFileInfoModel::isFolder(const QModelIndex& index)
+{
+	QFileInfo info(index.data().toString());
+	return (info.suffix().isEmpty());
 }
 
 QAbstractItemModel* QFileInfoModel::genStaticSystemModel(size_t maxDepth)

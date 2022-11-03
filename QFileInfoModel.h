@@ -43,6 +43,7 @@ public:
 	~QFileInfoModel();
 
 	QList<QString> getPath(QModelIndex index) const;
+	QString getPathfFromInfo(const QModelIndex &index) const;
 
 	QAbstractItemModel* readFile(QString fileName);
 	void writeFile(QString fileName, size_t maxDepth) const;
@@ -57,6 +58,9 @@ public:
 	void insertFileLinkToTheFolder(QModelIndex toInsert, QModelIndex destination);
 
 	static QString pathFromStringList(const QStringList& list);
+	static bool isLink(const QModelIndex& index);
+	static bool isFolder(const QModelIndex& index);
+
 
 private:
 	QMimeDatabase db;
