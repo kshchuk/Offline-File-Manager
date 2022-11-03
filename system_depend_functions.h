@@ -3,12 +3,12 @@
 #include<QList>
 
 
-QList<QString> removableDrives();
+static QList<QString> removableDrives();
 
 #if defined(_WIN32)
 #include <Windows.h>
 
-LPCWSTR drive2[26] = { L"A:\\", L"B:\\", L"C:\\", L"D:\\", L"E:\\", L"F:\\",
+static LPCWSTR drive2[26] = { L"A:\\", L"B:\\", L"C:\\", L"D:\\", L"E:\\", L"F:\\",
 						L"G:\\", L"H:\\",L"I:\\", L"J:\\", L"K:\\", L"L:\\",
 						L"M:\\", L"N:\\",L"O:\\", L"P:\\", L"Q:\\", L"R:\\",
 						L"S:\\", L"T:\\",L"U:\\", L"V:\\", L"W:\\", L"X:\\",
