@@ -27,16 +27,6 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
     ui.setupUi(this);
     
     model = new QFileInfoModel();
-    
-    try {
-        model->readFile(savingFile);
-    }
-    catch (const std::exception &e) {
-        QMessageBox::warning(this, tr("Offline File Manager"),
-            tr(e.what()), QMessageBox::Close);
-    };
-
-    treeViewInit(ui.fileSystemTree, model);
 
     connect(ui.actionClose, &QAction::triggered, this, &OfflineFileManager::close);
     connect(ui.updateButton, &QToolButton::clicked, this, &OfflineFileManager::on_updateButton_clicked);
@@ -50,6 +40,10 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
     connect(ui.fileSystemTree, &QTreeView::activated, this, &OfflineFileManager::on_treeWidget_clicked);
     connect(ui.fileSystemTree, &QTreeView::customContextMenuRequested, this, &OfflineFileManager::on_customContextMenu);
     connect(ui.fileSystemTree, &QTreeView::clicked, this, &OfflineFileManager::on_treeWidget_clicked);
+
+    model->readFile(savingFile);
+
+    treeViewInit();
 }
 
 OfflineFileManager::~OfflineFileManager()
@@ -129,7 +123,7 @@ void OfflineFileManager::action_Properties()
 
     QDialog* widget = new QDialog(this);
     QVBoxLayout* layout = new QVBoxLayout(widget);
-    PropertiesWindow* properties_window = new PropertiesWindow(widget);
+    PropertiesWindow* properties_window = new PropertiesWindow(widget, index);
     widget->setWindowTitle("Properties");
     QPushButton* buttonOk = new QPushButton(widget);
     QPushButton* buttonCancel = new QPushButton(widget);
@@ -241,17 +235,17 @@ void OfflineFileManager::on_updateButton_clicked()
     {
     case OfflineFileManager::FILESYSTEM:
     {
-        treeViewInit(ui.fileSystemTree, new QFileSystemModel);
+        treeViewInit();
 
         this->model->genStaticSystemModel(maxDepth);
-        treeViewInit(ui.fileSystemTree, model);
+        treeViewInit();
         break;
     }
     case OfflineFileManager::EXTERNAL_DRIVES:
     {
         this->model->genExternalDrivesModel(maxDepth);
         // treeViewInit(ui.fileSystemTree, model->readFile("tmp.bin"));
-        treeViewInit(ui.fileSystemTree, model);
+        treeViewInit();
         break;
     }
     default:
@@ -285,7 +279,7 @@ void OfflineFileManager::on_openAction_triggered()
         QMessageBox::critical(this, tr("Offline File Manager"),
             tr(e.what()), QMessageBox::Close);
     }
-    treeViewInit(ui.fileSystemTree, model);
+    treeViewInit();
 }
 
 void OfflineFileManager::on_homeButton_clicked()
@@ -327,19 +321,19 @@ void OfflineFileManager::on_upButton_clicked()
 
 void OfflineFileManager::on_addFolderButton_clicked()
 {
-    QModelIndex cur = model->byPath(ui.addressLine->text());
+    QModelIndex cur = ui.fileSystemTree->currentIndex();
     QString name = "New folder";
     QModelIndex appended =  model->appendFolder(QFileInfo(name), cur);
     ui.fileSystemTree->expand(appended);
     ui.fileSystemTree->expand(appended.parent());
-    editFileNameA();
+    treeViewInit();
+    editFileName(appended);
 }
 
-void OfflineFileManager::saveMeta(const QString& str)
+void OfflineFileManager::saveMeta(const QString& str, const QModelIndex& index)
 {
-    QModelIndex index = ui.fileSystemTree->currentIndex();
-    index = index.siblingAtColumn((int)ColunmsOrder::CUSTOM_METHADATA);
-    QStandardItem* item = model->itemFromIndex(index);
+    QModelIndex newindex = index.siblingAtColumn((int)ColunmsOrder::CUSTOM_METHADATA);
+    QStandardItem* item = model->itemFromIndex(newindex);
     item->setData(str, 0);
 }
 
@@ -353,19 +347,26 @@ void OfflineFileManager::editFileNameA()
     editFileName(ui.fileSystemTree->currentIndex());
 }
 
-void OfflineFileManager::treeViewInit(QTreeView* tree, QAbstractItemModel* model)
+void OfflineFileManager::errorString(QString e)
 {
-    tree->setModel(model);
+    this->error = e;
+    QMessageBox::critical(this, tr("Error"),
+        e, QMessageBox::Close);
+}
 
-    for (size_t i = 4; i < tree->model()->columnCount(); i++)
-        tree->hideColumn(i); // only 4 columns need to be displayed
+void OfflineFileManager::treeViewInit()
+{
+    ui.fileSystemTree->setModel(model);
 
-    tree->setAnimated(false);
-    tree->setIndentation(20);
-    tree->setSortingEnabled(true);
-    const QSize availableSize = tree->screen()->availableGeometry().size();
-    tree->setColumnWidth(0, tree->width() / 2);
-    QScroller::grabGesture(tree, QScroller::TouchGesture);
+    for (size_t i = 4; i < ui.fileSystemTree->model()->columnCount(); i++)
+        ui.fileSystemTree->hideColumn(i); // only 4 columns need to be displayed
+
+    ui.fileSystemTree->setAnimated(false);
+    ui.fileSystemTree->setIndentation(20);
+    ui.fileSystemTree->setSortingEnabled(true);
+    const QSize availableSize = ui.fileSystemTree->screen()->availableGeometry().size();
+    ui.fileSystemTree->setColumnWidth(0, ui.fileSystemTree->width() / 2);
+    QScroller::grabGesture(ui.fileSystemTree, QScroller::TouchGesture);
     ui.fileSystemTree->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui.fileSystemTree->setContextMenuPolicy(Qt::CustomContextMenu);
 }
