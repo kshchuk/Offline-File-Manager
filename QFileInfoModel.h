@@ -23,10 +23,11 @@ enum class ColunmsOrder
 	OWNER,
 	OWNER_ID,
 	CUSTOM_METHADATA,
-	SIZE_BYTES
+	SIZE_BYTES,
+	FULL_PATH
 };
 
-const size_t columnsNumber = 10;
+const size_t columnsNumber = 11;
 
 
 const QString virtualFolderType = "virtual folder";

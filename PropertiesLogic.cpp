@@ -43,6 +43,9 @@ PropertiesLogic::PropertiesLogic(const QModelIndex& index, QFileInfoModel* model
     itemIndex = index.siblingAtColumn(int(ColunmsOrder::ICON_NAME));
     item = model->itemFromIndex(itemIndex);
     iconName = item->data(role).toString();
+    itemIndex = index.siblingAtColumn(int(ColunmsOrder::FULL_PATH));
+    item = model->itemFromIndex(itemIndex);
+    fullPath = item->data(role).toString();
 }
 
 
@@ -90,6 +93,11 @@ QString PropertiesLogic::getLastModified()
 QString PropertiesLogic::getIconName()
 {
     return iconName;
+}
+
+QString PropertiesLogic::getFullPath()
+{
+    return fullPath;
 }
 
 void PropertiesLogic::setCustomMethadata(QString metadata)

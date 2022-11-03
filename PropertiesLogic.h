@@ -21,6 +21,7 @@ private:
     QString last_modified;
     QString customMeta;
     QString iconName;
+    QString fullPath;
 
     QModelIndex index;
     QFileInfoModel* model;
@@ -37,6 +38,7 @@ public:
     QString getCreated();
     QString getLastModified();
     QString getIconName();
+    QString getFullPath();
     void setCustomMethadata(QString methadata);
     QString getCustomMethadata();
 

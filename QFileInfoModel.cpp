@@ -352,7 +352,6 @@ QList<QStandardItem*> QFileInfoModel::packDrive(const QDirIterator& drive) const
 	
 	row.insert(int(ColunmsOrder::NAME), new QStandardItem(this->iconProvider.icon(drive.fileInfo()), drive.path()));
 	row.insert(int(ColunmsOrder::SIZE), new QStandardItem(fileSize(drive.fileInfo())));
-
 	QMimeType mime = db.mimeTypeForFile(drive.path());
 	row.insert(int(ColunmsOrder::TYPE), new QStandardItem(mime.comment()));
 	row.insert(int(ColunmsOrder::DATE_MODIDFIED), new QStandardItem(drive.fileInfo().lastModified().toString()));
@@ -364,6 +363,7 @@ QList<QStandardItem*> QFileInfoModel::packDrive(const QDirIterator& drive) const
 	row.insert(int(ColunmsOrder::OWNER_ID), new QStandardItem(QString::number(drive.fileInfo().ownerId())));
 	row.insert(int(ColunmsOrder::CUSTOM_METHADATA), new QStandardItem(QString()));
 	row.insert(int(ColunmsOrder::SIZE_BYTES), new QStandardItem(QString::number(drive.fileInfo().size())));
+	row.insert(int(ColunmsOrder::FULL_PATH), new QStandardItem(drive.fileInfo().absoluteFilePath()));
 
 	return row;
 }
@@ -389,6 +389,7 @@ QList<QStandardItem*> QFileInfoModel::fromFileInfo(const QFileInfo& info) const
 	row.insert(int(ColunmsOrder::OWNER_ID), new QStandardItem(QString::number(info.ownerId())));
 	row.insert(int(ColunmsOrder::CUSTOM_METHADATA), new QStandardItem(QString()));
 	row.insert(int(ColunmsOrder::SIZE_BYTES), new QStandardItem(QString::number(info.size())));
+	row.insert(int(ColunmsOrder::FULL_PATH), new QStandardItem(info.absoluteFilePath()));
 
 	return row;
 }
