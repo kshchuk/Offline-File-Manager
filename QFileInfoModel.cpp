@@ -28,7 +28,8 @@ QFileInfoModel::QFileInfoModel(QObject *parent)
 }
 
 QFileInfoModel::~QFileInfoModel()
-{}
+{
+}
 
 QList<QString> QFileInfoModel::getPath(QModelIndex index) const
 {
@@ -286,6 +287,43 @@ QModelIndex QFileInfoModel::byPathRecursive(QStringList::const_iterator piece,
 	return parent;
 }
 
+QByteArray QFileInfoModel::hash(const QFileInfo& info)
+{
+	QCryptographicHash crypto(QCryptographicHash::Md5);
+
+	QByteArray qb; qlonglong size = info.size();
+	qb.setNum(size); crypto.addData(qb);
+
+	QString path = info.filePath();
+	QFile file(path);
+
+	const int steps = 10;
+	const int chunkSize = 10000;
+	const qlonglong chunkStep = size / steps;
+
+	crypto.addData(file.read(chunkSize));
+	file.seek(size - chunkSize);
+	crypto.addData(file.read(chunkSize));
+
+	if (chunkSize <= size)
+	{
+		qlonglong cur = chunkSize;
+		file.seek(cur);
+		for (size_t i = 0; i < steps - 2; ++i)
+		{
+			crypto.addData(file.read(chunkSize));
+			if (chunkSize * i < size)
+				file.seek(chunkSize * i);
+			else
+				break;
+		}
+	}
+
+	QByteArray hash = crypto.result();
+	file.close();
+	return hash;
+}
+
 void QFileInfoModel::readHierarchyRecursive(QModelIndex parent, const QString& path, 
 	size_t maxDepth, size_t curDepth)
 {
@@ -416,6 +454,8 @@ QList<QStandardItem*> QFileInfoModel::fromFileInfo(const QFileInfo& info) const
 	row.insert(int(ColunmsOrder::CUSTOM_METHADATA), new QStandardItem(QString()));
 	row.insert(int(ColunmsOrder::SIZE_BYTES), new QStandardItem(QString::number(info.size())));
 	row.insert(int(ColunmsOrder::FULL_PATH), new QStandardItem(info.absoluteFilePath()));
+	if (info.isFile())
+	row.insert(int(ColunmsOrder::MD5), new QStandardItem(QString(hash(info).toHex())));
 
 	return row;
 }

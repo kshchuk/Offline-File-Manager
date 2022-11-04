@@ -22,6 +22,7 @@ private:
     QString customMeta;
     QString iconName;
     QString fullPath;
+    QString md5Hash;
 
     QModelIndex index;
     QFileInfoModel* model;
@@ -41,6 +42,7 @@ public:
     QString getFullPath();
     void setCustomMethadata(QString methadata);
     QString getCustomMethadata();
+    QString getMd5();
 
     QList<QStringList> getAll(); // atributes and value
 

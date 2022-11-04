@@ -164,7 +164,8 @@ void OfflineFileManager::action_Properties()
         OWNER_ID,
         DATE_CREATED,
         DATE_MODIDFIED,
-        CUSTOM_METHADATA
+        MD5,
+        CUSTOM_METHADATA,
     };
 
     QModelIndex index = ui.fileSystemTree->currentIndex();
@@ -230,6 +231,9 @@ void OfflineFileManager::action_Properties()
 
     properties_window->setItem((int)PropertiesOrder::DATE_MODIDFIED, 0, new QTableWidgetItem("Date modified:"));
     properties_window->setItem((int)PropertiesOrder::DATE_MODIDFIED, 1, new QTableWidgetItem(properties->getLastModified()));
+
+    properties_window->setItem((int)PropertiesOrder::MD5, 0, new QTableWidgetItem("MD5 hash:"));
+    properties_window->setItem((int)PropertiesOrder::MD5, 1, new QTableWidgetItem(properties->getMd5()));
 
     properties_window->setItem((int)PropertiesOrder::CUSTOM_METHADATA, 0, new QTableWidgetItem("Custom metadata:"));
     properties_window->setItem((int)PropertiesOrder::CUSTOM_METHADATA, 1, new QTableWidgetItem(properties->getCustomMethadata()));

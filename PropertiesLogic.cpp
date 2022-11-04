@@ -46,6 +46,9 @@ PropertiesLogic::PropertiesLogic(const QModelIndex& index, QFileInfoModel* model
     itemIndex = index.siblingAtColumn(int(ColunmsOrder::FULL_PATH));
     item = model->itemFromIndex(itemIndex);
     fullPath = item->data(role).toString();
+    itemIndex = index.siblingAtColumn(int(ColunmsOrder::MD5));
+    item = model->itemFromIndex(itemIndex);
+    md5Hash = item->data(role).toString();
 }
 
 
@@ -108,6 +111,11 @@ void PropertiesLogic::setCustomMethadata(QString metadata)
 QString PropertiesLogic::getCustomMethadata()
 {
     return customMeta;
+}
+
+QString PropertiesLogic::getMd5()
+{
+    return md5Hash;
 }
 
 void PropertiesLogic::saveMeta()

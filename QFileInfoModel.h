@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QCryptographicHash>
 #include <QStandardItemModel>
 #include <QFileIconProvider>
 #include <QMimeDatabase>
@@ -24,10 +25,11 @@ enum class ColunmsOrder
 	OWNER_ID,
 	CUSTOM_METHADATA,
 	SIZE_BYTES,
-	FULL_PATH
+	FULL_PATH,
+	MD5
 };
 
-const size_t columnsNumber = 11;
+const size_t columnsNumber = 12;
 
 
 static const QString virtualFolderType = "virtual folder";
@@ -61,6 +63,7 @@ public:
 	static QString pathFromStringList(const QStringList& list);
 	static bool isLink(const QModelIndex& index);
 	static bool isFolder(const QModelIndex& index);
+	static QByteArray hash();
 
 
 private:
@@ -70,14 +73,17 @@ private:
 	void readHierarchyRecursive(QModelIndex parent, const QString& path,
 		size_t maxDepth, size_t curDepth = 1);
 
-	QList<QStandardItem*> packDrive(const QDirIterator& drive) const;
 	// List of columns:
-	// Name | Size | Type | Date Modified | Icon Name | Birth Time | Group | Owner | OwnerID | Custom metadata
+	// Name | Size | Type | Date Modified | Icon Name | Birth Time |
+	// Group | Owner | OwnerID | Custom metadata | Size in bytes | Full path | MD5
 	QList<QStandardItem*> fromFileInfo(const QFileInfo& info) const;
 	QList<QStandardItem*> packLink(const QModelIndex& index) const;
+	QList<QStandardItem*> packDrive(const QDirIterator& drive) const;
+
 	void initFileModelHeaders(QFileInfoModel* model) const;
 	QString fileSize(const QFileInfo& info) const;
 	void setIcons(const QModelIndex& index = QModelIndex(), int depth = 0);
 	QModelIndex byPathRecursive(QStringList::const_iterator piece,
 		QStringList::const_iterator end, const QModelIndex& parent) const;
+	static QByteArray hash(const QFileInfo& info);
 };
