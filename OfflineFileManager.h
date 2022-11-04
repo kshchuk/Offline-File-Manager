@@ -38,7 +38,7 @@ private slots:
     void saveMeta(const QString&, const QModelIndex&);
     void editFileName(const QModelIndex& index);
     void editFileNameA();
-    void addDataToVirtualFolder(QModelIndexList list);
+    void addDataToVirtualFolder(QModelIndexList indexes, QStringList paths);
     void removeElement();
     void errorString(QString);
     void setExternalDrivesregime();

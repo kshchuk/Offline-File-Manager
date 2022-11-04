@@ -223,6 +223,13 @@ void QFileInfoModel::insertFileLinkToTheFolder(QModelIndex toInsert, QModelIndex
 	dest->appendRow(packLink(toInsert));
 }
 
+void QFileInfoModel::insertFileToTheFolder(const QString& path, QModelIndex destination)
+{
+	QStandardItem* dest = this->itemFromIndex(destination);
+	QFileInfo info(path);
+	dest->appendRow(fromFileInfo(info));
+}
+
 QString QFileInfoModel::pathFromStringList(const QStringList& list)
 {
 	QString spath;

@@ -59,6 +59,7 @@ public:
 	QModelIndex byPath(QString path) const;
 	quint64 fileSize(const QModelIndex& index) const;
 	void insertFileLinkToTheFolder(QModelIndex toInsert, QModelIndex destination);
+	void insertFileToTheFolder(const QString& path, QModelIndex destination);
 
 	static QString pathFromStringList(const QStringList& list);
 	static bool isLink(const QModelIndex& index);

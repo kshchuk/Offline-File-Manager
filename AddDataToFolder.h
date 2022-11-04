@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QDialog>
+#include <QFileIconProvider>
 #include "QFileInfoModel.h"
 #include "ui_AddDataToFolder.h"
 
@@ -13,21 +14,26 @@ public:
 	~AddDataToFolder();
 
 signals:
-	void indexesSent(QModelIndexList);
+	void infoSent(QModelIndexList, QStringList);
 	void finished();
 
 
 private slots:
 	void on_treeView_clicked(const QModelIndex& index);
-	//void addressText_edited();
-	void sendIndexes();
-	//void enterPressEvent(QKeyEvent* event);
+	void selectFromExplorer();
+	void sendInfo();
+	void clearAll();
+	void removeFromList();
+	void on_customContextMenu(const QPoint& point);
 
 private:
 	Ui::AddDataToFolderClass ui;
 	QFileInfoModel* model;
 
 	QList<QPair<QModelIndex, QString>> selected;
+	QStringList selectedExternal;
+	QFileIconProvider icons;
+
 	void treeViewInit(QTreeView* tree, QAbstractItemModel* model);
-	//void updateAddressText();
+	void updateSelectedFromExplorer();
 };

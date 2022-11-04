@@ -50,12 +50,6 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
     connect(ui.actionExternal_drives, &QAction::triggered, this, &OfflineFileManager::setExternalDrivesregime);
     connect(ui.actionMaximum_depth, &QAction::triggered, this, &OfflineFileManager::setMaxDepth);
 
-    //try {
-    //    model->readFile(savingFile);
-    //} catch(const std::exception& e) {
-    //    QMessageBox::warning(this, tr("Offline File Manager"),
-    //        tr(e.what()), QMessageBox::Close);
-    //}
     treeViewInit(ui.fileSystemTree, model);
     on_homeButton_clicked();
 }
@@ -272,7 +266,7 @@ void OfflineFileManager::action_Properties()
 void OfflineFileManager::action_addDataToVirtualFolder()
 {
     AddDataToFolder* dialog = new AddDataToFolder(this, model);
-    connect(dialog, &AddDataToFolder::indexesSent, this, &OfflineFileManager::addDataToVirtualFolder);
+    connect(dialog, &AddDataToFolder::infoSent, this, &OfflineFileManager::addDataToVirtualFolder);
     connect(dialog, &AddDataToFolder::finished, dialog, &AddDataToFolder::close);
     dialog->exec();
 }
@@ -425,13 +419,20 @@ void OfflineFileManager::on_upButton_clicked()
 
 void OfflineFileManager::on_addFolderButton_clicked()
 {
+
     QModelIndex cur = ui.fileSystemTree->currentIndex();
-    QString name = "New folder";
-    QModelIndex appended =  model->appendFolder(QFileInfo(name), cur);
-    //ui.fileSystemTree->expand(appended);
-    ui.fileSystemTree->expand(appended.parent());
-    //treeViewInit(ui.fileSystemTree, model);
-    editFileName(appended);
+
+    if (model->isFolder(cur) || cur == QModelIndex())
+    {
+        QString name = "New folder";
+        QModelIndex appended = model->appendFolder(QFileInfo(name), cur);
+        ui.fileSystemTree->expand(appended.parent());
+        editFileName(appended);
+    treeViewInit(ui.fileSystemTree, model);
+    }
+    else QMessageBox::warning(this, "Adding error",
+        "Unable to insert a folder into a non-folder",
+        QMessageBox::Close);
 }
 
 void OfflineFileManager::saveMeta(const QString& str, const QModelIndex& index)
@@ -451,14 +452,15 @@ void OfflineFileManager::editFileNameA()
     editFileName(ui.fileSystemTree->currentIndex());
 }
 
-void OfflineFileManager::addDataToVirtualFolder(QModelIndexList list)
+void OfflineFileManager::addDataToVirtualFolder(QModelIndexList indexes, QStringList paths)
 {
     QModelIndex cur = ui.fileSystemTree->currentIndex();
 
-    foreach(auto ind, list) {
+    foreach(auto ind, indexes)
         model->insertFileLinkToTheFolder(ind, cur);
-        QString s = ind.data().toString();
-    }
+
+    foreach(auto path, paths)
+        model->insertFileToTheFolder(path, cur);
 }
 
 void OfflineFileManager::removeElement()
@@ -519,20 +521,6 @@ void OfflineFileManager::setMaxDepth()
     connect(buttonOk, &QPushButton::clicked, dialog, &QWidget::close);
     connect(buttonOk, &QPushButton::clicked, 
         this, &OfflineFileManager::setMaxDepthFromTempValue);
-
-    //properties_window->setFixedHeight(this->height() / 1.6);
-    //properties_window->setFixedWidth(this->width() / 2);
-    //properties_window->setColumnCount(2);
-    //properties_window->setRowCount(columnsNumber);
-    //properties_window->setColumnWidth(0, 2 * properties_window->width() / 6);
-    //properties_window->setColumnWidth(1, 3 * properties_window->width() / 5);
-
-    //for (size_t i = 0; i < properties_window->rowCount(); i++)
-    //    properties_window->setRowHeight(i, properties_window->height() / 70);
-
-    //properties_window->setRowHeight(columnsNumber, properties_window->height() / 8);
-    //properties_window->setAttribute(Qt::WA_DeleteOnClose);
-    //this->setCursor(QCursor(Qt::ArrowCursor));
 
     layout->addWidget(label, 0);
     layout->addWidget(box);
