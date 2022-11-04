@@ -40,20 +40,13 @@
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>0</x>
+      <x>7</x>
       <y>10</y>
-      <width>751</width>
+      <width>741</width>
       <height>27</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="Line" name="line">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
      <item>
       <widget class="QToolButton" name="updateButton">
        <property name="styleSheet">
@@ -106,6 +99,17 @@ image: url(:/OfflineFileManager/res/icons/upload.png);</string>
      <item>
       <widget class="QLineEdit" name="addressLine"/>
      </item>
+     <item>
+      <widget class="QToolButton" name="searchButton">
+       <property name="styleSheet">
+        <string notr="true">background: rgb(204, 204, 204);
+image: url(:/OfflineFileManager/res/icons/172546_search_icon.png);</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
   </widget>
@@ -127,7 +131,22 @@ image: url(:/OfflineFileManager/res/icons/upload.png);</string>
     <addaction name="separator"/>
     <addaction name="actionClose"/>
    </widget>
+   <widget class="QMenu" name="menuConfiguration">
+    <property name="title">
+     <string>Configuration</string>
+    </property>
+    <widget class="QMenu" name="menuRegime">
+     <property name="title">
+      <string>Regime</string>
+     </property>
+     <addaction name="actionExternal_drives"/>
+     <addaction name="actionAll_drives"/>
+    </widget>
+    <addaction name="menuRegime"/>
+    <addaction name="actionMaximum_depth"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuConfiguration"/>
   </widget>
   <action name="actionClose">
    <property name="text">
@@ -157,6 +176,21 @@ image: url(:/OfflineFileManager/res/icons/upload.png);</string>
   <action name="actionOpenFile">
    <property name="text">
     <string>Open</string>
+   </property>
+  </action>
+  <action name="actionExternal_drives">
+   <property name="text">
+    <string>External drives</string>
+   </property>
+  </action>
+  <action name="actionAll_drives">
+   <property name="text">
+    <string>All drives</string>
+   </property>
+  </action>
+  <action name="actionMaximum_depth">
+   <property name="text">
+    <string>Maximum depth</string>
    </property>
   </action>
  </widget>

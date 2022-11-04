@@ -14,6 +14,7 @@
 #include <QThread>
 #include <QUrl>
 #include <QMenu>
+#include <QSpinBox>
 
 #include "PropertiesWindow.h"
 #include "PropertiesLogic.h"
@@ -45,6 +46,9 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
     connect(ui.fileSystemTree, &QTreeView::activated, this, &OfflineFileManager::on_treeWidget_clicked);
     connect(ui.fileSystemTree, &QTreeView::customContextMenuRequested, this, &OfflineFileManager::on_customContextMenu);
     connect(ui.fileSystemTree, &QTreeView::clicked, this, &OfflineFileManager::on_treeWidget_clicked);
+    connect(ui.actionAll_drives, &QAction::triggered, this, &OfflineFileManager::setAllDrivesregime);
+    connect(ui.actionExternal_drives, &QAction::triggered, this, &OfflineFileManager::setExternalDrivesregime);
+    connect(ui.actionMaximum_depth, &QAction::triggered, this, &OfflineFileManager::setMaxDepth);
 
     //try {
     //    model->readFile(savingFile);
@@ -481,6 +485,69 @@ void OfflineFileManager::errorString(QString e)
     this->error = e;
     QMessageBox::critical(this, tr("Error"),
         e, QMessageBox::Close);
+}
+
+void OfflineFileManager::setExternalDrivesregime()
+{
+    regime = Regime::EXTERNAL_DRIVES;
+}
+
+void OfflineFileManager::setAllDrivesregime()
+{
+    regime = Regime::FILESYSTEM;
+}
+
+void OfflineFileManager::setMaxDepth()
+{
+    QDialog* dialog = new QDialog(this);
+    QVBoxLayout* layout = new QVBoxLayout(dialog);
+    QLabel* label = new QLabel(dialog);
+    label->setText("Maximum depth: ");
+    QSpinBox* box = new QSpinBox(dialog);
+    dialog->setWindowTitle("Set maximum depth");
+    QPushButton* buttonOk = new QPushButton(dialog);
+    QPushButton* buttonCancel = new QPushButton(dialog);
+    buttonCancel->setText("Cancel");
+    buttonOk->setText("OK");
+
+    connect(buttonCancel, &QPushButton::clicked, dialog, &QWidget::close);
+    connect(box, &QSpinBox::valueChanged, this, &OfflineFileManager::setTempValue);
+    connect(buttonOk, &QPushButton::clicked, dialog, &QWidget::close);
+    connect(buttonOk, &QPushButton::clicked, 
+        this, &OfflineFileManager::setMaxDepthFromTempValue);
+
+    //properties_window->setFixedHeight(this->height() / 1.6);
+    //properties_window->setFixedWidth(this->width() / 2);
+    //properties_window->setColumnCount(2);
+    //properties_window->setRowCount(columnsNumber);
+    //properties_window->setColumnWidth(0, 2 * properties_window->width() / 6);
+    //properties_window->setColumnWidth(1, 3 * properties_window->width() / 5);
+
+    //for (size_t i = 0; i < properties_window->rowCount(); i++)
+    //    properties_window->setRowHeight(i, properties_window->height() / 70);
+
+    //properties_window->setRowHeight(columnsNumber, properties_window->height() / 8);
+    //properties_window->setAttribute(Qt::WA_DeleteOnClose);
+    //this->setCursor(QCursor(Qt::ArrowCursor));
+
+    layout->addWidget(label, 0);
+    layout->addWidget(box);
+    layout->addWidget(buttonCancel);
+    layout->addWidget(buttonOk);
+    dialog->setLayout(layout);
+    dialog->exec();
+
+    delete dialog;
+}
+
+void OfflineFileManager::setTempValue(int i)
+{
+    tempValue = i;
+}
+
+void OfflineFileManager::setMaxDepthFromTempValue()
+{
+    maxDepth = tempValue;
 }
 
 void OfflineFileManager::treeViewInit(QTreeView* tree, QFileInfoModel* model1)

@@ -41,6 +41,12 @@ private slots:
     void addDataToVirtualFolder(QModelIndexList list);
     void removeElement();
     void errorString(QString);
+    void setExternalDrivesregime();
+    void setAllDrivesregime();
+    void setMaxDepth();
+    void setTempValue(int i);
+    void setMaxDepthFromTempValue();
+
 
 private:
     Ui::OfflineFileManagerClass ui;
@@ -48,6 +54,8 @@ private:
     Regime regime = EXTERNAL_DRIVES;
     size_t maxDepth = 10;
     QMessageBox saveMessage;
+
+    int tempValue;
 
     QString error;
     void treeViewInit(QTreeView* tree, QFileInfoModel* model);
