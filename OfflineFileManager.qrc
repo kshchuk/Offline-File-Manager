@@ -7,5 +7,6 @@
         <file>res/css/VisualScript.qss</file>
         <file>res/css/Webmas.qss</file>
         <file>res/icons/add-folder.png</file>
+        <file>res/icons/172546_search_icon.png</file>
     </qresource>
 </RCC>

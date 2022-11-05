@@ -46,6 +46,8 @@ public:
 
 	QList<QString> getPath(QModelIndex index) const;
 	QString getPathfFromInfo(const QModelIndex &index) const;
+	QModelIndex byPath(QString path) const;
+	static QString pathFromStringList(const QStringList& list);
 
 	QAbstractItemModel* readFile(QString fileName);
 	void writeFile(QString fileName, size_t maxDepth) const;
@@ -56,12 +58,10 @@ public:
 
 	QModelIndex appendFolder(const QFileInfo& info, QModelIndex parent);
 	void setName(QString newName, QModelIndex index);
-	QModelIndex byPath(QString path) const;
 	quint64 fileSize(const QModelIndex& index) const;
 	void insertFileLinkToTheFolder(QModelIndex toInsert, QModelIndex destination);
 	void insertFileToTheFolder(const QString& path, QModelIndex destination);
 
-	static QString pathFromStringList(const QStringList& list);
 	static bool isLink(const QModelIndex& index);
 	static bool isFolder(const QModelIndex& index);
 	static QByteArray hash();
