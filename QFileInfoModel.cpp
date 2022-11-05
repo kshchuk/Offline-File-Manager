@@ -435,6 +435,7 @@ QList<QStandardItem*> QFileInfoModel::packDrive(const QDirIterator& drive) const
 	row.insert(int(ColunmsOrder::CUSTOM_METHADATA), new QStandardItem(QString()));
 	row.insert(int(ColunmsOrder::SIZE_BYTES), new QStandardItem(QString::number(drive.fileInfo().size())));
 	row.insert(int(ColunmsOrder::FULL_PATH), new QStandardItem(drive.fileInfo().absoluteFilePath()));
+	row.insert(int(ColunmsOrder::MD5), new QStandardItem(QString("")));
 
 	return row;
 }

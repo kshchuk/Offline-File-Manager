@@ -149,29 +149,14 @@ void OfflineFileManager::action_openFile()
 
 void OfflineFileManager::action_Properties()
 {
-    enum PropertiesOrder
-    {
-        NAME, 
-        FULL_PATH, 
-        TYPE,
-        SIZE,
-        ICON_NAME,
-        GROUP,
-        OWNER,
-        OWNER_ID,
-        DATE_CREATED,
-        DATE_MODIDFIED,
-        MD5,
-        CUSTOM_METHADATA,
-    };
-
     QModelIndex index = ui.fileSystemTree->currentIndex();
-    PropertiesLogic* properties = new PropertiesLogic(index, model);
 
     QDialog* widget = new QDialog(this);
     QVBoxLayout* layout = new QVBoxLayout(widget);
-    PropertiesWindow* properties_window = new PropertiesWindow(widget, index);
     widget->setWindowTitle("Properties");
+    widget->setFixedHeight(550);
+    widget->setFixedWidth(400);
+    PropertiesWindow* properties_window = new PropertiesWindow(widget, index, model);
     QPushButton* buttonOk = new QPushButton(widget);
     QPushButton* buttonCancel = new QPushButton(widget);
     QPushButton* buttonSave = new QPushButton(widget);
@@ -184,75 +169,6 @@ void OfflineFileManager::action_Properties()
     connect(buttonOk, &QPushButton::clicked, properties_window, &PropertiesWindow::saveTextSlot);
     connect(buttonSave, &QPushButton::clicked, properties_window, &PropertiesWindow::saveTextSlot);
     connect(properties_window, &PropertiesWindow::saveTextSignal, this, &OfflineFileManager::saveMeta);
-
-    properties_window->setFixedHeight(this->height() / 1.6);
-    properties_window->setFixedWidth(this->width() / 2);
-    properties_window->setColumnCount(2);
-    properties_window->setRowCount(columnsNumber);
-    properties_window->setColumnWidth(0, 2 * properties_window->width() / 6);
-    properties_window->setColumnWidth(1, 3 * properties_window->width() / 5);
-
-    for (size_t i = 0; i < properties_window->rowCount(); i++)
-        properties_window->setRowHeight(i, properties_window->height() / 70);
-
-    properties_window->setRowHeight(columnsNumber, properties_window->height() / 8);
-    properties_window->setAttribute(Qt::WA_DeleteOnClose);
-    this->setCursor(QCursor(Qt::ArrowCursor));
-
-    properties_window->setItem((int)PropertiesOrder::NAME, 0, new QTableWidgetItem("Name:"));
-    properties_window->setItem((int)PropertiesOrder::NAME, 1, new QTableWidgetItem(properties->getName()));
-
-    properties_window->setItem((int)PropertiesOrder::FULL_PATH, 0, new QTableWidgetItem("Full path:"));
-    properties_window->setItem((int)PropertiesOrder::FULL_PATH, 1, new QTableWidgetItem(properties->getFullPath()));
-
-    properties_window->setItem((int)PropertiesOrder::TYPE, 0, new QTableWidgetItem("Type:"));
-    properties_window->setItem((int)PropertiesOrder::TYPE, 1, new QTableWidgetItem(properties->getType()));
-
-    properties_window->setItem((int)PropertiesOrder::SIZE, 0, new QTableWidgetItem("Size:"));
-    properties_window->setItem((int)PropertiesOrder::SIZE, 1, new QTableWidgetItem(properties->getSize()));
-
-    properties_window->setItem((int)PropertiesOrder::ICON_NAME, 0, new QTableWidgetItem("Icon name:"));
-    properties_window->setItem((int)PropertiesOrder::ICON_NAME, 1, new QTableWidgetItem(properties->getIconName()));
-
-    properties_window->setItem((int)PropertiesOrder::GROUP, 0, new QTableWidgetItem("Group:"));
-    properties_window->setItem((int)PropertiesOrder::GROUP, 1, new QTableWidgetItem(properties->getGroup()));
-
-    properties_window->setItem((int)PropertiesOrder::OWNER, 0, new QTableWidgetItem("Owner:"));
-    properties_window->setItem((int)PropertiesOrder::OWNER, 1, new QTableWidgetItem(properties->getOwner()));
-
-    properties_window->setItem((int)PropertiesOrder::OWNER_ID, 0, new QTableWidgetItem("Owner ID:"));
-    properties_window->setItem((int)PropertiesOrder::OWNER_ID, 1, new QTableWidgetItem(properties->getOwnerid()));
-
-    properties_window->setItem((int)PropertiesOrder::DATE_CREATED, 0, new QTableWidgetItem("Date created:"));
-    properties_window->setItem((int)PropertiesOrder::DATE_CREATED, 1, new QTableWidgetItem(properties->getCreated()));
-
-    properties_window->setItem((int)PropertiesOrder::DATE_MODIDFIED, 0, new QTableWidgetItem("Date modified:"));
-    properties_window->setItem((int)PropertiesOrder::DATE_MODIDFIED, 1, new QTableWidgetItem(properties->getLastModified()));
-
-    properties_window->setItem((int)PropertiesOrder::MD5, 0, new QTableWidgetItem("MD5 hash:"));
-    properties_window->setItem((int)PropertiesOrder::MD5, 1, new QTableWidgetItem(properties->getMd5()));
-
-    properties_window->setItem((int)PropertiesOrder::CUSTOM_METHADATA, 0, new QTableWidgetItem("Custom metadata:"));
-    properties_window->setItem((int)PropertiesOrder::CUSTOM_METHADATA, 1, new QTableWidgetItem(properties->getCustomMethadata()));
-
-    properties_window->setHorizontalHeaderItem(0, new QTableWidgetItem("Property"));
-    properties_window->setHorizontalHeaderItem(1, new QTableWidgetItem("Value"));
-    properties_window->verticalHeader()->hide();
-
-
-    QTableWidgetItem* customItem = properties_window->item(properties_window->rowCount() - 1, 
-                                                            properties_window->columnCount() - 1);
-    Qt::ItemFlags writeFlag = customItem->flags();
-
-    // Make readonly
-    for (size_t i = 0; i < properties_window->rowCount(); ++i)
-        for (size_t j = 0; j < properties_window->columnCount(); ++j) {
-            QTableWidgetItem* item = properties_window->item(i, j);
-            item->setFlags(item->flags() ^ Qt::ItemIsEditable);
-        }
-
-    // Set custom meta editable
-    customItem->setFlags(writeFlag);
 
     layout->addWidget(properties_window, 0);
     layout->addWidget(buttonCancel);
