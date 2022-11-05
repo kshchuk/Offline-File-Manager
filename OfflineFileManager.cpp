@@ -256,11 +256,8 @@ void OfflineFileManager::action_Properties()
     layout->addWidget(buttonSave);
     layout->addWidget(buttonOk);
     widget->setLayout(layout);
-    widget->exec();
+    widget->show();
 
-    delete properties_window;
-    delete properties;
-    delete widget;
 }
 
 void OfflineFileManager::action_addDataToVirtualFolder()
