@@ -33,8 +33,8 @@ PropertiesWindow::PropertiesWindow(QWidget* parent, QModelIndex index, QFileInfo
     this->setItem((int)PropertiesOrder::SIZE, 0, new QTableWidgetItem("Size:"));
     this->setItem((int)PropertiesOrder::SIZE, 1, new QTableWidgetItem(properties->getSize()));
 
-    this->setItem((int)PropertiesOrder::ICON_NAME, 0, new QTableWidgetItem("Icon name:"));
-    this->setItem((int)PropertiesOrder::ICON_NAME, 1, new QTableWidgetItem(properties->getIconName()));
+    this->setItem((int)PropertiesOrder::ICON_NAME, 0, new QTableWidgetItem("Identical count:"));
+    this->setItem((int)PropertiesOrder::ICON_NAME, 1, new QTableWidgetItem(properties->getIndeticalCopiesNumber()));
 
     this->setItem((int)PropertiesOrder::GROUP, 0, new QTableWidgetItem("Group:"));
     this->setItem((int)PropertiesOrder::GROUP, 1, new QTableWidgetItem(properties->getGroup()));

@@ -40,9 +40,6 @@ PropertiesLogic::PropertiesLogic(const QModelIndex& index, QFileInfoModel* model
     itemIndex = index.siblingAtColumn(int(ColunmsOrder::CUSTOM_METHADATA));
     item = model->itemFromIndex(itemIndex);
     customMeta = item->data(role).toString();
-    itemIndex = index.siblingAtColumn(int(ColunmsOrder::ICON_NAME));
-    item = model->itemFromIndex(itemIndex);
-    iconName = item->data(role).toString();
     itemIndex = index.siblingAtColumn(int(ColunmsOrder::FULL_PATH));
     item = model->itemFromIndex(itemIndex);
     fullPath = item->data(role).toString();
@@ -52,53 +49,48 @@ PropertiesLogic::PropertiesLogic(const QModelIndex& index, QFileInfoModel* model
 }
 
 
-QString PropertiesLogic::getName()
+QString PropertiesLogic::getName() const
 {
     return name;
 }
 
 
-QString PropertiesLogic::getType()
+QString PropertiesLogic::getType() const
 {
     return type;
 }
 
-QString PropertiesLogic::getSize()
+QString PropertiesLogic::getSize() const
 {
     return size;
 }
 
-QString PropertiesLogic::getGroup()
+QString PropertiesLogic::getGroup() const
 {
     return group;
 }
 
-QString PropertiesLogic::getOwner()
+QString PropertiesLogic::getOwner() const
 {
     return owner;
 }
 
-QString PropertiesLogic::getOwnerid()
+QString PropertiesLogic::getOwnerid() const
 {
     return ownerId;
 }
 
-QString PropertiesLogic::getCreated()
+QString PropertiesLogic::getCreated() const
 {
     return created;
 }
 
-QString PropertiesLogic::getLastModified()
+QString PropertiesLogic::getLastModified() const
 {
     return last_modified;
 }
 
-QString PropertiesLogic::getIconName()
-{
-    return iconName;
-}
-
-QString PropertiesLogic::getFullPath()
+QString PropertiesLogic::getFullPath() const
 {
     return fullPath;
 }
@@ -108,12 +100,12 @@ void PropertiesLogic::setCustomMethadata(QString metadata)
     customMeta = metadata;
 }
 
-QString PropertiesLogic::getCustomMethadata()
+QString PropertiesLogic::getCustomMethadata() const
 {
     return customMeta;
 }
 
-QString PropertiesLogic::getMd5()
+QString PropertiesLogic::getMd5() const
 {
     return md5Hash;
 }
@@ -124,6 +116,22 @@ void PropertiesLogic::saveMeta()
     QStandardItem* item = model->itemFromIndex(itemIndex);
     item->setData(customMeta);
 }
+
+QString PropertiesLogic::getIndeticalCopiesNumber() const
+{
+    Searcher* searcher = new Searcher(model);
+    QVariant* criterias = new QVariant[searcher->criteriasCount];
+    criterias[searcher->HASH] = md5Hash;
+    connect(searcher, &Searcher::found, this, &PropertiesLogic::identicalFound);
+    searcher->search(criterias, "");
+    return QString::number(identicalCopiesNumber);
+}
+
+void PropertiesLogic::identicalFound()
+{
+    identicalCopiesNumber++;
+}
+
 
 QList<QStringList> PropertiesLogic::getAll()
 {

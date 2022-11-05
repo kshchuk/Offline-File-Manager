@@ -42,9 +42,6 @@
     <ClInclude Include="ModelSerializer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PropertiesLogic.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="QFileInfoModel.h">
@@ -60,6 +57,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Searcher.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="PropertiesLogic.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

@@ -6,10 +6,13 @@
 #include <QModelIndex>
 
 #include "QFileInfoModel.h"
+#include "Searcher.h"
 
 
-class PropertiesLogic
+class PropertiesLogic : public QObject
 {
+    Q_OBJECT
+
 private:
     QString name;
     QString type;
@@ -20,29 +23,32 @@ private:
     QString created;
     QString last_modified;
     QString customMeta;
-    QString iconName;
+    long identicalCopiesNumber = -1;
     QString fullPath;
     QString md5Hash;
 
     QModelIndex index;
     QFileInfoModel* model;
 
+private slots:
+    void identicalFound();
+
 public:
     PropertiesLogic(const QModelIndex& index, QFileInfoModel* model);
 
-    QString getName();
-    QString getType();
-    QString getSize();
-    QString getGroup();
-    QString getOwner();
-    QString getOwnerid();
-    QString getCreated();
-    QString getLastModified();
-    QString getIconName();
-    QString getFullPath();
+    QString getName() const;
+    QString getType() const;
+    QString getSize() const;
+    QString getGroup() const;
+    QString getOwner() const;
+    QString getOwnerid() const;
+    QString getCreated() const;
+    QString getLastModified() const;
+    QString getFullPath() const;
     void setCustomMethadata(QString methadata);
-    QString getCustomMethadata();
-    QString getMd5();
+    QString getCustomMethadata() const;
+    QString getMd5() const;
+    QString getIndeticalCopiesNumber() const;
 
     QList<QStringList> getAll(); // atributes and value
 

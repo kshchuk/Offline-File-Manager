@@ -94,7 +94,7 @@
     <ClInclude Include="BasicTraits.h" />
     <ClInclude Include="ModelSerializer.h" />
     <QtMoc Include="QFileInfoModel.h" />
-    <ClInclude Include="PropertiesLogic.h" />
+    <QtMoc Include="PropertiesLogic.h" />
     <QtMoc Include="PropertiesWindow.h" />
     <QtMoc Include="SearchWindow.h" />
     <QtMoc Include="Searcher.h" />
