@@ -46,6 +46,8 @@ private slots:
     void setMaxDepth();
     void setTempValue(int i);
     void setMaxDepthFromTempValue();
+    void highlightElem(QModelIndex index);
+    void search();
 
 
 private:

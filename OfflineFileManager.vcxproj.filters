@@ -45,12 +45,6 @@
     <ClInclude Include="PropertiesLogic.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Searcher.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SearchCriteria.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="QFileInfoModel.h">
@@ -62,18 +56,15 @@
     <QtMoc Include="AddDataToFolder.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="CloudServicesWindow.h">
+    <QtMoc Include="SearchWindow.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="SearchWindow.h">
+    <QtMoc Include="Searcher.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="AddDataToFolder.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
-    <QtUic Include="CloudServicesWindow.ui">
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="SearchWindow.ui">
@@ -82,9 +73,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AddDataToFolder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CloudServicesWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="OfflineFileManager.cpp">

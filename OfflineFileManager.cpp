@@ -19,6 +19,7 @@
 #include "PropertiesWindow.h"
 #include "PropertiesLogic.h"
 #include "AddDataToFolder.h"
+#include "SearchWindow.h"
 
 
 
@@ -49,6 +50,8 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
     connect(ui.actionAll_drives, &QAction::triggered, this, &OfflineFileManager::setAllDrivesregime);
     connect(ui.actionExternal_drives, &QAction::triggered, this, &OfflineFileManager::setExternalDrivesregime);
     connect(ui.actionMaximum_depth, &QAction::triggered, this, &OfflineFileManager::setMaxDepth);
+    connect(ui.searchButton, &QToolButton::clicked, this, &OfflineFileManager::search);
+    
 
     treeViewInit(ui.fileSystemTree, model);
     on_homeButton_clicked();
@@ -453,10 +456,10 @@ void OfflineFileManager::addDataToVirtualFolder(QModelIndexList indexes, QString
 {
     QModelIndex cur = ui.fileSystemTree->currentIndex();
 
-    foreach(auto ind, indexes)
+    foreach(auto &ind, indexes)
         model->insertFileLinkToTheFolder(ind, cur);
 
-    foreach(auto path, paths)
+    foreach(auto &path, paths)
         model->insertFileToTheFolder(path, cur);
 }
 
@@ -467,7 +470,7 @@ void OfflineFileManager::removeElement()
     mes.setText("Delete file");
     mes.setInformativeText("Are you sure you want to delete this record?");
     mes.setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
-    mes.setDefaultButton(QMessageBox::Yes);
+    mes.setDefaultButton(QMessageBox::Cancel);
 
     int ret = mes.exec();
     switch (ret) {
@@ -537,6 +540,20 @@ void OfflineFileManager::setTempValue(int i)
 void OfflineFileManager::setMaxDepthFromTempValue()
 {
     maxDepth = tempValue;
+}
+
+void OfflineFileManager::highlightElem(QModelIndex index)
+{
+    ui.fileSystemTree->setCurrentIndex(index);
+    ui.fileSystemTree->expand(index);
+}
+
+void OfflineFileManager::search()
+{
+    QModelIndex cur = ui.fileSystemTree->currentIndex();
+    SearchWindow* window = new SearchWindow(model, model->pathFromStringList(model->getPath(cur)), this);
+    connect(window, &SearchWindow::infoSent, this, &OfflineFileManager::highlightElem);
+    window->show();
 }
 
 void OfflineFileManager::treeViewInit(QTreeView* tree, QFileInfoModel* model1)

@@ -75,6 +75,12 @@
       <property name="text">
        <string/>
       </property>
+      <property name="checked">
+       <bool>false</bool>
+      </property>
+      <property name="tristate">
+       <bool>false</bool>
+      </property>
      </widget>
     </item>
     <item row="2" column="4">
@@ -91,6 +97,9 @@
      <widget class="QCheckBox" name="timeCreatedMaxCheckBox">
       <property name="text">
        <string/>
+      </property>
+      <property name="checked">
+       <bool>false</bool>
       </property>
      </widget>
     </item>
@@ -115,6 +124,9 @@
      <widget class="QCheckBox" name="timeEditedMinCheckBox">
       <property name="text">
        <string/>
+      </property>
+      <property name="checked">
+       <bool>false</bool>
       </property>
      </widget>
     </item>

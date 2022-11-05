@@ -85,7 +85,6 @@
   <ItemGroup>
     <QtRcc Include="OfflineFileManager.qrc" />
     <QtUic Include="AddDataToFolder.ui" />
-    <QtUic Include="CloudServicesWindow.ui" />
     <QtUic Include="OfflineFileManager.ui" />
     <QtMoc Include="OfflineFileManager.h" />
     <QtUic Include="SearchWindow.ui" />
@@ -93,19 +92,16 @@
   <ItemGroup>
     <QtMoc Include="AddDataToFolder.h" />
     <ClInclude Include="BasicTraits.h" />
-    <QtMoc Include="CloudServicesWindow.h" />
     <ClInclude Include="ModelSerializer.h" />
     <QtMoc Include="QFileInfoModel.h" />
     <ClInclude Include="PropertiesLogic.h" />
     <QtMoc Include="PropertiesWindow.h" />
     <QtMoc Include="SearchWindow.h" />
-    <ClInclude Include="SearchCriteria.h" />
-    <ClInclude Include="Searcher.h" />
+    <QtMoc Include="Searcher.h" />
     <ClInclude Include="system_depend_functions.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AddDataToFolder.cpp" />
-    <ClCompile Include="CloudServicesWindow.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="OfflineFileManager.cpp" />
     <ClCompile Include="PropertiesLogic.cpp" />

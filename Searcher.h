@@ -12,12 +12,13 @@
 //using CustomMeta = QString;
 
 
-class Searcher : QObject
+class Searcher : public QObject
 {
 	Q_OBJECT
 
-signals:
-	void found(QModelIndex);
+
+public:
+	Searcher(QFileInfoModel* model) : model(model) {};
 
 	enum CriteriaOrder
 	{
@@ -31,8 +32,14 @@ signals:
 		EDIT_TIME_MAX
 	};
 
-public:
+	const size_t criteriasCount = 8;
+
 	QModelIndexList search(QVariant criterias[], QString path);
+
+
+signals:
+	void found(QModelIndex);
+	void finished(QModelIndexList);
 
 
 private:
