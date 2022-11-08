@@ -11,17 +11,18 @@ AddDataToFolder::AddDataToFolder(QWidget *parent, QFileInfoModel* model)
 {
 	ui.setupUi(this);
     treeViewInit(ui.systemTree, model);
-
+   
     ui.systemTree->setExpandsOnDoubleClick(true);
-    connect(ui.systemTree, &QTreeView::clicked, this, &AddDataToFolder::on_treeView_clicked);
     connect(ui.cancelButton, &QPushButton::clicked, this, &AddDataToFolder::finished);
     connect(ui.okButton, &QPushButton::clicked, this, &AddDataToFolder::sendInfo);
     connect(ui.okButton, &QPushButton::clicked, this, &AddDataToFolder::finished);
     connect(ui.clearButton, &QPushButton::clicked, this, &AddDataToFolder::clearAll);
     connect(ui.fromExplorerButton, &QPushButton::clicked, this, &AddDataToFolder::selectFromExplorer);
     connect(ui.fileList, &QListWidget::customContextMenuRequested, this, &AddDataToFolder::on_customContextMenu);
+    connect(ui.systemTree, &QTreeView::customContextMenuRequested, this, &AddDataToFolder::on_customContextMenuForTree);
 
     ui.fileList->setContextMenuPolicy(Qt::CustomContextMenu);
+    ui.systemTree->setContextMenuPolicy(Qt::CustomContextMenu);
 }
 
 AddDataToFolder::~AddDataToFolder()
@@ -50,18 +51,42 @@ void AddDataToFolder::clearAll()
     selected.clear();
     selectedExternal.clear();
     ui.systemTree->clearSelection();
+    ui.fileList->clear();
 }
 
 void AddDataToFolder::removeFromList()
 {
     QModelIndex i = ui.fileList->currentIndex();
 
-    for (size_t j = 0; j < selectedExternal.size();j++)
-        if (!i.data().toString().compare(selectedExternal[j], Qt::CaseInsensitive)) {
+    QString d1 = i.data().toString();
+    for (size_t j = 0; j < selectedExternal.size(); j++) {
+        QString d2 = selectedExternal[j];
+        QStringList list = d2.split("/"); d2 = list.last();
+        if (!d1.compare(d2, Qt::CaseInsensitive)) {
             selectedExternal.remove(j);
             break;
         }
+    }
+
+    for (size_t j = 0; j < selected.size(); j++)
+    {
+        QString d2 = selected[j].second;
+        QStringList list = d2.split("/"); d2 = list.last();
+        if (!d1.compare(d2, Qt::CaseInsensitive)) {
+            selected.remove(j);
+            break;
+        }
+    }
     delete ui.fileList->itemFromIndex(i);
+}
+
+void AddDataToFolder::addToList()
+{
+    QModelIndex index = ui.systemTree->currentIndex();
+    QString path = model->pathFromStringList(model->getPath(index));
+    selected.append({ index, path });
+
+    updateSelectedFromExplorer();
 }
 
 void AddDataToFolder::on_customContextMenu(const QPoint& point)
@@ -73,22 +98,13 @@ void AddDataToFolder::on_customContextMenu(const QPoint& point)
     menu.exec(globalPos);
 }
 
-void AddDataToFolder::on_treeView_clicked(const QModelIndex& index)
+void AddDataToFolder::on_customContextMenuForTree(const QPoint& point)
 {
-    size_t i = 0;
-    foreach (auto elem, selected)
-    {
-        if (elem.first == index)
-        {
-            selected.removeAt(i);
-           // updateAddressText();
-            return;
-        }
-        i++;
-    }
-    QString path = model->pathFromStringList(model->getPath(index));
-    selected.append({ index, path});
-   // updateAddressText();
+    QPoint globalPos = ui.fileList->mapToGlobal(point);
+    QMenu menu(this);
+    menu.addAction("Select",
+        this, &AddDataToFolder::addToList);
+    menu.exec(globalPos);
 }
 
 void AddDataToFolder::treeViewInit(QTreeView* tree, QAbstractItemModel* model1)
@@ -98,7 +114,6 @@ void AddDataToFolder::treeViewInit(QTreeView* tree, QAbstractItemModel* model1)
     for (size_t i = 2; i < tree->model()->columnCount(); i++)
         tree->hideColumn(i); // only 4 columns need to be displayed
 
-    tree->setSelectionMode(QAbstractItemView::MultiSelection);
     tree->setAnimated(false);
     tree->setIndentation(20);
     tree->setSortingEnabled(true);
@@ -116,6 +131,16 @@ void AddDataToFolder::updateSelectedFromExplorer()
     foreach(auto elem, selectedExternal) {
         QFileInfo info(elem);
         QListWidgetItem* item = new QListWidgetItem(icons.icon(info), info.fileName());
+        ui.fileList->addItem(item);
+    }
+
+    foreach(auto elem, selected) {
+        QFileInfo info(elem.first.siblingAtColumn((int)ColunmsOrder::NAME).data().toString());
+        QListWidgetItem* item;
+        if (info.suffix() != "")
+            item = new QListWidgetItem(icons.icon(info), info.fileName());
+        else
+            item = new QListWidgetItem(icons.icon(icons.Folder), info.fileName());
         ui.fileList->addItem(item);
     }
 }

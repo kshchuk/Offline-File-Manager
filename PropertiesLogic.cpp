@@ -45,6 +45,7 @@ PropertiesLogic::PropertiesLogic(const QModelIndex& index, QFileInfoModel* model
     fullPath = item->data(role).toString();
     itemIndex = index.siblingAtColumn(int(ColunmsOrder::MD5));
     item = model->itemFromIndex(itemIndex);
+    if (item)
     md5Hash = item->data(role).toString();
 }
 

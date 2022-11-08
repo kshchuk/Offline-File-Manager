@@ -19,12 +19,13 @@ signals:
 
 
 private slots:
-	void on_treeView_clicked(const QModelIndex& index);
 	void selectFromExplorer();
 	void sendInfo();
 	void clearAll();
 	void removeFromList();
+	void addToList();
 	void on_customContextMenu(const QPoint& point);
+	void on_customContextMenuForTree(const QPoint& point);
 
 private:
 	Ui::AddDataToFolderClass ui;
