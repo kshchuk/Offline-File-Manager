@@ -20,6 +20,7 @@
 #include "PropertiesLogic.h"
 #include "AddDataToFolder.h"
 #include "SearchWindow.h"
+#include "GoogleGateway.h"
 
 
 
@@ -51,6 +52,7 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
     connect(ui.actionExternal_drives, &QAction::triggered, this, &OfflineFileManager::setExternalDrivesregime);
     connect(ui.actionMaximum_depth, &QAction::triggered, this, &OfflineFileManager::setMaxDepth);
     connect(ui.searchButton, &QToolButton::clicked, this, &OfflineFileManager::search);
+    connect(ui.actionGoogle_Drive, &QAction::triggered, this, &OfflineFileManager::ConnectGoogleDrive);
     
 
     treeViewInit(ui.fileSystemTree, model);
@@ -294,6 +296,7 @@ void OfflineFileManager::on_openAction_triggered()
             tr(e.what()), QMessageBox::Close);
     }
     treeViewInit(ui.fileSystemTree, model);
+    on_homeButton_clicked();
 }
 
 void OfflineFileManager::on_homeButton_clicked()
@@ -470,6 +473,11 @@ void OfflineFileManager::search()
     SearchWindow* window = new SearchWindow(model, model->pathFromStringList(model->getPath(cur)), this);
     connect(window, &SearchWindow::infoSent, this, &OfflineFileManager::highlightElem);
     window->show();
+}
+
+void OfflineFileManager::ConnectGoogleDrive()
+{
+    GoogleGateway* gate = new GoogleGateway(this);
 }
 
 void OfflineFileManager::treeViewInit(QTreeView* tree, QFileInfoModel* model1)

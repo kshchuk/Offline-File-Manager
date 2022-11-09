@@ -62,6 +62,9 @@
     <QtMoc Include="PropertiesLogic.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="GoogleGateway.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="AddDataToFolder.ui">
@@ -96,5 +99,11 @@
     <ClCompile Include="SearchWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GoogleGateway.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="client.json" />
   </ItemGroup>
 </Project>

@@ -145,8 +145,21 @@ image: url(:/OfflineFileManager/res/icons/172546_search_icon.png);</string>
     <addaction name="menuRegime"/>
     <addaction name="actionMaximum_depth"/>
    </widget>
+   <widget class="QMenu" name="menuNetwork">
+    <property name="title">
+     <string>Network</string>
+    </property>
+    <widget class="QMenu" name="menuConnect">
+     <property name="title">
+      <string>Connect</string>
+     </property>
+     <addaction name="actionGoogle_Drive"/>
+    </widget>
+    <addaction name="menuConnect"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuConfiguration"/>
+   <addaction name="menuNetwork"/>
   </widget>
   <action name="actionClose">
    <property name="text">
@@ -155,7 +168,7 @@ image: url(:/OfflineFileManager/res/icons/172546_search_icon.png);</string>
   </action>
   <action name="actionOpen">
    <property name="text">
-    <string>Open hierarchy file</string>
+    <string>Open</string>
    </property>
   </action>
   <action name="actionSave">
@@ -191,6 +204,11 @@ image: url(:/OfflineFileManager/res/icons/172546_search_icon.png);</string>
   <action name="actionMaximum_depth">
    <property name="text">
     <string>Maximum depth</string>
+   </property>
+  </action>
+  <action name="actionGoogle_Drive">
+   <property name="text">
+    <string>Google Drive</string>
    </property>
   </action>
  </widget>

@@ -29,13 +29,13 @@
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
-    <QtInstall>6.4.0_msvc2019_64</QtInstall>
-    <QtModules>core;gui;widgets</QtModules>
+    <QtInstall>6.5.0_msvc2019_64</QtInstall>
+    <QtModules>core;gui;network;widgets;webchannel;webenginecore;networkauth</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
-    <QtInstall>6.4.0_msvc2019_64</QtInstall>
-    <QtModules>core;gui;widgets</QtModules>
+    <QtInstall>6.5.0_msvc2019_64</QtInstall>
+    <QtModules>core;gui;network;widgets;webchannel;webenginecore;networkauth</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
   </PropertyGroup>
   <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
@@ -56,6 +56,18 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
   </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile />
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile />
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
     <ClCompile>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
@@ -92,6 +104,7 @@
   <ItemGroup>
     <QtMoc Include="AddDataToFolder.h" />
     <ClInclude Include="BasicTraits.h" />
+    <QtMoc Include="GoogleGateway.h" />
     <ClInclude Include="ModelSerializer.h" />
     <QtMoc Include="QFileInfoModel.h" />
     <QtMoc Include="PropertiesLogic.h" />
@@ -102,6 +115,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AddDataToFolder.cpp" />
+    <ClCompile Include="GoogleGateway.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="OfflineFileManager.cpp" />
     <ClCompile Include="PropertiesLogic.cpp" />
@@ -109,6 +123,9 @@
     <ClCompile Include="QFileInfoModel.cpp" />
     <ClCompile Include="Searcher.cpp" />
     <ClCompile Include="SearchWindow.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="client.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

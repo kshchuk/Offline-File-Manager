@@ -48,6 +48,7 @@ private slots:
     void setMaxDepthFromTempValue();
     void highlightElem(QModelIndex index);
     void search();
+    void ConnectGoogleDrive();
 
 
 private:
