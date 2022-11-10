@@ -35,6 +35,6 @@ private:
 	QStringList selectedExternal;
 	QFileIconProvider icons;
 
-	void treeViewInit(QTreeView* tree, QAbstractItemModel* model);
+	void MyTreeViewInit(QTreeView* tree, QAbstractItemModel* model);
 	void updateSelectedFromExplorer();
 };

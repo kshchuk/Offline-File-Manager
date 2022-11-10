@@ -99,6 +99,7 @@
     <QtUic Include="AddDataToFolder.ui" />
     <QtUic Include="OfflineFileManager.ui" />
     <QtMoc Include="OfflineFileManager.h" />
+    <QtUic Include="Robocopy.ui" />
     <QtUic Include="SearchWindow.ui" />
   </ItemGroup>
   <ItemGroup>
@@ -111,16 +112,20 @@
     <QtMoc Include="PropertiesWindow.h" />
     <QtMoc Include="SearchWindow.h" />
     <QtMoc Include="Searcher.h" />
+    <QtMoc Include="Robocopy.h" />
+    <QtMoc Include="MyExplorer.h" />
     <ClInclude Include="system_depend_functions.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AddDataToFolder.cpp" />
     <ClCompile Include="GoogleGateway.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MyExplorer.cpp" />
     <ClCompile Include="OfflineFileManager.cpp" />
     <ClCompile Include="PropertiesLogic.cpp" />
     <ClCompile Include="PropertiesWindow.cpp" />
     <ClCompile Include="QFileInfoModel.cpp" />
+    <ClCompile Include="Robocopy.cpp" />
     <ClCompile Include="Searcher.cpp" />
     <ClCompile Include="SearchWindow.cpp" />
   </ItemGroup>

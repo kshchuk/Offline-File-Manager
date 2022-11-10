@@ -10,7 +10,7 @@ AddDataToFolder::AddDataToFolder(QWidget *parent, QFileInfoModel* model)
 	: QDialog(parent), model(model)
 {
 	ui.setupUi(this);
-    treeViewInit(ui.systemTree, model);
+    MyTreeViewInit(ui.systemTree, model);
    
     ui.systemTree->setExpandsOnDoubleClick(true);
     connect(ui.cancelButton, &QPushButton::clicked, this, &AddDataToFolder::finished);
@@ -107,7 +107,7 @@ void AddDataToFolder::on_customContextMenuForTree(const QPoint& point)
     menu.exec(globalPos);
 }
 
-void AddDataToFolder::treeViewInit(QTreeView* tree, QAbstractItemModel* model1)
+void AddDataToFolder::MyTreeViewInit(QTreeView* tree, QAbstractItemModel* model1)
 {
     tree->setModel(model1);
 

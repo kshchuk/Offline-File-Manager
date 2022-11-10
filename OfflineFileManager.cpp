@@ -21,7 +21,7 @@
 #include "AddDataToFolder.h"
 #include "SearchWindow.h"
 #include "GoogleGateway.h"
-
+#include "Robocopy.h"
 
 
 OfflineFileManager::OfflineFileManager(QWidget *parent)
@@ -53,7 +53,7 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
     connect(ui.actionMaximum_depth, &QAction::triggered, this, &OfflineFileManager::setMaxDepth);
     connect(ui.searchButton, &QToolButton::clicked, this, &OfflineFileManager::search);
     connect(ui.actionGoogle_Drive, &QAction::triggered, this, &OfflineFileManager::ConnectGoogleDrive);
-    
+    connect(ui.actionrobocopy, &QAction::triggered, this, &OfflineFileManager::robocopyOpen);
 
     treeViewInit(ui.fileSystemTree, model);
     on_homeButton_clicked();
@@ -478,6 +478,12 @@ void OfflineFileManager::search()
 void OfflineFileManager::ConnectGoogleDrive()
 {
     GoogleGateway* gate = new GoogleGateway(this);
+}
+
+void OfflineFileManager::robocopyOpen()
+{
+    Robocopy* robocopy = new Robocopy(this, model);
+    robocopy->show();
 }
 
 void OfflineFileManager::treeViewInit(QTreeView* tree, QFileInfoModel* model1)

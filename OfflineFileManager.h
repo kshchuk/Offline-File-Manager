@@ -49,6 +49,7 @@ private slots:
     void highlightElem(QModelIndex index);
     void search();
     void ConnectGoogleDrive();
+    void robocopyOpen();
 
 
 private:
@@ -61,5 +62,6 @@ private:
     int tempValue;
 
     QString error;
-    void treeViewInit(QTreeView* tree, QFileInfoModel* model);
+
+    void treeViewInit(QTreeView* tree, QFileInfoModel* model1);
 };

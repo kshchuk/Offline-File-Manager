@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>751</width>
-    <height>429</height>
+    <height>444</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -157,9 +157,16 @@ image: url(:/OfflineFileManager/res/icons/172546_search_icon.png);</string>
     </widget>
     <addaction name="menuConnect"/>
    </widget>
+   <widget class="QMenu" name="menuUtils">
+    <property name="title">
+     <string>Utils</string>
+    </property>
+    <addaction name="actionrobocopy"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuConfiguration"/>
    <addaction name="menuNetwork"/>
+   <addaction name="menuUtils"/>
   </widget>
   <action name="actionClose">
    <property name="text">
@@ -209,6 +216,11 @@ image: url(:/OfflineFileManager/res/icons/172546_search_icon.png);</string>
   <action name="actionGoogle_Drive">
    <property name="text">
     <string>Google Drive</string>
+   </property>
+  </action>
+  <action name="actionrobocopy">
+   <property name="text">
+    <string>robocopy</string>
    </property>
   </action>
  </widget>

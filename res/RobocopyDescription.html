@@ -1,0 +1,813 @@
+
+<!DOCTYPE html><!--[if lt IE 7]><html class="ie6 ie"><![endif]--><!--[if IE 7]><html class="ie7 ie"><![endif]--><!--[if IE 8]><html class="ie8 ie"><![endif]--><!--[if IE 9]><html class="ie9 ie"><![endif]--><html lang="en" itemscope="" itemtype="https://schema.org/WebPage"><head><meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<title>MS-DOS and Windows Command Line Robocopy Command</title>
+<body>
+<div class="wrapper">
+</div>
+<div class="container content" id="main-content" role="main">
+<article>
+<h1 itemprop="headline">MS-DOS and Windows command line robocopy command</h1>
+</div>
+<h2 id="win10">Windows 10 and 11 syntax</h2>
+<pre class="tab">ROBOCOPY source destination [file [file]...] [options]</pre>
+<table class="mtable4 tab">
+<tbody><tr class="tcw">
+<td style="width:150px">source</td>
+<td>Source <a href="/jargon/d/director.htm">directory</a> (drive:\path or \\server\share\path).</td>
+</tr>
+<tr class="tcw">
+<td>destination</td>
+<td>Destination directory (drive:\path or \\server\share\path).</td>
+</tr>
+<tr class="tcw">
+<td>file</td>
+<td>File(s) to copy (names/wildcards: default is &#34;*.*&#34;).</td>
+</tr>
+</tbody></table>
+<p class="tabb">Copy options</p>
+<table class="mtable4 tab">
+<tbody><tr class="tcw">
+<td style="width:200px">/S</td>
+<td>Copy <a href="/jargon/s/subdirec.htm">subdirectories</a>, but not the empty ones.</td>
+</tr>
+<tr class="tcw">
+<td>/E</td>
+<td>Copy subdirectories, including the empty ones.</td>
+</tr>
+<tr class="tcw">
+<td>/LEV:n</td>
+<td>Only copy the top n levels of the source directory tree.</td>
+</tr>
+<tr class="tcw">
+<td>/Z</td>
+<td>Copy files in restartable mode.</td>
+</tr>
+<tr class="tcw">
+<td>/B</td>
+<td>Copy files in backup mode.</td>
+</tr>
+<tr class="tcw">
+<td>/ZB</td>
+<td>Use restartable mode. If access is denied, use backup mode.</td>
+</tr>
+<tr class="tcw">
+<td>/J</td>
+<td>Copy using unbuffered I/O (recommended for large files).</td>
+</tr>
+<tr class="tcw">
+<td>/EFSRAW</td>
+<td>Copy all <a href="/jargon/e/encrypt.htm">encrypted</a> files in EFS RAW mode.</td>
+</tr>
+<tr class="tcw">
+<td>/COPY:[copyflags]</td>
+<td>What to COPY for files (default is /COPY:DAT).<br />
+(copyflags: D=Data, A=Attributes, T=Timestamps).<br />(S=Security=NTFS ACLs, O=Owner info, U=aUditing info).</td>
+</tr>
+<tr class="tcw">
+<td>/SEC</td>
+<td>Copy files with security (equivalent to /COPY:DATS).</td>
+</tr>
+<tr class="tcw">
+<td>/COPYALL</td>
+<td>Copy all file info (equivalent to /COPY:DATSOU).</td>
+</tr>
+<tr class="tcw">
+<td>/NOCOPY</td>
+<td>Copy no file info (useful with /PURGE).</td>
+</tr>
+<tr class="tcw">
+<td>/SECFIX</td>
+<td>Fix file security on all files, even skipped files.</td>
+</tr>
+<tr class="tcw">
+<td>/TIMFIX</td>
+<td>Fix file times on all files, even skipped files.</td>
+</tr>
+<tr class="tcw">
+<td>/PURGE</td>
+<td>Delete dest files/dirs that no longer exist in the source.</td>
+</tr>
+<tr class="tcw">
+<td>/MIR</td>
+<td><a href="/jargon/m/mirrorin.htm">Mirror</a> a directory tree (equivalent to /E plus /PURGE).</td>
+</tr>
+<tr class="tcw">
+<td>/MOV</td>
+<td>Move files (delete from the source after copying).</td>
+</tr>
+<tr class="tcw">
+<td>/MOVE</td>
+<td>Move files and dirs (delete from the source after copying).</td>
+</tr>
+<tr class="tcw">
+<td>/A+:[RASHCNET]</td>
+<td>Add the given attributes to copied files.</td>
+</tr>
+<tr class="tcw">
+<td>/A-:[RASHCNET]</td>
+<td>Remove the given attributes from copied files.</td>
+</tr>
+<tr class="tcw">
+<td>/CREATE</td>
+<td>Create directory tree and zero-length files only.</td>
+</tr>
+<tr class="tcw">
+<td>/FAT</td>
+<td>Create destination files using <a href="/jargon/num/8-3-format.htm">8.3 FAT file names</a> only.</td>
+</tr>
+<tr class="tcw">
+<td>/256</td>
+<td>Turn off a very long <a href="/jargon/p/path.htm">path</a> (&gt; 256 characters) support.</td>
+</tr>
+<tr class="tcw">
+<td>/MON:n</td>
+<td>Monitor source; run again when more than n changes are shown.</td>
+</tr>
+<tr class="tcw">
+<td>/MOT:m</td>
+<td>Monitor source; run again in m minutes time, if changed.</td>
+</tr>
+<tr class="tcw">
+<td>/RH:hhmm-hhmm</td>
+<td>Run hours - times when new copies may be started.</td>
+</tr>
+<tr class="tcw">
+<td>/PF</td>
+<td>Check run hours on a per file (not per pass) basis.</td>
+</tr>
+<tr class="tcw">
+<td>/IPG:n</td>
+<td>Inter-packet gap (ms), to free bandwidth on slow lines.</td>
+</tr>
+<tr class="tcw">
+<td>/SJ</td>
+<td>Copy <a href="/jargon/j/junction.htm">junctions</a> as junctions instead of as the junction targets.</td>
+</tr>
+<tr class="tcw">
+<td>/SL</td>
+<td>Copy <a href="/jargon/s/symblink.htm">symbolic links</a> as links instead of as the link targets.</td>
+</tr>
+<tr class="tcw">
+<td>/MT[:n]</td>
+<td>Do multi-threaded copies with n <a href="/jargon/t/thread.htm">threads</a> (default 8).<br /> n must be at least 1 and not greater than 128.<br /> This option is incompatible with the /IPG and /EFSRAW options.<br /> Redirect output using /LOG option for better performance.</td>
+</tr>
+<tr class="tcw">
+<td>/DCOPY:[copyflags]</td>
+<td>What to copy for directories (default is /DCOPY:DA).<br /> (copyflags : D=Data, A=Attributes, T=Timestamps, E=EAs, X=Skip alt data streams).</td>
+</tr>
+<tr class="tcw">
+<td>/NODCOPY</td>
+<td>Copy no directory info (the default /DCOPY:DA is done).</td>
+</tr>
+<tr class="tcw">
+<td>/NOOFFLOAD</td>
+<td>Copy files without using the Windows Copy Offload mechanism.</td>
+</tr>
+<tr class="tcw">
+<td>/COMPRESS</td>
+<td>Request network compression during file transfer, if applicable.</td>
+</tr>
+</tbody></table>
+<p class="tabb">Copy File Throttling options</p>
+<div class="tip dtab">
+<span class="title note">Note</span>
+<p>The Copy File Throttling options are only available in Windows 11.</p>
+</div>
+<table class="mtable3 tab">
+<tbody><tr class="tcw">
+<td style="width:200px">/IoMaxSize:n[KMG]</td>
+<td>Requested max I/O size per {read,write} cycle, in n [KMG] bytes.</td>
+</tr>
+<tr class="tcw">
+<td>/IoRate:n[KMG]</td>
+<td>Requested I/O rate, in n [KMG] bytes per second.</td>
+</tr>
+<tr class="tcw">
+<td>/Threshold:n[KMG]</td>
+<td>File size threshold for throttling, in n [KMG] bytes (see <a href="#w10-11remarks">Remarks</a>).</td>
+</tr>
+</tbody></table>
+<p class="tabb">File Selection options</p>
+<table class="mtable4 tab">
+<tbody><tr class="tcw">
+<td style="width:200px">/A</td>
+<td>Copy only the files with the <a href="/jargon/a/archive.htm">archive</a> attribute set.</td>
+</tr>
+<tr class="tcw">
+<td>/M</td>
+<td>Copy only the files with the archive attribute and reset it.</td>
+</tr>
+<tr class="tcw">
+<td>/IA:[RASHCNETO]</td>
+<td>Include only the files with any of the given attributes set.</td>
+</tr>
+<tr class="tcw">
+<td>/XA:[RASHCNETO]</td>
+<td>Exclude files with any of the given attributes set.</td>
+</tr>
+<tr class="tcw">
+<td>/XF file [file]...</td>
+<td>Exclude files matching given names/paths/wildcards.</td>
+</tr>
+<tr class="tcw">
+<td>/XD dirs [dirs]...</td>
+<td>Exclude directories matching given names/paths.</td>
+</tr>
+<tr class="tcw">
+<td>/XC</td>
+<td>Exclude changed files.</td>
+</tr>
+<tr class="tcw">
+<td>/XN</td>
+<td>Exclude newer files.</td>
+</tr>
+<tr class="tcw">
+<td>/XO</td>
+<td>Exclude older files.</td>
+</tr>
+<tr class="tcw">
+<td>/XX</td>
+<td>Exclude extra files and directories.</td>
+</tr>
+<tr class="tcw">
+<td>/XL</td>
+<td>Exclude lonely files and directories.</td>
+</tr>
+<tr class="tcw">
+<td>/IS</td>
+<td>Include same files.</td>
+</tr>
+<tr class="tcw">
+<td>/IT</td>
+<td>Include tweaked files.</td>
+</tr>
+<tr class="tcw">
+<td>/MAX:n</td>
+<td>Maximum file size - exclude files bigger than n bytes.</td>
+</tr>
+<tr class="tcw">
+<td>/MIN:n</td>
+<td>Minimum file size - exclude files smaller than n bytes.</td>
+</tr>
+<tr class="tcw">
+<td>/MAXAGE:n</td>
+<td>Maximum file age - exclude files older than n days/date.</td>
+</tr>
+<tr class="tcw">
+<td>/MINAGE:n</td>
+<td>Minimum file age - exclude files newer than n days/date.</td>
+</tr>
+<tr class="tcw">
+<td>/MAXLAD:n</td>
+<td>Maximum last access date - exclude files unused since n.</td>
+</tr>
+<tr class="tcw">
+<td>/MINLAD:n</td>
+<td>Minimum last access date - exclude files used since n.<br /> (If n &lt; 1900 then n = n days, else n = YYYYMMDD date).</td>
+</tr>
+<tr class="tcw">
+<td>/FFT</td>
+<td>Assume <a href="/jargon/f/fat.htm">FAT</a> file times (2-second granularity).</td>
+</tr>
+<tr class="tcw">
+<td>/DST</td>
+<td>Compensate for one-hour DST time differences.</td>
+</tr>
+<tr class="tcw">
+<td>/XJ</td>
+<td>Exclude <a href="/jargon/s/symblink.htm">symbolic links</a> (for both files and directories) and <a href="/jargon/j/junction.htm">junction points</a>.</td>
+</tr>
+<tr class="tcw">
+<td>/XJD</td>
+<td>Exclude symbolic links for directories and junction points.</td>
+</tr>
+<tr class="tcw">
+<td>/XJF</td>
+<td>Exclude symbolic linksfor files.</td>
+</tr>
+<tr class="tcw">
+<td>/IM</td>
+<td>Include modified files (differing change times).</td>
+</tr>
+</tbody></table>
+<p class="tabb">Retry options</p>
+<table class="mtable3 tab">
+<tbody><tr class="tcw">
+<td style="width:180px">/R:n</td>
+<td>Number of retries on failed copies: default 1 million.</td>
+</tr>
+<tr class="tcw">
+<td>/W:n</td>
+<td>Wait time between retries: default is 30 seconds.</td>
+</tr>
+<tr class="tcw">
+ <td>/REG</td>
+<td>Save /R:n and /W:n in the registry as default settings.</td>
+</tr>
+<tr class="tcw">
+<td>/TBD</td>
+<td>Wait for sharenames to be defined (retry error 67).</td>
+</tr>
+<tr class="tcw">
+<td>/LFSM</td>
+<td>Operate in low free space mode, enabling copy pause and resume (see <a href="#w10-11remarks">Remarks</a>).</td>
+</tr>
+<tr class="tcw">
+<td>/LFSM:n[KMG]</td>
+<td>/LFSM, specifying the floor size in n [K:kilo,M:mega,G:giga] bytes.</td>
+</tr>
+</tbody></table>
+<p class="tabb">Logging options</p>
+<table class="mtable3 tab">
+<tbody><tr class="tcw">
+<td style="width:180px">/L</td>
+<td>List only - don&#39;t copy, timestamp or delete any files.</td>
+</tr>
+<tr class="tcw">
+<td>/X</td>
+<td>Report all extra files, not only those selected.</td>
+</tr>
+<tr class="tcw">
+<td>/V</td>
+<td>Produce verbose output, showing skipped files.</td>
+</tr>
+<tr class="tcw">
+<td>/TS</td>
+<td>Include source file timestamps in the output.</td>
+</tr>
+<tr class="tcw">
+<td>/FP</td>
+<td>Include full pathname of files in the output.</td>
+</tr>
+<tr class="tcw">
+<td>/BYTES</td>
+<td>Print sizes as <a href="/jargon/b/byte.htm">bytes</a>.</td>
+</tr>
+<tr class="tcw">
+<td>/NS</td>
+<td>No size - don&#39;t log file sizes.</td>
+</tr>
+<tr class="tcw">
+<td>/NC</td>
+<td>No class - don&#39;t log file classes.</td>
+</tr>
+<tr class="tcw">
+<td>/NFL</td>
+<td>No file list - don&#39;t log file names.</td>
+</tr>
+<tr class="tcw">
+<td>/NDL</td>
+<td>No directory list - don&#39;t log directory names.</td>
+</tr>
+<tr class="tcw">
+<td>/NP</td>
+<td>No progress - don&#39;t display percentage copied.</td>
+</tr>
+<tr class="tcw">
+<td>/ETA</td>
+<td>Show estimated time of arrival of copied files.</td>
+</tr>
+<tr class="tcw">
+<td>/LOG:file</td>
+<td>Output status to LOG file (overwrite existing log).</td>
+</tr>
+<tr class="tcw">
+<td>/LOG+:file</td>
+<td>Output status to LOG file (append to existing log).</td>
+</tr>
+<tr class="tcw">
+<td>/UNILOG:file</td>
+<td>Output status to LOG file as UNICODE (overwrite existing log).</td>
+</tr>
+<tr class="tcw">
+<td>/UNILOG+:file</td>
+<td>Output status to LOG file as UNICODE (append to existing log).</td>
+</tr>
+<tr class="tcw">
+<td>/TEE</td>
+<td>Output to console window and the log file.</td>
+</tr>
+<tr class="tcw">
+<td>/NJH</td>
+<td>No job header.</td>
+</tr>
+<tr class="tcw">
+<td>/NJS</td>
+<td>No job summary.</td>
+</tr>
+<tr class="tcw">
+<td>/UNICODE</td>
+<td>Output status as UNICODE.</td>
+</tr>
+</tbody></table>
+<p class="tabb">Job options</p>
+<table class="mtable4 tab">
+<tbody><tr class="tcw">
+<td style="width:180px">/JOB:jobname</td>
+<td>Take parameters from the named job file.</td>
+</tr>
+<tr class="tcw">
+<td>/SAVE:jobname</td>
+<td>Save parameters to the named job file.</td>
+</tr>
+<tr class="tcw">
+<td>/QUIT</td>
+<td>Quit after processing command line (to view parameters).</td>
+</tr>
+<tr class="tcw">
+<td>/NOSD</td>
+<td>No source directory is specified.</td>
+</tr>
+<tr class="tcw">
+<td>/NODD</td>
+<td>No destination directory is specified.</td>
+</tr>
+<tr class="tcw">
+<td>/IF</td>
+<td>Include the following files.</td>
+</tr>
+</tbody></table>
+<h3 class="tab" id="w10-11remarks">Remarks</h3>
+<p class="tab">Using /PURGE or /MIR on the root directory of the volume formerly caused robocopy to apply the requested operation on files inside the System Volume Information directory as well. That is no longer the case. If /PURGE or /MIR is specified, robocopy skips any files or directories with that name in top-level source and destination directories of the copy session.</p>
+<p class="tab">The modified files classification applies only when source and destination filesystems support change timestamps (e.g., NTFS), and the source and destination files have different change times. These files are not copied by default; specify /IM to include them.</p>
+<p class="tab">The /DCOPY:E flag requests that extended attribute copying should be attempted for directories. Note that currently robocopy continues if a directory&#39;s EAs could not be copied. This flag is also not included in /COPYALL.</p>
+<p class="tab">Using /LFSM requests robocopy to operate in &#39;low free space mode&#39;. In that mode, robocopy pauses whenever file copying would cause the destination volume&#39;s free space to go below a &#39;floor&#39; value, which can be explicitly specified by the LFSM:n[KMG] form of the flag. If /LFSM is specified with no explicit floor value, the floor is set to ten percent of the destination volume&#39;s size. Low free space mode is incompatible with /MT, /EFSRAW, /B, and /ZB.</p>
+<h2 id="win8">Windows 8 and earlier syntax</h2>
+<pre class="tab">ROBOCOPY source destination [file [file]...] [options]</pre>
+<table class="mtable4 tab">
+<tbody><tr class="tcw">
+<td style="width:150px">source</td>
+<td>Source <a href="/jargon/d/director.htm">directory</a> (drive:\path or \\server\share\path).</td>
+</tr>
+<tr class="tcw">
+<td>destination</td>
+<td>Destination directory (drive:\path or \\server\share\path).</td>
+</tr>
+<tr class="tcw">
+<td>file</td>
+<td>File(s) to copy (names/wildcards: default is &#34;*.*&#34;).</td>
+</tr>
+</tbody></table>
+<p class="tabb">Copy options</p>
+<table class="mtable4 tab">
+<tbody><tr class="tcw">
+<td style="width:200px">/S</td>
+<td>Copy <a href="/jargon/s/subdirec.htm">subdirectories</a>, but not the empty ones.</td>
+</tr>
+<tr class="tcw">
+<td>/E</td>
+<td>Copy subdirectories, including the empty ones.</td>
+</tr>
+<tr class="tcw">
+<td>/LEV:n</td>
+<td>Only copy the top n levels of the source directory tree.</td>
+</tr>
+<tr class="tcw">
+<td>/Z</td>
+<td>Copy files in restartable mode.</td>
+</tr>
+<tr class="tcw">
+<td>/B</td>
+<td>Copy files in backup mode.</td>
+</tr>
+<tr class="tcw">
+<td>/ZB</td>
+<td>Use restartable mode. If access denied, use backup mode.</td>
+</tr>
+<tr class="tcw">
+<td>/EFSRAW</td>
+<td>Copy all <a href="/jargon/e/encrypt.htm">encrypted</a> files in EFS RAW mode.</td>
+</tr>
+<tr class="tcw">
+<td>/COPY:[copyflags]</td>
+<td>What to COPY for files (default is /COPY:DAT).<br /> (copyflags : D=Data, A=Attributes, T=Timestamps).<br /> (S=Security=NTFS ACLs, O=Owner info, U=aUditing info).</td>
+</tr>
+<tr class="tcw">
+<td>/DCOPY:T</td>
+<td>COPY the directory <a href="/jargon/t/timestam.htm">timestamps</a>.</td>
+</tr>
+<tr class="tcw">
+<td>/SEC</td>
+<td>Copy files with security (equivalent to /COPY:DATS).</td>
+</tr>
+<tr class="tcw">
+<td>/COPYALL</td>
+<td>Copy all file info (equivalent to /COPY:DATSOU).</td>
+</tr>
+<tr class="tcw">
+<td>/NOCOPY</td>
+<td>Copy no file info (useful with /PURGE).</td>
+</tr>
+<tr class="tcw">
+<td>/SECFIX</td>
+<td>Fix file security on all files, even skipped files.</td>
+</tr>
+<tr class="tcw">
+<td>/TIMFIX</td>
+<td>Fix file times on all files, even the skipped ones.</td>
+</tr>
+<tr class="tcw">
+<td>/PURGE</td>
+<td>Delete dest files/dirs that no longer exist in the source.</td>
+</tr>
+<tr class="tcw">
+<td>/MIR</td>
+<td><a href="/jargon/m/mirrorin.htm">Mirror</a> a directory tree (equivalent to /E plus /PURGE).</td>
+</tr>
+<tr class="tcw">
+<td>/MOV</td>
+<td>Move files (delete from the source after copying).</td>
+</tr>
+<tr class="tcw">
+<td>/MOVE</td>
+<td>Move files and dirs (delete from the source after copying).</td>
+</tr>
+<tr class="tcw">
+<td>/A+:[RASHCNET]</td>
+<td>Add the given attributes to copied files.</td>
+</tr>
+<tr class="tcw">
+<td>/A-:[RASHCNET]</td>
+<td>Remove the given attributes from copied files.</td>
+</tr>
+<tr class="tcw">
+<td>/CREATE</td>
+<td>Create directory tree and zero-length files only.</td>
+</tr>
+<tr class="tcw">
+<td>/FAT</td>
+<td>Create destination files using <a href="/jargon/num/8-3-format.htm">8.3 FAT file names</a> only.</td>
+</tr>
+<tr class="tcw">
+<td>/256</td>
+<td>Turn off very long <a href="/jargon/p/path.htm">path</a> (&gt; 256 characters) support.</td>
+</tr>
+<tr class="tcw">
+<td>/MON:n</td>
+<td>Monitor source; run again when more than n changes seen.</td>
+</tr>
+<tr class="tcw">
+<td>/MOT:m</td>
+<td>Monitor source; run again in m minutes time, if changed.</td>
+</tr>
+<tr class="tcw">
+<td>/RH:hhmm-hhmm</td>
+<td>Run hours - times when new copies may be started.</td>
+</tr>
+<tr class="tcw">
+<td>/PF</td>
+<td>Check run hours on a per file (not per pass) basis.</td>
+</tr>
+<tr class="tcw">
+<td>/IPG:n</td>
+<td>Inter-packet gap (ms), to free bandwidth on slow lines.</td>
+</tr>
+<tr class="tcw">
+<td>/SL</td>
+<td>Copy <a href="/jargon/s/symblink.htm">symbolic links</a> versus the target.</td>
+</tr>
+<tr class="tcw">
+<td>/MT[:n]</td>
+<td>Do multi-threaded copies with n <a href="/jargon/t/thread.htm">threads</a> (default 8).<br /> n must be at least 1 and not greater than 128.<br /> This option is incompatible with the /IPG and /EFSRAW options.<br /> Redirect output using /LOG option for better performance.</td>
+</tr>
+</tbody></table>
+<p class="tabb">File Selection options</p>
+<table class="mtable4 tab">
+<tbody><tr class="tcw">
+<td style="width:200px">/A</td>
+<td>Copy only the files with the <a href="/jargon/a/archive.htm">archive</a> attribute set.</td>
+</tr>
+<tr class="tcw">
+<td>/M</td>
+<td>Copy only the files with the archive attribute and reset it.</td>
+</tr>
+<tr class="tcw">
+<td>/IA:[RASHCNETO]</td>
+<td>Include only the files with any of the given attributes set.</td>
+</tr>
+<tr class="tcw">
+<td>/XA:[RASHCNETO]</td>
+<td>Exclude files with any of the given attributes set.</td>
+</tr>
+<tr class="tcw">
+<td>/XF file [file]...</td>
+<td>Exclude files matching given names/paths/wildcards.</td>
+</tr>
+<tr class="tcw">
+<td>/XD dirs [dirs]...</td>
+<td>Exclude directories matching given names/paths.</td>
+</tr>
+<tr class="tcw">
+<td>/XC</td>
+<td>Exclude changed files.</td>
+</tr>
+<tr class="tcw">
+<td>/XN</td>
+<td>Exclude newer files.</td>
+</tr>
+<tr class="tcw">
+<td>/XO</td>
+<td>Exclude older files.</td>
+</tr>
+<tr class="tcw">
+<td>/XX</td>
+<td>Exclude extra files and directories.</td>
+</tr>
+<tr class="tcw">
+<td>/XL</td>
+<td>Exclude lonely files and directories.</td>
+</tr>
+<tr class="tcw">
+<td>/IS</td>
+<td>Include same files.</td>
+</tr>
+<tr class="tcw">
+<td>/IT</td>
+<td>Include tweaked files.</td>
+</tr>
+<tr class="tcw">
+<td>/MAX:n</td>
+<td>Maximum file size - exclude files bigger than n bytes.</td>
+</tr>
+<tr class="tcw">
+<td>/MIN:n</td>
+<td>Minimum file size - exclude files smaller than n bytes.</td>
+</tr>
+<tr class="tcw">
+<td>/MAXAGE:n</td>
+<td>Maximum file age - exclude files older than n days/date.</td>
+</tr>
+<tr class="tcw">
+<td>/MINAGE:n</td>
+<td>Minimum file age - exclude files newer than n days/date.</td>
+</tr>
+<tr class="tcw">
+<td>/MAXLAD:n</td>
+<td>Maximum last access date - exclude files unused since n.</td>
+</tr>
+<tr class="tcw">
+<td>/MINLAD:n</td>
+<td>Minimum last access date - exclude files used since n.<br /> (If n &lt; 1900 then n = n days, else n = YYYYMMDD date).</td>
+</tr>
+<tr class="tcw">
+<td>/XJ</td>
+<td>Exclude <a href="/jargon/j/junction.htm">junction points</a>. (normally included by default).</td>
+</tr>
+<tr class="tcw">
+<td>/FFT</td>
+<td>Assume <a href="/jargon/f/fat.htm">FAT</a> file times (2-second granularity).</td>
+</tr>
+<tr class="tcw">
+<td>/DST</td>
+<td>Compensate for one-hour DST time differences.</td>
+</tr>
+<tr class="tcw">
+<td>/XJD</td>
+<td>Exclude junction points for directories.</td>
+</tr>
+<tr class="tcw">
+<td>/XJF</td>
+<td>Exclude junction points for files.</td>
+</tr>
+</tbody></table>
+<p class="tabb">Retry options</p>
+<table class="mtable3 tab">
+<tbody><tr class="tcw">
+<td style="width:70px">/R:n</td>
+<td>Number of retries on failed copies: default 1 million.</td>
+</tr>
+<tr class="tcw">
+<td>/W:n</td>
+<td>Wait time between retries: default is 30 seconds.</td>
+</tr>
+<tr class="tcw">
+<td>/REG</td>
+<td>Save /R:n and /W:n in the registry as default settings.</td>
+</tr>
+<tr class="tcw">
+<td>/TBD</td>
+<td>Wait for sharenames to be defined (retry error 67).</td>
+</tr>
+</tbody></table>
+<p class="tabb">Logging options</p>
+<table class="mtable3 tab">
+<tbody><tr class="tcw">
+<td style="width:180px">/L</td>
+<td>List only - don&#39;t copy, timestamp or delete any files.</td>
+</tr>
+<tr class="tcw">
+<td>/X</td>
+<td>Report all extra files, not only those selected.</td>
+</tr>
+<tr class="tcw">
+<td>/V</td>
+<td>Produce verbose output, showing skipped files.</td>
+</tr>
+<tr class="tcw">
+<td>/TS</td>
+<td>Include source file timestamps in the output.</td>
+</tr>
+<tr class="tcw">
+<td>/FP</td>
+<td>Include full pathname of files in the output.</td>
+</tr>
+<tr class="tcw">
+<td>/BYTES</td>
+<td>Print sizes as <a href="/jargon/b/byte.htm">bytes</a>.</td>
+</tr>
+<tr class="tcw">
+<td>/NS</td>
+<td>No size - don&#39;t log file sizes.</td>
+</tr>
+<tr class="tcw">
+<td>/NC</td>
+<td>No class - don&#39;t log file classes.</td>
+</tr>
+<tr class="tcw">
+<td>/NFL</td>
+<td>No file list - don&#39;t log file names.</td>
+</tr>
+<tr class="tcw">
+<td>/NDL</td>
+<td>No directory List - don&#39;t log directory names.</td>
+</tr>
+<tr class="tcw">
+<td>/NP</td>
+<td>No progress - don&#39;t display percentage copied.</td>
+</tr>
+<tr class="tcw">
+<td>/ETA</td>
+<td>Show estimated time of arrival of copied files.</td>
+</tr>
+<tr class="tcw">
+<td>/LOG:file</td>
+<td>Output status to LOG file (overwrite existing log).</td>
+</tr>
+<tr class="tcw">
+<td>/LOG+:file</td>
+<td>Output status to LOG file (append to existing log).</td>
+</tr>
+<tr class="tcw">
+<td>/UNILOG:file</td>
+<td>Output status to LOG file as UNICODE (overwrite existing log).</td>
+</tr>
+<tr class="tcw">
+<td>/UNILOG+:file</td>
+<td>Output status to LOG file as UNICODE (append to existing log).</td>
+</tr>
+<tr class="tcw">
+<td>/TEE</td>
+<td>Output to console window and the log file.</td>
+</tr>
+<tr class="tcw">
+<td>/NJH</td>
+<td>No job header.</td>
+</tr>
+<tr class="tcw">
+<td>/NJS</td>
+<td>No job summary.</td>
+</tr>
+<tr class="tcw">
+<td>/UNICODE</td>
+<td>Output status as UNICODE.</td>
+</tr>
+</tbody></table>
+<p class="tabb">Job options</p>
+<table class="mtable4 tab">
+<tbody><tr class="tcw">
+<td style="width:180px">/JOB:jobname</td>
+<td>Take parameters from the named job file.</td>
+</tr>
+<tr class="tcw">
+<td>/SAVE:jobname</td>
+<td>Save parameters to the named job file.</td>
+</tr>
+<tr class="tcw">
+<td>/QUIT</td>
+<td>Quit after processing command line (to view parameters).</td>
+</tr>
+<tr class="tcw">
+<td>/NOSD</td>
+<td>No source directory is specified.</td>
+</tr>
+<tr class="tcw">
+<td>/NODD</td>
+<td>No destination directory is specified.</td>
+</tr>
+<tr class="tcw">
+<td>/IF</td>
+<td>Include the following files.</td>
+</tr>
+</tbody></table>
+<h2 id="examples">Robocopy examples</h2>
+<pre class="tcy tab">robocopy c:\hope c:\hope2 *.txt</pre>
+<p class="tab">In this first example, any .txt file would be copied from the hope directory into the hope2 directory. Whenever you want to copy one or more files and not a complete directory the file must be specified after the destination directory.</p>
+<pre class="tcy tab">robocopy c:\hope c:\hope2</pre>
+<p class="tab">In the above example, the robocopy command would copy all files (not directories) in the hope directory to the hope2 directory.</p>
+<pre class="tcy tab">robocopy c:\hope c:\hope2 /e</pre>
+<p class="tab">In the above example, all files and folders (including empty ones) are copied from the hope directory to the hope2 directory.</p>
+<pre class="tcy tab">robocopy c:\hope c:\hope2 /MIR</pre>
+<p class="tab">This example mirrors what&#39;s in c:\hope into c:\hope2 and <a href="/jargon/p/purge.htm">purge</a> any files in the hope2 directory that don&#39;t exist in the hope directory. Use the /mir switch cautiously since it is deleting files that do not match in the destination directory.</p>
+<pre class="tcy tab">robocopy \\computer\hope C:\hope2</pre>
+<p class="tab">Next, this example would copy any of the files in the hope directory on the network computer named computer to the current computer hope2 directory.</p>
+</body></html>

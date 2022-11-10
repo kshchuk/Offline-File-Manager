@@ -65,12 +65,21 @@
     <QtMoc Include="GoogleGateway.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="Robocopy.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="MyExplorer.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="AddDataToFolder.ui">
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="SearchWindow.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="Robocopy.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>
@@ -100,6 +109,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GoogleGateway.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Robocopy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MyExplorer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
