@@ -6,748 +6,718 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>709</width>
-    <height>570</height>
+    <width>691</width>
+    <height>662</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Robocopy</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QTabWidget" name="tabWidget">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>681</width>
-      <height>291</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>681</width>
-      <height>291</height>
-     </size>
-    </property>
-    <property name="currentIndex">
-     <number>3</number>
-    </property>
-    <widget class="QWidget" name="tab">
-     <attribute name="title">
-      <string>Copy options</string>
-     </attribute>
-     <widget class="QWidget" name="">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>0</y>
-        <width>661</width>
-        <height>261</height>
-       </rect>
-      </property>
-      <layout class="QGridLayout" name="gridLayout">
-       <item row="11" column="1">
-        <widget class="QCheckBox" name="MOT">
-         <property name="text">
-          <string>Monitor source; and run again in m minutes Time, if changed</string>
-         </property>
-        </widget>
-       </item>
-       <item row="10" column="1">
-        <widget class="QCheckBox" name="MON">
-         <property name="text">
-          <string>Monitor source, and run again when more than n changes seen</string>
-         </property>
-        </widget>
-       </item>
-       <item row="10" column="0">
-        <widget class="QCheckBox" name="NOCOPY">
-         <property name="text">
-          <string>Copy no file information</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0">
-        <widget class="QCheckBox" name="LEV">
-         <property name="text">
-          <string>Copy only top n levels of the source folder tree</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QCheckBox" name="ZB">
-         <property name="text">
-          <string>Copy files using resume support</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QCheckBox" name="PURGE">
-         <property name="text">
-          <string>Delete destination files/folders that no longer exist in source</string>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="1">
-        <widget class="QCheckBox" name="d_256">
-         <property name="text">
-          <string>Disable very long path (&gt; 256 characters support)</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="1">
-        <widget class="QCheckBox" name="CREATE">
-         <property name="text">
-          <string>Create folder structures and zero-length files only</string>
-         </property>
-        </widget>
-       </item>
-       <item row="11" column="0">
-        <widget class="QCheckBox" name="TIMFIX">
-         <property name="text">
-          <string>Fix all files security</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0">
-        <widget class="QCheckBox" name="EFSRAW">
-         <property name="text">
-          <string>Copy encrypted files using EFS RAW mode</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QCheckBox" name="E">
-         <property name="text">
-          <string>Copy sub-folders, including empty sub-folders</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QCheckBox" name="MIR">
-         <property name="text">
-          <string>Mirror folder structure</string>
-         </property>
-        </widget>
-       </item>
-       <item row="12" column="0">
-        <widget class="QCheckBox" name="RH">
-         <property name="text">
-          <string>Run Hours - times when new copies may be started</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QCheckBox" name="S">
-         <property name="text">
-          <string>Copy sub-folders</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QCheckBox" name="MOV">
-         <property name="text">
-          <string>Move files</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0">
-        <widget class="QCheckBox" name="DCOPY">
-         <property name="text">
-          <string>Copy Folder Timestamps</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="1">
-        <widget class="QCheckBox" name="A_p">
-         <property name="text">
-          <string>Add attributes to destination files</string>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="0">
-        <widget class="QCheckBox" name="COPYALL">
-         <property name="text">
-          <string>Copy all file information</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QCheckBox" name="B">
-         <property name="text">
-          <string>Copy files in Backup mode</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="1">
-        <widget class="QCheckBox" name="FAT">
-         <property name="text">
-          <string>Create destination files using 8.3 FAT file names only</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1">
-        <widget class="QCheckBox" name="A_m">
-         <property name="text">
-          <string>Remove attributes from destination files</string>
-         </property>
-        </widget>
-       </item>
-       <item row="12" column="1">
-        <widget class="QCheckBox" name="PF">
-         <property name="text">
-          <string>Check run hours on a Per File basis</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0">
-        <widget class="QCheckBox" name="COPY">
-         <property name="text">
-          <string>Specifiy what file information to copy</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QCheckBox" name="Z">
-         <property name="text">
-          <string>Copy files with resume support</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1">
-        <widget class="QCheckBox" name="MOVE">
-         <property name="text">
-          <string>Move files and folders</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QCheckBox" name="TIMFIX_2">
-         <property name="text">
-          <string>Fix all files time</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </widget>
-    <widget class="QWidget" name="tab_2">
-     <attribute name="title">
-      <string>File Selection Options</string>
-     </attribute>
-     <widget class="QWidget" name="">
-      <property name="geometry">
-       <rect>
-        <x>6</x>
-        <y>0</y>
-        <width>661</width>
-        <height>261</height>
-       </rect>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_3">
-       <item row="0" column="0">
-        <widget class="QCheckBox" name="A">
-         <property name="text">
-          <string>Files with Archive attribute set</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QCheckBox" name="XC">
-         <property name="text">
-          <string>Exclude Changed files</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QCheckBox" name="M">
-         <property name="text">
-          <string>Files with the Archive attribute and remove it</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QCheckBox" name="XN">
-         <property name="text">
-          <string>Exclude Newer files</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QCheckBox" name="IA">
-         <property name="text">
-          <string>Include files with specific attributes set</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QCheckBox" name="XJD">
-         <property name="text">
-          <string>Exclude Junction points for Folders</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QCheckBox" name="XA">
-         <property name="text">
-          <string>Exclude files with specific attributes set</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QCheckBox" name="MINAGE">
-         <property name="text">
-          <string>Exclude files newer than n days/date</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QCheckBox" name="XF">
-         <property name="text">
-          <string>Exclude Files matching given names/paths/wildcards</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1">
-        <widget class="QCheckBox" name="XO">
-         <property name="text">
-          <string>Exclude Older files</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0">
-        <widget class="QCheckBox" name="XD">
-         <property name="text">
-          <string>Exclude folders matching given names/paths</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="1">
-        <widget class="QCheckBox" name="DST">
-         <property name="text">
-          <string>Compensate for one-hour DST time difference</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0">
-        <widget class="QCheckBox" name="MAX">
-         <property name="text">
-          <string>Exclude files bigger than n bytes</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1">
-        <widget class="QCheckBox" name="FFT">
-         <property name="text">
-          <string>FAT File Times (2-second granularity)</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0">
-        <widget class="QCheckBox" name="MIN">
-         <property name="text">
-          <string>Exclude files smaller than n bytes</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="1">
-        <widget class="QCheckBox" name="XL">
-         <property name="text">
-          <string>Exclude files and folders present in source but not destination</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0">
-        <widget class="QCheckBox" name="XJ">
-         <property name="text">
-          <string>Exclude Junction points</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="1">
-        <widget class="QCheckBox" name="IS">
-         <property name="text">
-          <string>Overwrite existing files even if they are same</string>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="0">
-        <widget class="QCheckBox" name="MAXLAD">
-         <property name="text">
-          <string>Exclude files unused since n days</string>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="1">
-        <widget class="QCheckBox" name="MAXAGE">
-         <property name="text">
-          <string>Exclude files older than n days/date</string>
-         </property>
-        </widget>
-       </item>
-       <item row="10" column="0">
-        <widget class="QCheckBox" name="MINLAD">
-         <property name="text">
-          <string>Exclude files used since n days</string>
-         </property>
-        </widget>
-       </item>
-       <item row="10" column="1">
-        <widget class="QCheckBox" name="XJF">
-         <property name="text">
-          <string>Exclude Junction points for Files</string>
-         </property>
-        </widget>
-       </item>
-       <item row="11" column="0" colspan="2">
-        <widget class="QCheckBox" name="XX">
-         <property name="text">
-          <string>Exclude extra files present in destination folder but not in source</string>
-         </property>
-        </widget>
-       </item>
-       <item row="12" column="0" colspan="2">
-        <widget class="QCheckBox" name="IT">
-         <property name="text">
-          <string>Include files with identical size and timestamp, but different attribute settings</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </widget>
-    <widget class="QWidget" name="tab_3">
-     <attribute name="title">
-      <string>Retry Options</string>
-     </attribute>
-     <widget class="QWidget" name="">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>300</width>
-        <height>61</height>
-       </rect>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_4">
-       <item row="0" column="0">
-        <widget class="QCheckBox" name="checkBox_116">
-         <property name="text">
-          <string>Number of Retries on failed copies: default 1 million</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QCheckBox" name="W">
-         <property name="text">
-          <string>Wait n time between retries: default is 30 seconds</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QCheckBox" name="TBD">
-         <property name="text">
-          <string>Wait for sharenames to be defined</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </widget>
-    <widget class="QWidget" name="tab_4">
-     <attribute name="title">
-      <string>Logging Options</string>
-     </attribute>
-     <widget class="QWidget" name="">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>661</width>
-        <height>201</height>
-       </rect>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_8">
-       <item row="0" column="0">
-        <widget class="QCheckBox" name="L">
-         <property name="text">
-          <string>List only</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QCheckBox" name="NS">
-         <property name="text">
-          <string>Don't log file sizes</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QCheckBox" name="X">
-         <property name="text">
-          <string>Report all extra files</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QCheckBox" name="NC">
-         <property name="text">
-          <string>Don't log file classes</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QCheckBox" name="V">
-         <property name="text">
-          <string>Verbose output</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QCheckBox" name="NFL">
-         <property name="text">
-          <string>Don't log file names</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QCheckBox" name="TS">
-         <property name="text">
-          <string>Include source file Time Stamps</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QCheckBox" name="NDL">
-         <property name="text">
-          <string>Don't log folder names.</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QCheckBox" name="FP">
-         <property name="text">
-          <string>Include Full Pathname of files</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1">
-        <widget class="QCheckBox" name="NP">
-         <property name="text">
-          <string>Don't show progress of operation</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0">
-        <widget class="QCheckBox" name="BYTES">
-         <property name="text">
-          <string>Print file sizes as bytes</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="1">
-        <widget class="QCheckBox" name="ETA">
-         <property name="text">
-          <string>Show Estimated Time of Arrival of copied files</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0">
-        <widget class="QCheckBox" name="LOG">
-         <property name="text">
-          <string>Output status to a LOG file. Overwrite existing file</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1">
-        <widget class="QCheckBox" name="TEE">
-         <property name="text">
-          <string>Output to console window and log file</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0">
-        <widget class="QCheckBox" name="LOG_p">
-         <property name="text">
-          <string>Append existing output status to an existing LOG file</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="1">
-        <widget class="QCheckBox" name="NJH">
-         <property name="text">
-          <string>Don't output Job Header</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0">
-        <widget class="QCheckBox" name="UNILOG">
-         <property name="text">
-          <string>Output status to a Unicode LOG file. Overwrite existing file</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="1">
-        <widget class="QCheckBox" name="NJS">
-         <property name="text">
-          <string>Don't output Job Summary</string>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="0">
-        <widget class="QCheckBox" name="UNILOG_p">
-         <property name="text">
-          <string>Append existing output status to an existing Unicode LOG file</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </widget>
-    <widget class="QWidget" name="tab_5">
-     <attribute name="title">
-      <string>Job Options</string>
-     </attribute>
-     <widget class="QWidget" name="">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>661</width>
-        <height>74</height>
-       </rect>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_9">
-       <item row="0" column="0">
-        <widget class="QCheckBox" name="JOB">
-         <property name="text">
-          <string>Take parameters from specified job file</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QCheckBox" name="NOSD">
-         <property name="text">
-          <string>NO Source Folder is specified</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QCheckBox" name="SAVE">
-         <property name="text">
-          <string>Save parameters to a specific job file</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QCheckBox" name="NODD">
-         <property name="text">
-          <string>NO Destination Folder is specified</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QCheckBox" name="QUIT">
-         <property name="text">
-          <string>QUIT after processing</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QCheckBox" name="IF">
-         <property name="text">
-          <string>Include the following Files</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </widget>
-   </widget>
-   <widget class="QPlainTextEdit" name="psevdoConsole">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>340</y>
-      <width>671</width>
-      <height>191</height>
-     </rect>
-    </property>
-    <property name="plainText">
-     <string>&gt;robocopy </string>
-    </property>
-   </widget>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <widget class="QWidget" name="">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>310</y>
-      <width>671</width>
-      <height>28</height>
+      <x>1</x>
+      <y>1</y>
+      <width>687</width>
+      <height>618</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <layout class="QVBoxLayout" name="verticalLayout_3">
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Source</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="lineEdit"/>
-       </item>
-       <item>
-        <widget class="QPushButton" name="exploreSource">
-         <property name="text">
-          <string>Explore</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>Destination</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="lineEdit_2"/>
-       </item>
-       <item>
-        <widget class="QPushButton" name="exploreDest">
-         <property name="text">
-          <string>Explore</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <widget class="QPushButton" name="runButton">
-       <property name="text">
-        <string>Run</string>
+      <widget class="QTabWidget" name="tabWidget">
+       <property name="minimumSize">
+        <size>
+         <width>681</width>
+         <height>291</height>
+        </size>
        </property>
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="tab">
+        <attribute name="title">
+         <string>Copy options</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_7">
+         <item>
+          <layout class="QGridLayout" name="gridLayout">
+           <item row="0" column="1">
+            <widget class="QCheckBox" name="TIMFIX_2">
+             <property name="text">
+              <string>Fix all files time</string>
+             </property>
+            </widget>
+           </item>
+           <item row="9" column="0">
+            <widget class="QCheckBox" name="COPYALL">
+             <property name="text">
+              <string>Copy all file information</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QCheckBox" name="E">
+             <property name="text">
+              <string>Copy sub-folders, including empty sub-folders</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QCheckBox" name="S">
+             <property name="text">
+              <string>Copy sub-folders</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QCheckBox" name="B">
+             <property name="text">
+              <string>Copy files in Backup mode</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QCheckBox" name="MOVE">
+             <property name="text">
+              <string>Move files and folders</string>
+             </property>
+            </widget>
+           </item>
+           <item row="10" column="1">
+            <widget class="QCheckBox" name="MON">
+             <property name="text">
+              <string>Monitor source, and run again when more than n changes seen</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <widget class="QCheckBox" name="A_p">
+             <property name="text">
+              <string>Add attributes to destination files</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="1">
+            <widget class="QCheckBox" name="CREATE">
+             <property name="text">
+              <string>Create folder structures and zero-length files only</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <widget class="QCheckBox" name="LEV">
+             <property name="text">
+              <string>Copy only top n levels of the source folder tree</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QCheckBox" name="MIR">
+             <property name="text">
+              <string>Mirror folder structure</string>
+             </property>
+            </widget>
+           </item>
+           <item row="11" column="0">
+            <widget class="QCheckBox" name="TIMFIX">
+             <property name="text">
+              <string>Fix all files security</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QCheckBox" name="Z">
+             <property name="text">
+              <string>Copy files with resume support</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QCheckBox" name="MOV">
+             <property name="text">
+              <string>Move files</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QCheckBox" name="EFSRAW">
+             <property name="text">
+              <string>Copy encrypted files using EFS RAW mode</string>
+             </property>
+            </widget>
+           </item>
+           <item row="12" column="1">
+            <widget class="QCheckBox" name="PF">
+             <property name="text">
+              <string>Check run hours on a Per File basis</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QCheckBox" name="ZB">
+             <property name="text">
+              <string>Copy files using resume support</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1">
+            <widget class="QCheckBox" name="A_m">
+             <property name="text">
+              <string>Remove attributes from destination files</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QCheckBox" name="PURGE">
+             <property name="text">
+              <string>Delete destination files/folders that no longer exist in source</string>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="0">
+            <widget class="QCheckBox" name="COPY">
+             <property name="text">
+              <string>Specifiy what file information to copy</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0">
+            <widget class="QCheckBox" name="DCOPY">
+             <property name="text">
+              <string>Copy Folder Timestamps</string>
+             </property>
+            </widget>
+           </item>
+           <item row="11" column="1">
+            <widget class="QCheckBox" name="MOT">
+             <property name="text">
+              <string>Monitor source; and run again in m minutes Time, if changed</string>
+             </property>
+            </widget>
+           </item>
+           <item row="12" column="0">
+            <widget class="QCheckBox" name="RH">
+             <property name="text">
+              <string>Run Hours - times when new copies may be started</string>
+             </property>
+            </widget>
+           </item>
+           <item row="10" column="0">
+            <widget class="QCheckBox" name="NOCOPY">
+             <property name="text">
+              <string>Copy no file information</string>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="1">
+            <widget class="QCheckBox" name="FAT">
+             <property name="text">
+              <string>Create destination files using 8.3 FAT file names only</string>
+             </property>
+            </widget>
+           </item>
+           <item row="9" column="1">
+            <widget class="QCheckBox" name="d_256">
+             <property name="text">
+              <string>Disable very long path (&gt; 256 characters support)</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tab_2">
+        <attribute name="title">
+         <string>File Selection Options</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <layout class="QGridLayout" name="gridLayout_3">
+           <item row="6" column="0">
+            <widget class="QCheckBox" name="MAX">
+             <property name="text">
+              <string>Exclude files bigger than n bytes</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QCheckBox" name="MINAGE">
+             <property name="text">
+              <string>Exclude files newer than n days/date</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QCheckBox" name="XA">
+             <property name="text">
+              <string>Exclude files with specific attributes set</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="1">
+            <widget class="QCheckBox" name="XL">
+             <property name="text">
+              <string>Exclude files and folders present in source but not destination</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <widget class="QCheckBox" name="DST">
+             <property name="text">
+              <string>Compensate for one-hour DST time difference</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QCheckBox" name="XJD">
+             <property name="text">
+              <string>Exclude Junction points for Folders</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0">
+            <widget class="QCheckBox" name="MIN">
+             <property name="text">
+              <string>Exclude files smaller than n bytes</string>
+             </property>
+            </widget>
+           </item>
+           <item row="12" column="0" colspan="2">
+            <widget class="QCheckBox" name="IT">
+             <property name="text">
+              <string>Include files with identical size and timestamp, but different attribute settings</string>
+             </property>
+            </widget>
+           </item>
+           <item row="11" column="0" colspan="2">
+            <widget class="QCheckBox" name="XX">
+             <property name="text">
+              <string>Exclude extra files present in destination folder but not in source</string>
+             </property>
+            </widget>
+           </item>
+           <item row="9" column="0">
+            <widget class="QCheckBox" name="MAXLAD">
+             <property name="text">
+              <string>Exclude files unused since n days</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QCheckBox" name="A">
+             <property name="text">
+              <string>Files with Archive attribute set</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1">
+            <widget class="QCheckBox" name="FFT">
+             <property name="text">
+              <string>FAT File Times (2-second granularity)</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QCheckBox" name="XN">
+             <property name="text">
+              <string>Exclude Newer files</string>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="0">
+            <widget class="QCheckBox" name="XJ">
+             <property name="text">
+              <string>Exclude Junction points</string>
+             </property>
+            </widget>
+           </item>
+           <item row="10" column="0">
+            <widget class="QCheckBox" name="MINLAD">
+             <property name="text">
+              <string>Exclude files used since n days</string>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="1">
+            <widget class="QCheckBox" name="IS">
+             <property name="text">
+              <string>Overwrite existing files even if they are same</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QCheckBox" name="XC">
+             <property name="text">
+              <string>Exclude Changed files</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QCheckBox" name="IA">
+             <property name="text">
+              <string>Include files with specific attributes set</string>
+             </property>
+            </widget>
+           </item>
+           <item row="9" column="1">
+            <widget class="QCheckBox" name="MAXAGE">
+             <property name="text">
+              <string>Exclude files older than n days/date</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QCheckBox" name="XF">
+             <property name="text">
+              <string>Exclude Files matching given names/paths/wildcards</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QCheckBox" name="XD">
+             <property name="text">
+              <string>Exclude folders matching given names/paths</string>
+             </property>
+            </widget>
+           </item>
+           <item row="10" column="1">
+            <widget class="QCheckBox" name="XJF">
+             <property name="text">
+              <string>Exclude Junction points for Files</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QCheckBox" name="M">
+             <property name="text">
+              <string>Files with the Archive attribute and remove it</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QCheckBox" name="XO">
+             <property name="text">
+              <string>Exclude Older files</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tab_3">
+        <attribute name="title">
+         <string>Retry Options</string>
+        </attribute>
+        <widget class="QWidget" name="layoutWidget">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>10</y>
+           <width>300</width>
+           <height>74</height>
+          </rect>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="checkBox_116">
+            <property name="text">
+             <string>Number of Retries on failed copies: default 1 million</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QCheckBox" name="W">
+            <property name="text">
+             <string>Wait n time between retries: default is 30 seconds</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QCheckBox" name="TBD">
+            <property name="text">
+             <string>Wait for sharenames to be defined</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+       <widget class="QWidget" name="tab_4">
+        <attribute name="title">
+         <string>Logging Options</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_6">
+         <item>
+          <layout class="QGridLayout" name="gridLayout_8">
+           <item row="0" column="0">
+            <widget class="QCheckBox" name="L">
+             <property name="text">
+              <string>List only</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QCheckBox" name="NS">
+             <property name="text">
+              <string>Don't log file sizes</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QCheckBox" name="X">
+             <property name="text">
+              <string>Report all extra files</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QCheckBox" name="NC">
+             <property name="text">
+              <string>Don't log file classes</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QCheckBox" name="V">
+             <property name="text">
+              <string>Verbose output</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QCheckBox" name="NFL">
+             <property name="text">
+              <string>Don't log file names</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QCheckBox" name="TS">
+             <property name="text">
+              <string>Include source file Time Stamps</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QCheckBox" name="NDL">
+             <property name="text">
+              <string>Don't log folder names.</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QCheckBox" name="FP">
+             <property name="text">
+              <string>Include Full Pathname of files</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QCheckBox" name="NP">
+             <property name="text">
+              <string>Don't show progress of operation</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QCheckBox" name="BYTES">
+             <property name="text">
+              <string>Print file sizes as bytes</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <widget class="QCheckBox" name="ETA">
+             <property name="text">
+              <string>Show Estimated Time of Arrival of copied files</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <widget class="QCheckBox" name="LOG">
+             <property name="text">
+              <string>Output status to a LOG file. Overwrite existing file</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1">
+            <widget class="QCheckBox" name="TEE">
+             <property name="text">
+              <string>Output to console window and log file</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0">
+            <widget class="QCheckBox" name="LOG_p">
+             <property name="text">
+              <string>Append existing output status to an existing LOG file</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="1">
+            <widget class="QCheckBox" name="NJH">
+             <property name="text">
+              <string>Don't output Job Header</string>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="0">
+            <widget class="QCheckBox" name="UNILOG">
+             <property name="text">
+              <string>Output status to a Unicode LOG file. Overwrite existing file</string>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="1">
+            <widget class="QCheckBox" name="NJS">
+             <property name="text">
+              <string>Don't output Job Summary</string>
+             </property>
+            </widget>
+           </item>
+           <item row="9" column="0">
+            <widget class="QCheckBox" name="UNILOG_p">
+             <property name="text">
+              <string>Append existing output status to an existing Unicode LOG file</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tab_5">
+        <attribute name="title">
+         <string>Job Options</string>
+        </attribute>
+        <widget class="QWidget" name="layoutWidget">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>10</y>
+           <width>661</width>
+           <height>74</height>
+          </rect>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_9">
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="JOB">
+            <property name="text">
+             <string>Take parameters from specified job file</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QCheckBox" name="NOSD">
+            <property name="text">
+             <string>NO Source Folder is specified</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QCheckBox" name="SAVE">
+            <property name="text">
+             <string>Save parameters to a specific job file</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QCheckBox" name="NODD">
+            <property name="text">
+             <string>NO Destination Folder is specified</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QCheckBox" name="QUIT">
+            <property name="text">
+             <string>QUIT after processing</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QCheckBox" name="IF">
+            <property name="text">
+             <string>Include the following Files</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
       </widget>
      </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>Source</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEdit"/>
+           </item>
+           <item>
+            <widget class="QPushButton" name="exploreSource">
+             <property name="text">
+              <string>Explore</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>Destination</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEdit_2"/>
+           </item>
+           <item>
+            <widget class="QPushButton" name="exploreDest">
+             <property name="text">
+              <string>Explore</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QPushButton" name="runButton">
+           <property name="text">
+            <string>Run</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QPlainTextEdit" name="psevdoConsole">
+         <property name="plainText">
+          <string>&gt;robocopy </string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
     </layout>
-   </widget>
-   <widget class="QWidget" name="">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>2</width>
-      <height>2</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout"/>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -755,7 +725,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>709</width>
+     <width>691</width>
      <height>22</height>
     </rect>
    </property>

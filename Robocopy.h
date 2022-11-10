@@ -21,7 +21,9 @@ private slots:
 	void visitReferenceSite();
 	void updatePsevdoConsole();
 	void setSource();
+	void setSourceSlot (QString);
 	void setDest();
+	void setDestSlot(QString);
 	void runCommand();
 	void updateRunning();
 	void processFinished(int code);
@@ -33,4 +35,5 @@ private:
 
 	QFileInfoModel* model;
 	QProcess* process;
+	QString prevCommand;
 };

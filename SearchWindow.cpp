@@ -12,6 +12,8 @@ SearchWindow::SearchWindow(QFileInfoModel* model, QString path, QWidget *parent)
 
 	searcher = new Searcher(model);
 
+	this->setFixedSize({ 661, 412 });
+
 	ui.pathLine->setText(path);
 
 	initTable();
