@@ -11,11 +11,10 @@ class GoogleGateway : public QObject
 public:
     explicit GoogleGateway(QObject* parent = nullptr);
 
-public slots:
+private slots:
     void loadFileList();
+    void treeGot(QNetworkReply* reply);
 
 private:
     QOAuth2AuthorizationCodeFlow* google;
-
-    QNetworkReply* reply;
 };

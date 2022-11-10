@@ -49,8 +49,6 @@ GoogleGateway::GoogleGateway(QObject* parent) : QObject(parent)
     auto replyHandler = new QOAuthHttpServerReplyHandler(port, this);
     this->google->setReplyHandler(replyHandler);
 
-    this->google->grant();
-
     connect(this->google, &QOAuth2AuthorizationCodeFlow::granted, [=]() {
         qDebug() << __FUNCTION__ << __LINE__ << "Access Granted!";
 
@@ -61,10 +59,31 @@ GoogleGateway::GoogleGateway(QObject* parent) : QObject(parent)
             });
         connect(reply, &QNetworkReply::finished, this, &GoogleGateway::loadFileList);
         });
+
+    this->google->grant();
+
+    loadFileList();
 }
 
 void GoogleGateway::loadFileList()
 {
-    
+    QString token = google->token();
+    QNetworkRequest request;
+    request.setRawHeader(QByteArray("Authorization"), token.toLatin1());
+    QUrl url("https://www.googleapis.com/drive/v3/files?fields=*");
+    request.setUrl(url);
+
+    auto m_netM = new QNetworkAccessManager;
+
+    connect(m_netM, &QNetworkAccessManager::finished, this, &GoogleGateway::treeGot);
+
+    m_netM->get(request);
+    m_netM->deleteLater();
 }
+
+void GoogleGateway::treeGot(QNetworkReply* reply)
+{
+    QString json = reply->readAll();
+}
+
 
