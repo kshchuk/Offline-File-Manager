@@ -14,7 +14,7 @@ public:
 
 
 signals:
-	void pathSent(QString path);
+	void pathSent(const QString& path);
 
 public slots:
 	void sendPathOfTheSelectedFile();

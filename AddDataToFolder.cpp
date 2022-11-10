@@ -10,6 +10,7 @@ AddDataToFolder::AddDataToFolder(QWidget *parent, QFileInfoModel* model)
 	: QDialog(parent), model(model)
 {
 	ui.setupUi(this);
+
     MyTreeViewInit(ui.systemTree, model);
    
     ui.systemTree->setExpandsOnDoubleClick(true);

@@ -6,109 +6,100 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>751</width>
-    <height>444</height>
+    <width>784</width>
+    <height>445</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>OfflineFileManager</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QTreeView" name="fileSystemTree">
+   <widget class="QWidget" name="">
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>50</y>
-      <width>751</width>
-      <height>361</height>
+      <y>0</y>
+      <width>781</width>
+      <height>421</height>
      </rect>
     </property>
-   </widget>
-   <widget class="Line" name="separ">
-    <property name="geometry">
-     <rect>
-      <x>-10</x>
-      <y>30</y>
-      <width>851</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>7</x>
-      <y>10</y>
-      <width>741</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QToolButton" name="updateButton">
-       <property name="styleSheet">
-        <string notr="true">background: rgb(204, 204, 204);
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QToolButton" name="updateButton">
+         <property name="styleSheet">
+          <string notr="true">background: rgb(204, 204, 204);
 image: url(:/OfflineFileManager/res/icons/refresh_update_icon_142975.png);
 
 
 
 </string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="addFolderButton">
-       <property name="styleSheet">
-        <string notr="true">background: rgb(204, 204, 204);
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="addFolderButton">
+         <property name="styleSheet">
+          <string notr="true">background: rgb(204, 204, 204);
 image: url(:/OfflineFileManager/res/icons/add-folder.png);
 </string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="homeButton">
-       <property name="styleSheet">
-        <string notr="true">background: rgb(204, 204, 204);
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="homeButton">
+         <property name="styleSheet">
+          <string notr="true">background: rgb(204, 204, 204);
 image: url(:/OfflineFileManager/res/icons/house.png);</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="upButton">
-       <property name="styleSheet">
-        <string notr="true">background: rgb(204, 204, 204);
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="upButton">
+         <property name="styleSheet">
+          <string notr="true">background: rgb(204, 204, 204);
 image: url(:/OfflineFileManager/res/icons/upload.png);</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="addressLine"/>
-     </item>
-     <item>
-      <widget class="QToolButton" name="searchButton">
-       <property name="styleSheet">
-        <string notr="true">background: rgb(204, 204, 204);
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="addressLine"/>
+       </item>
+       <item>
+        <widget class="QToolButton" name="searchButton">
+         <property name="styleSheet">
+          <string notr="true">background: rgb(204, 204, 204);
 image: url(:/OfflineFileManager/res/icons/172546_search_icon.png);</string>
-       </property>
-       <property name="text">
-        <string/>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="Line" name="separ">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
       </widget>
+     </item>
+     <item>
+      <widget class="QTreeView" name="fileSystemTree"/>
      </item>
     </layout>
    </widget>
@@ -118,7 +109,7 @@ image: url(:/OfflineFileManager/res/icons/172546_search_icon.png);</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>751</width>
+     <width>784</width>
      <height>22</height>
     </rect>
    </property>

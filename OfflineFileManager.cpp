@@ -28,8 +28,13 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
     : QMainWindow(parent)
 {
     ui.setupUi(this);
-    
+
     model = new QFileInfoModel();
+
+    treeViewInit(ui.fileSystemTree, model);
+
+    this->setCentralWidget(ui.widget);
+    
 
     saveMessage.setText("Save data");
     saveMessage.setInformativeText("You have unsaved changes. Do you want to save it?");
@@ -55,7 +60,6 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
     connect(ui.actionGoogle_Drive, &QAction::triggered, this, &OfflineFileManager::ConnectGoogleDrive);
     connect(ui.actionrobocopy, &QAction::triggered, this, &OfflineFileManager::robocopyOpen);
 
-    treeViewInit(ui.fileSystemTree, model);
     on_homeButton_clicked();
 }
 

@@ -14,7 +14,11 @@ MyExplorer::~MyExplorer()
 
 void MyExplorer::sendPathOfTheSelectedFile()
 {
-	emit pathSent(this->currentIndex().data((int)ColunmsOrder::FULL_PATH).toString());
+    QString path = this->currentIndex().siblingAtColumn((int)ColunmsOrder::FULL_PATH).data().toString();
+    if (path.isEmpty())
+        path = this->currentIndex().siblingAtColumn((int)ColunmsOrder::NAME).data().toString();
+
+	emit pathSent(path);
 }
 
 void MyExplorer::treeViewInit(QTreeView* tree, QFileInfoModel* model1)
@@ -28,8 +32,7 @@ void MyExplorer::treeViewInit(QTreeView* tree, QFileInfoModel* model1)
     tree->setIndentation(20);
     tree->setSortingEnabled(true);
     const QSize availableSize = tree->screen()->availableGeometry().size();
-    tree->setColumnWidth(0, tree->width() / 2);
+    tree->setColumnWidth(0, 400);
     QScroller::grabGesture(tree, QScroller::TouchGesture);
     tree->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    tree->setContextMenuPolicy(Qt::CustomContextMenu);
 }
