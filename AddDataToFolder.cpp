@@ -119,7 +119,7 @@ void AddDataToFolder::MyTreeViewInit(QTreeView* tree, QAbstractItemModel* model1
     tree->setIndentation(20);
     tree->setSortingEnabled(true);
     const QSize availableSize = tree->screen()->availableGeometry().size();
-    tree->setColumnWidth(0, 2*tree->width() / 3);
+    tree->setColumnWidth(0, 200);
     QScroller::grabGesture(tree, QScroller::TouchGesture);
     tree->setEditTriggers(QAbstractItemView::NoEditTriggers);
     tree->setContextMenuPolicy(Qt::CustomContextMenu);
