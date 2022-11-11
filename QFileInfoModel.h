@@ -3,6 +3,7 @@
 #include <QCryptographicHash>
 #include <QStandardItemModel>
 #include <QFileIconProvider>
+#include <QStorageInfo>
 #include <QMimeDatabase>
 #include <QStandardItem>
 #include <QDirIterator>
@@ -64,12 +65,24 @@ public:
 
 	static bool isLink(const QModelIndex& index);
 	static bool isFolder(const QModelIndex& index);
-	static QByteArray hash();
+
+public slots:
+	void stopRunning();
+
+signals:
+	void currentReadingFile(const QString& path);
+	void fileRead(int curPercentage);
+	void loaded();
 
 
 private:
 	QMimeDatabase db;
 	QFileIconProvider iconProvider;
+	QStorageInfo storageInfo;
+	quint64 allSize = 0;
+	quint64 readSize = 0;
+
+	bool isRunning = true;
 
 	void readHierarchyRecursive(QModelIndex parent, const QString& path,
 		size_t maxDepth, size_t curDepth = 1);

@@ -15,6 +15,7 @@
 #include <QUrl>
 #include <QMenu>
 #include <QSpinBox>
+#include <QProgressBar>
 
 #include "PropertiesWindow.h"
 #include "PropertiesLogic.h"
@@ -240,15 +241,15 @@ void OfflineFileManager::on_updateButton_clicked()
     case OfflineFileManager::FILESYSTEM:
     {
         treeViewInit(ui.fileSystemTree, model);
-
+        runProgressBar();
         this->model->genStaticSystemModel(maxDepth);
         treeViewInit(ui.fileSystemTree, model);
         break;
     }
     case OfflineFileManager::EXTERNAL_DRIVES:
     {
+        runProgressBar();
         this->model->genExternalDrivesModel(maxDepth);
-        // treeViewInit(ui.fileSystemTree, model->readFile("tmp.bin"));
         treeViewInit(ui.fileSystemTree, model);
         break;
     }
@@ -505,4 +506,29 @@ void OfflineFileManager::treeViewInit(QTreeView* tree, QFileInfoModel* model1)
     QScroller::grabGesture(tree, QScroller::TouchGesture);
     tree->setEditTriggers(QAbstractItemView::NoEditTriggers);
     tree->setContextMenuPolicy(Qt::CustomContextMenu);
+}
+
+void OfflineFileManager::runProgressBar()
+{
+    QWidget* widget = new QWidget(this);
+    QVBoxLayout* layout = new QVBoxLayout(widget);
+    widget->setWindowTitle("Reading");
+    widget->setFixedHeight(150);
+    widget->setFixedWidth(500);
+    widget->move(200, 100);
+
+    QLineEdit* line = new QLineEdit(widget);
+    QProgressBar* progBar = new QProgressBar(widget);
+
+    connect(model, &QFileInfoModel::loaded, widget, &QWidget::close);
+    connect(model, &QFileInfoModel::fileRead, progBar, &QProgressBar::setValue);
+    connect(model, &QFileInfoModel::currentReadingFile, line, &QLineEdit::setText);
+
+
+    layout->addWidget(progBar);
+    layout->addWidget(line);
+    widget->setLayout(layout);
+    widget->show();
+
+    widget->deleteLater();
 }

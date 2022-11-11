@@ -51,6 +51,7 @@ QString QFileInfoModel::getPathfFromInfo(const QModelIndex& index) const
 
 QAbstractItemModel* QFileInfoModel::readFile(QString fileName)
 {
+	allSize = 0; readSize = 0;
 	QFile file(fileName);
 	if (file.open(QIODevice::ReadOnly)) {
 		QDataStream stream(&file);
@@ -68,6 +69,7 @@ QAbstractItemModel* QFileInfoModel::readFile(QString fileName)
 	else
 		throw std::runtime_error("Unable to open file:" + fileName.toStdString());
 
+	emit loaded();
 	return nullptr;
 }
 
@@ -107,6 +109,12 @@ bool QFileInfoModel::isFolder(const QModelIndex& index)
 QAbstractItemModel* QFileInfoModel::genStaticSystemModel(size_t maxDepth)
 {
 	this->clear();
+	initFileModelHeaders(this);
+	allSize = 0; readSize = 0; isRunning = true;
+	foreach(auto drive, QDir::drives()) {
+		storageInfo.setPath(drive.filePath());
+		allSize += storageInfo.bytesTotal() - storageInfo.bytesFree();
+	}
 
 	foreach(auto drive, QDir::drives())
 	{
@@ -121,17 +129,23 @@ QAbstractItemModel* QFileInfoModel::genStaticSystemModel(size_t maxDepth)
 
 		readHierarchyRecursive(index, it.path(), maxDepth);
 	}
-	initFileModelHeaders(this);
+	emit loaded();
 	return this;
 }
 
 QAbstractItemModel* QFileInfoModel::genExternalDrivesModel(size_t maxDepth)
 {
 	this->clear();
-
+	allSize = 0; readSize = 0; isRunning = true;
 	QStandardItem* root = this->invisibleRootItem();
 
+	initFileModelHeaders(this);
 	QList<QString> externalDrives = removableDrives();
+	foreach(auto drive, externalDrives) {
+		storageInfo.setPath(drive);
+		allSize += storageInfo.bytesTotal() - storageInfo.bytesFree();
+	}
+
 	foreach(auto drive, externalDrives)
 	{
 		QDirIterator it(drive);
@@ -144,7 +158,7 @@ QAbstractItemModel* QFileInfoModel::genExternalDrivesModel(size_t maxDepth)
 
 		readHierarchyRecursive(index, it.path(), maxDepth);
 	}
-	initFileModelHeaders(this);
+	emit loaded();
 	return this;
 }
 
@@ -340,12 +354,17 @@ void QFileInfoModel::readHierarchyRecursive(QModelIndex parent, const QString& p
 	QStandardItem* parentItem = this->itemFromIndex(parent);
 
 	QDirIterator it(path, QDir::NoDotAndDotDot | QDir::AllEntries);
-	while (it.hasNext())
+	while (it.hasNext() && isRunning)
 	{
 		it.next();
+		emit currentReadingFile(it.filePath());
 
-		QList<QStandardItem*> preparedRow = fromFileInfo(it.fileInfo());
+		QFileInfo info(it.fileInfo()); 
+		QList<QStandardItem*> preparedRow = fromFileInfo(info);
 		parentItem->appendRow(preparedRow);
+
+		readSize += info.size();
+		emit fileRead(100 * readSize / allSize);
 
 		int row = parentItem->rowCount() - 1;
 		QModelIndex index = parentItem->child(row)->index();
@@ -398,6 +417,13 @@ QList<QStandardItem*> QFileInfoModel::packLink(const QModelIndex& index) const
 
 	return row;
 }
+
+void QFileInfoModel::stopRunning()
+{
+	isRunning = false;
+	this->clear();
+}
+
 
 QList<QStandardItem*> QFileInfoModel::packDrive(const QDirIterator& drive) const
 {

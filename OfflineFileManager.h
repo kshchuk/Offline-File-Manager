@@ -56,7 +56,7 @@ private:
     Ui::OfflineFileManagerClass ui;
     QFileInfoModel* model = nullptr;
     Regime regime = EXTERNAL_DRIVES;
-    size_t maxDepth = 10;
+    size_t maxDepth = 100;
     QMessageBox saveMessage;
 
     int tempValue;
@@ -64,4 +64,5 @@ private:
     QString error;
 
     void treeViewInit(QTreeView* tree, QFileInfoModel* model1);
+    void runProgressBar();
 };
