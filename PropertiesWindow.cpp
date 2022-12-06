@@ -51,7 +51,7 @@ PropertiesWindow::PropertiesWindow(QWidget* parent, QModelIndex index, QFileInfo
     this->setItem((int)PropertiesOrder::DATE_MODIDFIED, 0, new QTableWidgetItem("Date modified:"));
     this->setItem((int)PropertiesOrder::DATE_MODIDFIED, 1, new QTableWidgetItem(properties->getLastModified()));
 
-    this->setItem((int)PropertiesOrder::MD5, 0, new QTableWidgetItem("MD5 hash:"));
+    this->setItem((int)PropertiesOrder::MD5, 0, new QTableWidgetItem("Hash:"));
     this->setItem((int)PropertiesOrder::MD5, 1, new QTableWidgetItem(properties->getMd5()));
 
     this->setItem((int)PropertiesOrder::CUSTOM_METHADATA, 0, new QTableWidgetItem("Custom metadata:"));

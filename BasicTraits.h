@@ -1,7 +1,12 @@
+// Is used for serialization/deserialization
+// https://github.com/KubaO/stackoverflown/tree/master/questions/model-serialization-32176887
+
 #pragma once
 
 #include <QtGui>
 #include <QStandardItemModel>
+
+
 
 
 struct BasicTraits {
