@@ -44,11 +44,15 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
 
     connect(ui.actionClose, &QAction::triggered, this, &OfflineFileManager::close);
     connect(ui.updateButton, &QToolButton::triggered, this, &OfflineFileManager::on_updateButton_clicked);
+    connect(ui.actionUpdate, &QAction::triggered, this, &OfflineFileManager::on_updateButton_clicked);
     connect(ui.upButton, &QToolButton::triggered, this, &OfflineFileManager::on_upButton_clicked);
+    connect(ui.actionReturn_Up_Folder, &QAction::triggered, this, &OfflineFileManager::on_upButton_clicked);
     connect(ui.homeButton, &QToolButton::clicked, this, &OfflineFileManager::on_homeButton_clicked);
+    connect(ui.actionReturn_Home_Folder, &QAction::triggered, this, &OfflineFileManager::on_homeButton_clicked);
     connect(ui.actionSave, &QAction::triggered, this, &OfflineFileManager::on_saveAction_triggered);
     connect(ui.actionOpen, &QAction::triggered, this, &OfflineFileManager::on_openAction_triggered);
     connect(ui.addFolderButton, &QToolButton::triggered, this, &OfflineFileManager::on_addFolderButton_clicked);
+    connect(ui.actionCreate_virtual_foulder, &QAction::triggered, this, &OfflineFileManager::on_addFolderButton_clicked);
     connect(ui.fileSystemTree, &QTreeView::doubleClicked, model, &QFileInfoModel::fetchMore);
     connect(ui.addressLine, &QLineEdit::editingFinished, this, &OfflineFileManager::on_editLine_editingFinished);
     connect(ui.fileSystemTree, &QTreeView::activated, this, &OfflineFileManager::on_treeWidget_clicked);
@@ -58,6 +62,7 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
     connect(ui.actionExternal_drives, &QAction::triggered, this, &OfflineFileManager::setExternalDrivesregime);
     connect(ui.actionMaximum_depth, &QAction::triggered, this, &OfflineFileManager::setMaxDepth);
     connect(ui.searchButton, &QToolButton::clicked, this, &OfflineFileManager::search);
+    connect(ui.actionSearch, &QAction::triggered, this, &OfflineFileManager::search);
     connect(ui.actionGoogle_Drive, &QAction::triggered, this, &OfflineFileManager::ConnectGoogleDrive);
     connect(ui.actionrobocopy, &QAction::triggered, this, &OfflineFileManager::robocopyOpen);
 
