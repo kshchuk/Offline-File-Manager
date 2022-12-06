@@ -20,6 +20,18 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{24b60e93-1a04-442a-85c2-d42cb7abacb3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="archiver">
+      <UniqueIdentifier>{9fd585b7-7187-49e4-8ada-1f91431757c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="archiver\MimeHandler">
+      <UniqueIdentifier>{f7bd3e4f-ae10-482e-b333-c01e8d0a62d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="archiver\pkgconfig">
+      <UniqueIdentifier>{6704ac35-dedb-4cc7-89d0-00d565852a67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="archiver\StandardPaths">
+      <UniqueIdentifier>{ccabd8ee-db47-4eb5-baff-4936d99cc823}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="OfflineFileManager.qrc">
@@ -41,6 +53,57 @@
     </ClInclude>
     <ClInclude Include="ModelSerializer.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="archiver\Global.hpp">
+      <Filter>archiver</Filter>
+    </ClInclude>
+    <ClInclude Include="archiver\LibBZip2.hpp">
+      <Filter>archiver</Filter>
+    </ClInclude>
+    <ClInclude Include="archiver\LibGZip.hpp">
+      <Filter>archiver</Filter>
+    </ClInclude>
+    <ClInclude Include="archiver\LibLZip.hpp">
+      <Filter>archiver</Filter>
+    </ClInclude>
+    <ClInclude Include="archiver\LibLzma.hpp">
+      <Filter>archiver</Filter>
+    </ClInclude>
+    <ClInclude Include="archiver\LibLzma2.hpp">
+      <Filter>archiver</Filter>
+    </ClInclude>
+    <ClInclude Include="archiver\lz4dec.h">
+      <Filter>archiver</Filter>
+    </ClInclude>
+    <ClInclude Include="archiver\MimeHandler\NBMimeDatabase.hpp">
+      <Filter>archiver\MimeHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="archiver\MimeHandler\NBMimeDatabase_p.hpp">
+      <Filter>archiver\MimeHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="archiver\MimeHandler\NBMimeGlobPattern_p.hpp">
+      <Filter>archiver\MimeHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="archiver\MimeHandler\NBMimeMagicRule_p.hpp">
+      <Filter>archiver\MimeHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="archiver\MimeHandler\NBMimeMagicRuleMatcher_p.hpp">
+      <Filter>archiver\MimeHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="archiver\MimeHandler\NBMimeProvider_p.hpp">
+      <Filter>archiver\MimeHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="archiver\MimeHandler\NBMimeType.hpp">
+      <Filter>archiver\MimeHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="archiver\MimeHandler\NBMimeType_p.hpp">
+      <Filter>archiver\MimeHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="archiver\MimeHandler\NBMimeTypeParser_p.hpp">
+      <Filter>archiver\MimeHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="archiver\StandardPaths\NBStandardPaths.hpp">
+      <Filter>archiver\StandardPaths</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -70,6 +133,9 @@
     </QtMoc>
     <QtMoc Include="MyExplorer.h">
       <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="archiver\libarchiveqt.h">
+      <Filter>archiver</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
@@ -117,8 +183,75 @@
     <ClCompile Include="MyExplorer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Archiver.cpp" />
+    <ClCompile Include="archiver\LibArchive.cpp">
+      <Filter>archiver</Filter>
+    </ClCompile>
+    <ClCompile Include="archiver\LibBZip2.cpp">
+      <Filter>archiver</Filter>
+    </ClCompile>
+    <ClCompile Include="archiver\LibGZip.cpp">
+      <Filter>archiver</Filter>
+    </ClCompile>
+    <ClCompile Include="archiver\LibLZip.cpp">
+      <Filter>archiver</Filter>
+    </ClCompile>
+    <ClCompile Include="archiver\LibLzma.cpp">
+      <Filter>archiver</Filter>
+    </ClCompile>
+    <ClCompile Include="archiver\LibLzma2.cpp">
+      <Filter>archiver</Filter>
+    </ClCompile>
+    <ClCompile Include="archiver\lz4dec.c">
+      <Filter>archiver</Filter>
+    </ClCompile>
+    <ClCompile Include="archiver\MimeHandler\NBMimeDatabase.cpp">
+      <Filter>archiver\MimeHandler</Filter>
+    </ClCompile>
+    <ClCompile Include="archiver\MimeHandler\NBMimeGlobPattern.cpp">
+      <Filter>archiver\MimeHandler</Filter>
+    </ClCompile>
+    <ClCompile Include="archiver\MimeHandler\NBMimeMagicRule.cpp">
+      <Filter>archiver\MimeHandler</Filter>
+    </ClCompile>
+    <ClCompile Include="archiver\MimeHandler\NBMimeMagicRuleMatcher.cpp">
+      <Filter>archiver\MimeHandler</Filter>
+    </ClCompile>
+    <ClCompile Include="archiver\MimeHandler\NBMimeProvider.cpp">
+      <Filter>archiver\MimeHandler</Filter>
+    </ClCompile>
+    <ClCompile Include="archiver\MimeHandler\NBMimeType.cpp">
+      <Filter>archiver\MimeHandler</Filter>
+    </ClCompile>
+    <ClCompile Include="archiver\MimeHandler\NBMimeTypeParser.cpp">
+      <Filter>archiver\MimeHandler</Filter>
+    </ClCompile>
+    <ClCompile Include="archiver\StandardPaths\NBStandardPaths.cpp">
+      <Filter>archiver\StandardPaths</Filter>
+    </ClCompile>
+    <ClCompile Include="archiver\StandardPaths\NBStandardPaths_unix.cpp">
+      <Filter>archiver\StandardPaths</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="client.json" />
+    <None Include="archiver\ChangeLog">
+      <Filter>archiver</Filter>
+    </None>
+    <None Include="archiver\README">
+      <Filter>archiver</Filter>
+    </None>
+    <None Include="archiver\shared.pro">
+      <Filter>archiver</Filter>
+    </None>
+    <None Include="archiver\static.pro">
+      <Filter>archiver</Filter>
+    </None>
+    <None Include="archiver\pkgconfig\archiveqt.pc">
+      <Filter>archiver\pkgconfig</Filter>
+    </None>
+    <None Include="archiver\pkgconfig\archiveqt5.pc">
+      <Filter>archiver\pkgconfig</Filter>
+    </None>
   </ItemGroup>
 </Project>
