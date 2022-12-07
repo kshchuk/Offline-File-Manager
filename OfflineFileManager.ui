@@ -14,7 +14,7 @@
    <string>OfflineFileManager</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -120,7 +120,13 @@ image: url(:/OfflineFileManager/res/icons/172546_search_icon.png);</string>
     <addaction name="actionOpen"/>
     <addaction name="actionSave"/>
     <addaction name="separator"/>
-    <addaction name="actionClose"/>
+    <addaction name="actionUpdate"/>
+    <addaction name="actionCreate_Virtual_Folder"/>
+    <addaction name="actionReturn_Home"/>
+    <addaction name="actionReturn_Upper"/>
+    <addaction name="actionSearch"/>
+    <addaction name="separator"/>
+    <addaction name="actionClose_2"/>
    </widget>
    <widget class="QMenu" name="menuConfiguration">
     <property name="title">
@@ -135,6 +141,7 @@ image: url(:/OfflineFileManager/res/icons/172546_search_icon.png);</string>
     </widget>
     <addaction name="menuRegime"/>
     <addaction name="actionMaximum_depth"/>
+    <addaction name="actionSet_Filters"/>
    </widget>
    <widget class="QMenu" name="menuNetwork">
     <property name="title">
@@ -212,6 +219,41 @@ image: url(:/OfflineFileManager/res/icons/172546_search_icon.png);</string>
   <action name="actionrobocopy">
    <property name="text">
     <string>robocopy</string>
+   </property>
+  </action>
+  <action name="actionUpdate">
+   <property name="text">
+    <string>Update</string>
+   </property>
+  </action>
+  <action name="actionCreate_Virtual_Folder">
+   <property name="text">
+    <string>Create Virtual Folder</string>
+   </property>
+  </action>
+  <action name="actionReturn_Home">
+   <property name="text">
+    <string>Return Home</string>
+   </property>
+  </action>
+  <action name="actionReturn_Upper">
+   <property name="text">
+    <string>Return Upper</string>
+   </property>
+  </action>
+  <action name="actionSearch">
+   <property name="text">
+    <string>Search</string>
+   </property>
+  </action>
+  <action name="actionClose_2">
+   <property name="text">
+    <string>Close</string>
+   </property>
+  </action>
+  <action name="actionSet_Filters">
+   <property name="text">
+    <string>Set Filters</string>
    </property>
   </action>
  </widget>

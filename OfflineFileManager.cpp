@@ -34,7 +34,7 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
 
     treeViewInit(ui.fileSystemTree, model);
 
-    this->setCentralWidget(ui.widget);
+    this->setCentralWidget(ui.layoutWidget);
     
 
     saveMessage.setText("Save data");
@@ -42,13 +42,17 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
     saveMessage.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     saveMessage.setDefaultButton(QMessageBox::Yes);
 
-    connect(ui.actionClose, &QAction::triggered, this, &OfflineFileManager::close);
+    connect(ui.actionClose_2, &QAction::triggered, this, &OfflineFileManager::close);
     connect(ui.updateButton, &QToolButton::triggered, this, &OfflineFileManager::on_updateButton_clicked);
+    connect(ui.actionUpdate, &QAction::triggered, this, &OfflineFileManager::on_updateButton_clicked);
     connect(ui.upButton, &QToolButton::triggered, this, &OfflineFileManager::on_upButton_clicked);
+    connect(ui.actionReturn_Upper, &QAction::triggered, this, &OfflineFileManager::on_upButton_clicked);
     connect(ui.homeButton, &QToolButton::clicked, this, &OfflineFileManager::on_homeButton_clicked);
+    connect(ui.actionReturn_Home, &QAction::triggered, this, &OfflineFileManager::on_homeButton_clicked);
     connect(ui.actionSave, &QAction::triggered, this, &OfflineFileManager::on_saveAction_triggered);
     connect(ui.actionOpen, &QAction::triggered, this, &OfflineFileManager::on_openAction_triggered);
     connect(ui.addFolderButton, &QToolButton::triggered, this, &OfflineFileManager::on_addFolderButton_clicked);
+    connect(ui.actionCreate_Virtual_Folder, &QAction::triggered, this, &OfflineFileManager::on_addFolderButton_clicked);
     connect(ui.fileSystemTree, &QTreeView::doubleClicked, model, &QFileInfoModel::fetchMore);
     connect(ui.addressLine, &QLineEdit::editingFinished, this, &OfflineFileManager::on_editLine_editingFinished);
     connect(ui.fileSystemTree, &QTreeView::activated, this, &OfflineFileManager::on_treeWidget_clicked);
@@ -58,6 +62,7 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
     connect(ui.actionExternal_drives, &QAction::triggered, this, &OfflineFileManager::setExternalDrivesregime);
     connect(ui.actionMaximum_depth, &QAction::triggered, this, &OfflineFileManager::setMaxDepth);
     connect(ui.searchButton, &QToolButton::clicked, this, &OfflineFileManager::search);
+    connect(ui.actionSearch, &QAction::triggered, this, &OfflineFileManager::search);
     connect(ui.actionGoogle_Drive, &QAction::triggered, this, &OfflineFileManager::ConnectGoogleDrive);
     connect(ui.actionrobocopy, &QAction::triggered, this, &OfflineFileManager::robocopyOpen);
 
