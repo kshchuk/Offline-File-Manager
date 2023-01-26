@@ -48,11 +48,9 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
     connect(ui.upButton, &QToolButton::triggered, this, &OfflineFileManager::on_upButton_clicked);
     connect(ui.actionReturn_Upper, &QAction::triggered, this, &OfflineFileManager::on_upButton_clicked);
     connect(ui.homeButton, &QToolButton::clicked, this, &OfflineFileManager::on_homeButton_clicked);
-    connect(ui.actionReturn_Home, &QAction::triggered, this, &OfflineFileManager::on_homeButton_clicked);
     connect(ui.actionSave, &QAction::triggered, this, &OfflineFileManager::on_saveAction_triggered);
     connect(ui.actionOpen, &QAction::triggered, this, &OfflineFileManager::on_openAction_triggered);
     connect(ui.addFolderButton, &QToolButton::triggered, this, &OfflineFileManager::on_addFolderButton_clicked);
-    connect(ui.actionCreate_Virtual_Folder, &QAction::triggered, this, &OfflineFileManager::on_addFolderButton_clicked);
     connect(ui.fileSystemTree, &QTreeView::doubleClicked, model, &QFileInfoModel::fetchMore);
     connect(ui.addressLine, &QLineEdit::editingFinished, this, &OfflineFileManager::on_editLine_editingFinished);
     connect(ui.fileSystemTree, &QTreeView::activated, this, &OfflineFileManager::on_treeWidget_clicked);

@@ -104,6 +104,24 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="AddDataToFolder.h" />
+    <ClInclude Include="archiver\Global.hpp" />
+    <QtMoc Include="archiver\libarchiveqt.h" />
+    <ClInclude Include="archiver\LibBZip2.hpp" />
+    <ClInclude Include="archiver\LibGZip.hpp" />
+    <ClInclude Include="archiver\LibLZip.hpp" />
+    <ClInclude Include="archiver\LibLzma.hpp" />
+    <ClInclude Include="archiver\LibLzma2.hpp" />
+    <ClInclude Include="archiver\lz4dec.h" />
+    <ClInclude Include="archiver\MimeHandler\NBMimeDatabase.hpp" />
+    <ClInclude Include="archiver\MimeHandler\NBMimeDatabase_p.hpp" />
+    <ClInclude Include="archiver\MimeHandler\NBMimeGlobPattern_p.hpp" />
+    <ClInclude Include="archiver\MimeHandler\NBMimeMagicRuleMatcher_p.hpp" />
+    <ClInclude Include="archiver\MimeHandler\NBMimeMagicRule_p.hpp" />
+    <ClInclude Include="archiver\MimeHandler\NBMimeProvider_p.hpp" />
+    <ClInclude Include="archiver\MimeHandler\NBMimeType.hpp" />
+    <ClInclude Include="archiver\MimeHandler\NBMimeTypeParser_p.hpp" />
+    <ClInclude Include="archiver\MimeHandler\NBMimeType_p.hpp" />
+    <ClInclude Include="archiver\StandardPaths\NBStandardPaths.hpp" />
     <ClInclude Include="BasicTraits.h" />
     <QtMoc Include="GoogleGateway.h" />
     <ClInclude Include="ModelSerializer.h" />
@@ -118,6 +136,23 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AddDataToFolder.cpp" />
+    <ClCompile Include="Archiver.cpp" />
+    <ClCompile Include="archiver\LibArchive.cpp" />
+    <ClCompile Include="archiver\LibBZip2.cpp" />
+    <ClCompile Include="archiver\LibGZip.cpp" />
+    <ClCompile Include="archiver\LibLZip.cpp" />
+    <ClCompile Include="archiver\LibLzma.cpp" />
+    <ClCompile Include="archiver\LibLzma2.cpp" />
+    <ClCompile Include="archiver\lz4dec.c" />
+    <ClCompile Include="archiver\MimeHandler\NBMimeDatabase.cpp" />
+    <ClCompile Include="archiver\MimeHandler\NBMimeGlobPattern.cpp" />
+    <ClCompile Include="archiver\MimeHandler\NBMimeMagicRule.cpp" />
+    <ClCompile Include="archiver\MimeHandler\NBMimeMagicRuleMatcher.cpp" />
+    <ClCompile Include="archiver\MimeHandler\NBMimeProvider.cpp" />
+    <ClCompile Include="archiver\MimeHandler\NBMimeType.cpp" />
+    <ClCompile Include="archiver\MimeHandler\NBMimeTypeParser.cpp" />
+    <ClCompile Include="archiver\StandardPaths\NBStandardPaths.cpp" />
+    <ClCompile Include="archiver\StandardPaths\NBStandardPaths_unix.cpp" />
     <ClCompile Include="GoogleGateway.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyExplorer.cpp" />
@@ -130,6 +165,12 @@
     <ClCompile Include="SearchWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="archiver\ChangeLog" />
+    <None Include="archiver\pkgconfig\archiveqt.pc" />
+    <None Include="archiver\pkgconfig\archiveqt5.pc" />
+    <None Include="archiver\README" />
+    <None Include="archiver\shared.pro" />
+    <None Include="archiver\static.pro" />
     <None Include="client.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
