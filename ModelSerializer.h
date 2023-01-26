@@ -1,9 +1,5 @@
 #pragma once
 
-// https://github.com/KubaO/stackoverflown/tree/master/questions/model-serialization-32176887
-// Original code didn't worked. 
-
-
 #include "BasicTraits.h"
 
 

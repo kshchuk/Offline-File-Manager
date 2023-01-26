@@ -14,6 +14,7 @@
 #include "system_depend_functions.h"
 
 
+
 QFileInfoModel::QFileInfoModel(QObject *parent)
 	: QStandardItemModel(parent)
 {

@@ -89,7 +89,7 @@ private:
 
 	// List of columns:
 	// Name | Size | Type | Date Modified | Icon Name | Birth Time |
-	// Group | Owner | OwnerID | Custom metadata | Size in bytes | Full path | MD5
+	// Group | Owner | OwnerID | Custom metadata | Size in bytes | Full path | HASH
 	QList<QStandardItem*> fromFileInfo(const QFileInfo& info) const;
 	QList<QStandardItem*> packLink(const QModelIndex& index) const;
 	QList<QStandardItem*> packDrive(const QDirIterator& drive) const;
