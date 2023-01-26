@@ -1,10 +1,10 @@
 #include "GoogleGateway.h"
 
-#include "googlegateway.h"
 #include <QObject>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QUrlQuery>
 #include <QString>
 #include <QFile>
 #include <QDir>
@@ -13,14 +13,25 @@
 #include <QDesktopServices>
 
 
+bool GoogleGateway::isAuthorised = false;
+QString GoogleGateway::accessToken;
+
 
 GoogleGateway::GoogleGateway(QObject* parent) : QObject(parent)
 {
     this->google = new QOAuth2AuthorizationCodeFlow(this);
     this->google->setScope("https://www.googleapis.com/auth/drive.metadata.readonly");
 
-    connect(this->google, &QOAuth2AuthorizationCodeFlow::authorizeWithBrowser, &QDesktopServices::openUrl);
+    connect(this->google, &QOAuth2AuthorizationCodeFlow::authorizeWithBrowser, [=](QUrl url) {
+        QUrlQuery query(url);
 
+        query.addQueryItem("prompt", "consent");      // Param required to get data everytime
+        query.addQueryItem("access_type", "offline"); // Needed for Refresh Token (as AccessToken expires shortly)
+        url.setQuery(query);
+        QDesktopServices::openUrl(url);
+        });
+
+    // Load confs from .json
     QByteArray val;
     QFile file;
     file.setFileName(QDir::toNativeSeparators("client.json"));
@@ -51,39 +62,28 @@ GoogleGateway::GoogleGateway(QObject* parent) : QObject(parent)
 
     connect(this->google, &QOAuth2AuthorizationCodeFlow::granted, [=]() {
         qDebug() << __FUNCTION__ << __LINE__ << "Access Granted!";
-
-        auto reply = this->google->get(QUrl("https://www.googleapis.com/plus/v1/people/me"));
-        connect(reply, &QNetworkReply::finished, [reply]() {
-            qDebug() << "REQUEST FINISHED. Error? " << (reply->error() != QNetworkReply::NoError);
-            qDebug() << reply->readAll();
-            });
-        connect(reply, &QNetworkReply::finished, this, &GoogleGateway::loadFileList);
+        isAuthorised = true;
         });
 
-    this->google->grant();
+    connect(this->google, &QOAuth2AuthorizationCodeFlow::tokenChanged,
+                     this, [](const QString& token) { accessToken = token; });
 
-    loadFileList();
+    if (!isAuthorised)
+        google->grant();
+    else {
+        google->setToken(accessToken);
+    }
+
 }
 
 void GoogleGateway::loadFileList()
 {
-    QString token = google->token();
-    QNetworkRequest request;
-    request.setRawHeader(QByteArray("Authorization"), token.toLatin1());
-    QUrl url("https://www.googleapis.com/drive/v3/files?fields=*");
-    request.setUrl(url);
-
-    auto m_netM = new QNetworkAccessManager;
-
-    connect(m_netM, &QNetworkAccessManager::finished, this, &GoogleGateway::treeGot);
-
-    m_netM->get(request);
-    m_netM->deleteLater();
+    if (!isAuthorised) return;
+    
+    auto reply = this->google->get(QUrl("https://www.googleapis.com/drive/v3/files?fields=*"));
+    connect(reply, &QNetworkReply::finished, [=]() {
+        qDebug() << "REQUEST FINISHED. Error? " << (reply->error() != QNetworkReply::NoError);
+        qDebug() << reply->readAll();
+        emit loadedFileList(reply->readAll());
+        });
 }
-
-void GoogleGateway::treeGot(QNetworkReply* reply)
-{
-    QString json = reply->readAll();
-}
-
-
