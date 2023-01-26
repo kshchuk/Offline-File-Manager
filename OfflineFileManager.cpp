@@ -25,7 +25,7 @@
 #include "Robocopy.h"
 
 
-OfflineFileManager::OfflineFileManager(QWidget *parent)
+OfflineFileManager::OfflineFileManager(QWidget* parent)
     : QMainWindow(parent)
 {
     ui.setupUi(this);
@@ -34,23 +34,25 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
 
     treeViewInit(ui.fileSystemTree, model);
 
-    this->setCentralWidget(ui.layoutWidget);
-    
+    this->setCentralWidget(ui.centralWidget);
+
 
     saveMessage.setText("Save data");
     saveMessage.setInformativeText("You have unsaved changes. Do you want to save it?");
     saveMessage.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     saveMessage.setDefaultButton(QMessageBox::Yes);
 
-    connect(ui.actionClose_2, &QAction::triggered, this, &OfflineFileManager::close);
+    connect(ui.actionClose, &QAction::triggered, this, &OfflineFileManager::close);
     connect(ui.updateButton, &QToolButton::triggered, this, &OfflineFileManager::on_updateButton_clicked);
     connect(ui.actionUpdate, &QAction::triggered, this, &OfflineFileManager::on_updateButton_clicked);
     connect(ui.upButton, &QToolButton::triggered, this, &OfflineFileManager::on_upButton_clicked);
-    connect(ui.actionReturn_Upper, &QAction::triggered, this, &OfflineFileManager::on_upButton_clicked);
+    connect(ui.actionReturn_Up_Folder, &QAction::triggered, this, &OfflineFileManager::on_upButton_clicked);
     connect(ui.homeButton, &QToolButton::clicked, this, &OfflineFileManager::on_homeButton_clicked);
+    connect(ui.actionReturn_Home_Folder, &QAction::triggered, this, &OfflineFileManager::on_homeButton_clicked);
     connect(ui.actionSave, &QAction::triggered, this, &OfflineFileManager::on_saveAction_triggered);
     connect(ui.actionOpen, &QAction::triggered, this, &OfflineFileManager::on_openAction_triggered);
     connect(ui.addFolderButton, &QToolButton::triggered, this, &OfflineFileManager::on_addFolderButton_clicked);
+    connect(ui.actionCreate_virtual_foulder, &QAction::triggered, this, &OfflineFileManager::on_addFolderButton_clicked);
     connect(ui.fileSystemTree, &QTreeView::doubleClicked, model, &QFileInfoModel::fetchMore);
     connect(ui.addressLine, &QLineEdit::editingFinished, this, &OfflineFileManager::on_editLine_editingFinished);
     connect(ui.fileSystemTree, &QTreeView::activated, this, &OfflineFileManager::on_treeWidget_clicked);
@@ -63,6 +65,7 @@ OfflineFileManager::OfflineFileManager(QWidget *parent)
     connect(ui.actionSearch, &QAction::triggered, this, &OfflineFileManager::search);
     connect(ui.actionGoogle_Drive, &QAction::triggered, this, &OfflineFileManager::ConnectGoogleDrive);
     connect(ui.actionrobocopy, &QAction::triggered, this, &OfflineFileManager::robocopyOpen);
+    connect(ui.actionGoogle_Drive_2, &QAction::triggered, this, &OfflineFileManager::ConnectGoogleDrive);
 
     on_homeButton_clicked();
 }
@@ -90,9 +93,9 @@ void OfflineFileManager::on_treeWidget_clicked(QModelIndex index)
 {
     QList<QString> path = model->getPath(index);
     QString spath;
-    foreach(auto file, path) { 
+    foreach(auto file, path) {
         file.removeIf([](QChar c) {return c == QChar('/') || c == QChar('\\'); });
-        spath += '/' + file; 
+        spath += '/' + file;
     }
 
     ui.addressLine->blockSignals(true);
@@ -114,7 +117,7 @@ void OfflineFileManager::action_openInFileExplorer()
     {
         int i = path.length() - 1, j = 0;
         while (i >= 0 && path[i] != QChar('/') && path[i] != QChar('\\')) { j++; i--; }
-        path.remove(i, j+1);
+        path.remove(i, j + 1);
     }
 
     if (path.isEmpty())
@@ -132,7 +135,7 @@ void OfflineFileManager::action_openInFileExplorer()
 void OfflineFileManager::action_openFile()
 {
     QModelIndex index = ui.fileSystemTree->currentIndex();
-    
+
     if (model->isLink(index)) {
         QString path = model->getPathfFromInfo(index);
         index = model->byPath(path);
@@ -206,7 +209,7 @@ void OfflineFileManager::on_customContextMenu(const QPoint& point)
         this, &OfflineFileManager::action_openFile);
     menu.addAction("Open in file explorer",
         this, &OfflineFileManager::action_openInFileExplorer);
-    
+
     QModelIndex index = ui.fileSystemTree->currentIndex();
     if (!index.siblingAtColumn((int)ColunmsOrder::TYPE).data().toString().compare(virtualFolderType))
         menu.addAction("Add data",
@@ -262,10 +265,10 @@ void OfflineFileManager::on_updateButton_clicked()
     on_homeButton_clicked();
 }
 
-void OfflineFileManager::on_saveAction_triggered() 
+void OfflineFileManager::on_saveAction_triggered()
 {
-    QString fileName = QFileDialog::getSaveFileName(this, 
-        ("Save File"),"", ("File system hierarchy (*.fsh)"));
+    QString fileName = QFileDialog::getSaveFileName(this,
+        ("Save File"), "", ("File system hierarchy (*.fsh)"));
 
     try {
         model->writeFile(fileName, maxDepth);
@@ -295,11 +298,11 @@ void OfflineFileManager::on_openAction_triggered()
 
     QString fileName = QFileDialog::getOpenFileName(this, ("Open File"),
         "", ("File system hierarchy (*.fsh)"));
-    
+
     try {
         model->readFile(fileName);
     }
-    catch(const std::exception &e) {
+    catch (const std::exception& e) {
         QMessageBox::critical(this, tr("Offline File Manager"),
             tr(e.what()), QMessageBox::Close);
     }
@@ -318,7 +321,7 @@ void OfflineFileManager::on_editLine_editingFinished()
 {
     QString path = ui.addressLine->text();
     QModelIndex index = model->byPath(path);
-    
+
     if (index.isValid()) {
         ui.fileSystemTree->expand(index);
         ui.fileSystemTree->setCurrentIndex(index);
@@ -329,15 +332,16 @@ void OfflineFileManager::on_upButton_clicked()
 {
     QString path = ui.addressLine->text();
     QModelIndex index = model->byPath(path);
-    
+
     ui.fileSystemTree->collapseAll();
     ui.fileSystemTree->setCurrentIndex(index.parent());
 
     QStringList newPath = model->getPath(index.parent());
     QString spath;
-    foreach(auto file, newPath) { 
+    foreach(auto file, newPath) {
         file.removeIf([](QChar c) {return c == QChar('/') || c == QChar('\\'); });
-        spath += '/' + file; };
+        spath += '/' + file;
+    };
 
     ui.addressLine->blockSignals(true);
     ui.addressLine->setText(spath);
@@ -355,7 +359,7 @@ void OfflineFileManager::on_addFolderButton_clicked()
         QModelIndex appended = model->appendFolder(QFileInfo(name), cur);
         ui.fileSystemTree->expand(appended.parent());
         editFileName(appended);
-    treeViewInit(ui.fileSystemTree, model);
+        treeViewInit(ui.fileSystemTree, model);
     }
     else QMessageBox::warning(this, "Adding error",
         "Unable to insert a folder into a non-folder",
@@ -383,10 +387,10 @@ void OfflineFileManager::addDataToVirtualFolder(QModelIndexList indexes, QString
 {
     QModelIndex cur = ui.fileSystemTree->currentIndex();
 
-    foreach(auto &ind, indexes)
+    foreach(auto & ind, indexes)
         model->insertFileLinkToTheFolder(ind, cur);
 
-    foreach(auto &path, paths)
+    foreach(auto & path, paths)
         model->insertFileToTheFolder(path, cur);
 }
 
@@ -446,7 +450,7 @@ void OfflineFileManager::setMaxDepth()
     connect(buttonCancel, &QPushButton::clicked, dialog, &QWidget::close);
     connect(box, &QSpinBox::valueChanged, this, &OfflineFileManager::setTempValue);
     connect(buttonOk, &QPushButton::clicked, dialog, &QWidget::close);
-    connect(buttonOk, &QPushButton::clicked, 
+    connect(buttonOk, &QPushButton::clicked,
         this, &OfflineFileManager::setMaxDepthFromTempValue);
 
     layout->addWidget(label, 0);

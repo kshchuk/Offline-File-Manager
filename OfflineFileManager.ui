@@ -29,12 +29,13 @@
        <item>
         <widget class="QToolButton" name="updateButton">
          <property name="styleSheet">
-          <string notr="true">background: rgb(204, 204, 204);
-image: url(:/OfflineFileManager/res/icons/refresh_update_icon_142975.png);
+          <string notr="true">
+											background: rgb(204, 204, 204);
+											image: url(:/OfflineFileManager/res/icons/refresh_update_icon_142975.png);
 
 
 
-</string>
+										</string>
          </property>
          <property name="text">
           <string/>
@@ -44,9 +45,10 @@ image: url(:/OfflineFileManager/res/icons/refresh_update_icon_142975.png);
        <item>
         <widget class="QToolButton" name="addFolderButton">
          <property name="styleSheet">
-          <string notr="true">background: rgb(204, 204, 204);
-image: url(:/OfflineFileManager/res/icons/add-folder.png);
-</string>
+          <string notr="true">
+											background: rgb(204, 204, 204);
+											image: url(:/OfflineFileManager/res/icons/add-folder.png);
+										</string>
          </property>
          <property name="text">
           <string/>
@@ -56,8 +58,10 @@ image: url(:/OfflineFileManager/res/icons/add-folder.png);
        <item>
         <widget class="QToolButton" name="homeButton">
          <property name="styleSheet">
-          <string notr="true">background: rgb(204, 204, 204);
-image: url(:/OfflineFileManager/res/icons/house.png);</string>
+          <string notr="true">
+											background: rgb(204, 204, 204);
+											image: url(:/OfflineFileManager/res/icons/house.png);
+										</string>
          </property>
          <property name="text">
           <string/>
@@ -67,8 +71,10 @@ image: url(:/OfflineFileManager/res/icons/house.png);</string>
        <item>
         <widget class="QToolButton" name="upButton">
          <property name="styleSheet">
-          <string notr="true">background: rgb(204, 204, 204);
-image: url(:/OfflineFileManager/res/icons/upload.png);</string>
+          <string notr="true">
+											background: rgb(204, 204, 204);
+											image: url(:/OfflineFileManager/res/icons/upload.png);
+										</string>
          </property>
          <property name="text">
           <string/>
@@ -81,8 +87,10 @@ image: url(:/OfflineFileManager/res/icons/upload.png);</string>
        <item>
         <widget class="QToolButton" name="searchButton">
          <property name="styleSheet">
-          <string notr="true">background: rgb(204, 204, 204);
-image: url(:/OfflineFileManager/res/icons/172546_search_icon.png);</string>
+          <string notr="true">
+											background: rgb(204, 204, 204);
+											image: url(:/OfflineFileManager/res/icons/172546_search_icon.png);
+										</string>
          </property>
          <property name="text">
           <string/>
@@ -120,13 +128,12 @@ image: url(:/OfflineFileManager/res/icons/172546_search_icon.png);</string>
     <addaction name="actionOpen"/>
     <addaction name="actionSave"/>
     <addaction name="separator"/>
+    <addaction name="actionClose"/>
     <addaction name="actionUpdate"/>
-    <addaction name="actionCreate_Virtual_Folder"/>
-    <addaction name="actionReturn_Home"/>
-    <addaction name="actionReturn_Upper"/>
+    <addaction name="actionCreate_virtual_foulder"/>
+    <addaction name="actionReturn_Home_Folder"/>
+    <addaction name="actionReturn_Up_Folder"/>
     <addaction name="actionSearch"/>
-    <addaction name="separator"/>
-    <addaction name="actionClose_2"/>
    </widget>
    <widget class="QMenu" name="menuConfiguration">
     <property name="title">
@@ -141,6 +148,7 @@ image: url(:/OfflineFileManager/res/icons/172546_search_icon.png);</string>
     </widget>
     <addaction name="menuRegime"/>
     <addaction name="actionMaximum_depth"/>
+    <addaction name="actionFilter"/>
    </widget>
    <widget class="QMenu" name="menuUtils">
     <property name="title">
@@ -148,9 +156,16 @@ image: url(:/OfflineFileManager/res/icons/172546_search_icon.png);</string>
     </property>
     <addaction name="actionrobocopy"/>
    </widget>
+   <widget class="QMenu" name="menuNetwork">
+    <property name="title">
+     <string>Network</string>
+    </property>
+    <addaction name="actionGoogle_Drive_2"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuConfiguration"/>
    <addaction name="menuUtils"/>
+   <addaction name="menuNetwork"/>
   </widget>
   <action name="actionClose">
    <property name="text">
@@ -205,6 +220,41 @@ image: url(:/OfflineFileManager/res/icons/172546_search_icon.png);</string>
   <action name="actionrobocopy">
    <property name="text">
     <string>robocopy</string>
+   </property>
+  </action>
+  <action name="actionUpdate">
+   <property name="text">
+    <string>Update</string>
+   </property>
+  </action>
+  <action name="actionFilter">
+   <property name="text">
+    <string>Filter</string>
+   </property>
+  </action>
+  <action name="actionCreate_virtual_foulder">
+   <property name="text">
+    <string>Create Virtual Folder</string>
+   </property>
+  </action>
+  <action name="actionReturn_Home_Folder">
+   <property name="text">
+    <string>Return Home Folder</string>
+   </property>
+  </action>
+  <action name="actionReturn_Up_Folder">
+   <property name="text">
+    <string>Return Up Folder</string>
+   </property>
+  </action>
+  <action name="actionSearch">
+   <property name="text">
+    <string>Search</string>
+   </property>
+  </action>
+  <action name="actionGoogle_Drive_2">
+   <property name="text">
+    <string>Google Drive</string>
    </property>
   </action>
  </widget>
