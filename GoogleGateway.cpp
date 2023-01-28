@@ -1,7 +1,6 @@
 #include "GoogleGateway.h"
 
 #include <QObject>
-#include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QUrlQuery>
@@ -63,27 +62,41 @@ GoogleGateway::GoogleGateway(QObject* parent) : QObject(parent)
     connect(this->google, &QOAuth2AuthorizationCodeFlow::granted, [=]() {
         qDebug() << __FUNCTION__ << __LINE__ << "Access Granted!";
         isAuthorised = true;
+        emit authorized();
         });
 
     connect(this->google, &QOAuth2AuthorizationCodeFlow::tokenChanged,
                      this, [](const QString& token) { accessToken = token; });
+}
 
+void GoogleGateway::authorize()
+{
     if (!isAuthorised)
         google->grant();
     else {
         google->setToken(accessToken);
+        emit authorized();
     }
-
 }
 
-void GoogleGateway::loadFileList()
+void GoogleGateway::loadFileListPage()
 {
     if (!isAuthorised) return;
-    
-    auto reply = this->google->get(QUrl("https://www.googleapis.com/drive/v3/files?fields=*"));
+
+    QString url = tr("https://www.googleapis.com/drive/v3/files?fields=*");
+    if (!nextPageToken.isEmpty()) url += tr("&pageToken=") + nextPageToken;
+
+    auto reply = this->google->get(QUrl(url));
     connect(reply, &QNetworkReply::finished, [=]() {
         qDebug() << "REQUEST FINISHED. Error? " << (reply->error() != QNetworkReply::NoError);
-        qDebug() << reply->readAll();
-        emit loadedFileList(reply->readAll());
+        QJsonDocument* jsonDoc = new QJsonDocument(QJsonDocument::fromJson(reply->readAll()));
+        nextPageToken = (*jsonDoc)["nextPageToken"].toString();
+        qDebug() << "nextPageToken=" << nextPageToken;
+
+        emit loadedFileListPage(*jsonDoc);
+
+        if (!nextPageToken.isEmpty())
+            loadFileListPage();
         });
+
 }

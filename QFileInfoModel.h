@@ -56,10 +56,13 @@ public:
 
 	QAbstractItemModel* genStaticSystemModel(size_t maxDepth);
 	QAbstractItemModel* genExternalDrivesModel(size_t maxDepth);
+	QAbstractItemModel* genGoogleDriveModel(size_t maxDepth);
+
 
 	QModelIndex appendFolder(const QFileInfo& info, QModelIndex parent);
 	void setName(QString newName, QModelIndex index);
 	quint64 fileSize(const QModelIndex& index) const;
+
 	void insertFileLinkToTheFolder(QModelIndex toInsert, QModelIndex destination);
 	void insertFileToTheFolder(const QString& path, QModelIndex destination);
 
@@ -100,4 +103,5 @@ private:
 	QModelIndex byPathRecursive(QStringList::const_iterator piece,
 		QStringList::const_iterator end, const QModelIndex& parent) const;
 	static QByteArray hash(const QFileInfo& info);
+	void genFromGoogleDriveResponse(const QJsonDocument& response);
 };

@@ -11,6 +11,7 @@
 #include <functional>
 
 #include "ModelSerializer.h"
+#include "GoogleGateway.h"
 #include "system_depend_functions.h"
 
 
@@ -161,6 +162,22 @@ QAbstractItemModel* QFileInfoModel::genExternalDrivesModel(size_t maxDepth)
 	}
 	emit loaded();
 	return this;
+}
+
+QAbstractItemModel* QFileInfoModel::genGoogleDriveModel(size_t maxDepth)
+{
+	GoogleGateway *gateway = new GoogleGateway(this);
+	connect(gateway, &GoogleGateway::authorized, gateway, &GoogleGateway::loadFileListPage);
+	connect(gateway, &GoogleGateway::loadedFileListPage, this, &QFileInfoModel::genFromGoogleDriveResponse);
+	gateway->authorize();
+
+	return this;
+}
+
+void QFileInfoModel::genFromGoogleDriveResponse(const QJsonDocument& response)
+{
+	
+	qDebug() << response;
 }
 
 QModelIndex QFileInfoModel::appendFolder(const QFileInfo& info, QModelIndex parent)

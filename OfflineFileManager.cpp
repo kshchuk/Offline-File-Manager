@@ -489,7 +489,7 @@ void OfflineFileManager::search()
 
 void OfflineFileManager::ConnectGoogleDrive()
 {
-    GoogleGateway* gate = new GoogleGateway(this);
+    model->genGoogleDriveModel(maxDepth);
 }
 
 void OfflineFileManager::robocopyOpen()

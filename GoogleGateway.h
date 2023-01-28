@@ -1,6 +1,8 @@
 #pragma once
 
 #include <QObject>
+#include <QString>
+#include <QJsonDocument>
 #include <QtNetworkAuth/QOAuth2AuthorizationCodeFlow>
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkAccessManager>
@@ -11,15 +13,18 @@ class GoogleGateway : public QObject
 public:
     explicit GoogleGateway(QObject* parent = nullptr);
 
-signals:
-    void loadedFileList(QByteArray replylist);
+public slots:
+    void loadFileListPage();
+    void authorize();
 
-private slots:
-    void loadFileList();
+signals:
+    void authorized();
+    void loadedFileListPage(const QJsonDocument& doc);
 
 private:
     QOAuth2AuthorizationCodeFlow* google;
 
+    QString nextPageToken;
     static bool isAuthorised;
     static QString accessToken;
 };
