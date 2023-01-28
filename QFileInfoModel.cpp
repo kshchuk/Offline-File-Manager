@@ -2,8 +2,9 @@
 
 #include <QFileSystemModel>
 #include <QMimeDatabase>
-#include <QException>
+#include <QtCborCommon>
 #include <QApplication>
+#include <QException>
 #include <QMimeType>
 #include <QLocale>
 #include <QStyle>
@@ -499,6 +500,16 @@ QList<QStandardItem*> QFileInfoModel::packDrive(const QDirIterator& drive) const
 	return row;
 }
 
+QDateTime FromRfc3339(const QString &s) {
+	auto datetime = s.split("T");
+	datetime.append(datetime[1].split(".")); datetime.removeAt(1); datetime.removeLast();
+	QString str; foreach(const auto & t, datetime) str += t + " ";
+	auto date = datetime[0].split("-");
+	auto time = datetime[1].split(":");
+	QDateTime dt(QDate(date[0].toInt(), date[1].toInt(), date[2].toInt()), QTime(time[0].toInt(), time[1].toInt(), time[2].toInt()));
+	return dt;
+}
+
 QList<QStandardItem*> QFileInfoModel::packGoogleDriveFile(const QJsonValue& file) const
 {
 	QList<QStandardItem*> row;
@@ -510,17 +521,19 @@ QList<QStandardItem*> QFileInfoModel::packGoogleDriveFile(const QJsonValue& file
 
 	QMimeType mime = db.mimeTypeForFile(QFileInfo(file["name"].toString()));
 	row.insert(int(ColunmsOrder::TYPE), new QStandardItem(mime.comment()));
-	row.insert(int(ColunmsOrder::DATE_MODIDFIED), new QStandardItem(file["modifiedTime"].toString()));
+	row.insert(int(ColunmsOrder::DATE_MODIDFIED), new QStandardItem(FromRfc3339(file["modifiedTime"].toString()).toString()));
 
 	//unvisible data
 	row.insert(int(ColunmsOrder::ICON_NAME), new QStandardItem(file["mimeType"].toString()));
-	row.insert(int(ColunmsOrder::DATE_CREATED), new QStandardItem(file["createdTime"].toString()));
+	row.insert(int(ColunmsOrder::DATE_CREATED), new QStandardItem(FromRfc3339(file["createdTime"].toString()).toString()));
 	row.insert(int(ColunmsOrder::GROUP), new QStandardItem(QString()));
 	row.insert(int(ColunmsOrder::OWNER), new QStandardItem(file["owners"][0]["emailAddress"].toString()));
 	row.insert(int(ColunmsOrder::OWNER_ID), new QStandardItem(file["permissionId"].toString()));
 	row.insert(int(ColunmsOrder::CUSTOM_METHADATA), new QStandardItem(QString()));
-	row.insert(int(ColunmsOrder::SIZE_BYTES), new QStandardItem(file["size"].toInteger()));
-	row.insert(int(ColunmsOrder::FULL_PATH), new QStandardItem(file["webContentLink"].toString()));
+	row.insert(int(ColunmsOrder::SIZE_BYTES), new QStandardItem(file["size"].toString()));
+	//qDebug() << file["webViewLink"];
+	row.insert(int(ColunmsOrder::FULL_PATH), new QStandardItem(file["webViewLink"].toString()));
+	//qDebug() << file["md5Checksum"];
 	row.insert(int(ColunmsOrder::MD5), new QStandardItem(file["md5Checksum"].toString()));
 
 	return row;

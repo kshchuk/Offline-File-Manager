@@ -15,7 +15,7 @@ class OfflineFileManager : public QMainWindow
 {
     Q_OBJECT
 
-        enum Regime { FILESYSTEM, EXTERNAL_DRIVES };
+        enum Regime { FILESYSTEM, EXTERNAL_DRIVES, GOOGLE_DRIVE };
 
 public:
     OfflineFileManager(QWidget* parent = nullptr);
@@ -43,6 +43,7 @@ private slots:
     void errorString(QString);
     void setExternalDrivesregime();
     void setAllDrivesregime();
+    void setGoogleDriveRegime();
     void setMaxDepth();
     void setTempValue(int i);
     void setMaxDepthFromTempValue();

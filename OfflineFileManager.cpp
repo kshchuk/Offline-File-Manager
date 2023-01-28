@@ -34,8 +34,7 @@ OfflineFileManager::OfflineFileManager(QWidget* parent)
 
     treeViewInit();
 
-    this->setCentralWidget(ui.centralWidget);
-
+    this->setCentralWidget(ui.layoutWidget);
 
     saveMessage.setText("Save data");
     saveMessage.setInformativeText("You have unsaved changes. Do you want to save it?");
@@ -260,6 +259,12 @@ void OfflineFileManager::on_updateButton_clicked()
         treeViewInit();
         break;
     }
+    case OfflineFileManager::GOOGLE_DRIVE:
+    {
+        model->genGoogleDriveModel(maxDepth);
+        treeViewInit();
+        break;
+    }
     default:
         break;
     }
@@ -435,6 +440,11 @@ void OfflineFileManager::setAllDrivesregime()
     regime = Regime::FILESYSTEM;
 }
 
+void OfflineFileManager::setGoogleDriveRegime()
+{
+    regime = Regime::GOOGLE_DRIVE;
+}
+
 void OfflineFileManager::setMaxDepth()
 {
     QDialog* dialog = new QDialog(this);
@@ -491,6 +501,7 @@ void OfflineFileManager::search()
 void OfflineFileManager::ConnectGoogleDrive()
 {
     model->genGoogleDriveModel(maxDepth);
+    regime = Regime::GOOGLE_DRIVE;
 }
 
 void OfflineFileManager::robocopyOpen()
