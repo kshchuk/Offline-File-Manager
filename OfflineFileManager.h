@@ -50,6 +50,7 @@ private slots:
     void search();
     void ConnectGoogleDrive();
     void robocopyOpen();
+    void treeViewInit();
 
 
 private:
@@ -63,6 +64,5 @@ private:
 
     QString error;
 
-    void treeViewInit(QTreeView* tree, QFileInfoModel* model1);
     void runProgressBar();
 };

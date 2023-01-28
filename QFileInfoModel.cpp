@@ -60,10 +60,10 @@ QAbstractItemModel* QFileInfoModel::readFile(QString fileName)
 		this->clear();
 		ModelSerializer<> ser;
 		Status st = ser.load(stream, this);
+		setIcons();
 		if (!st.ok()) throw std::runtime_error("Reading error:" + fileName.toStdString());
 		this->initFileModelHeaders(this);
 
-		setIcons();
 
 		file.close();
 		return this;
@@ -166,6 +166,8 @@ QAbstractItemModel* QFileInfoModel::genExternalDrivesModel(size_t maxDepth)
 
 QAbstractItemModel* QFileInfoModel::genGoogleDriveModel(size_t maxDepth)
 {
+	this->clear();
+	initFileModelHeaders(this);
 	GoogleGateway *gateway = new GoogleGateway(this);
 	connect(gateway, &GoogleGateway::authorized, gateway, &GoogleGateway::loadFileListPage);
 	connect(gateway, &GoogleGateway::loadedFileListPage, this, &QFileInfoModel::genFromGoogleDriveResponse);
@@ -176,8 +178,15 @@ QAbstractItemModel* QFileInfoModel::genGoogleDriveModel(size_t maxDepth)
 
 void QFileInfoModel::genFromGoogleDriveResponse(const QJsonDocument& response)
 {
-	
-	qDebug() << response;
+	QJsonArray files = response["files"].toArray();
+	foreach(const QJsonValue &file, files)
+	{
+		qDebug() << file["name"].toString();
+		this->invisibleRootItem()->appendRow(this->packGoogleDriveFile(file));
+	}
+	// HACK: Don't update all icons when a new page is added
+	this->setIcons();
+	emit loaded();
 }
 
 QModelIndex QFileInfoModel::appendFolder(const QFileInfo& info, QModelIndex parent)
@@ -416,6 +425,12 @@ QString QFileInfoModel::fileSize(const QFileInfo& info) const
 	return QString();
 }
 
+QString QFileInfoModel::fileSize(qint64 size) const
+{
+	QLocale locale;
+	return locale.formattedDataSize(size);
+}
+
 QList<QStandardItem*> QFileInfoModel::packLink(const QModelIndex& index) const
 {
 	QFileInfo info(index.data().toString());
@@ -480,6 +495,33 @@ QList<QStandardItem*> QFileInfoModel::packDrive(const QDirIterator& drive) const
 	row.insert(int(ColunmsOrder::SIZE_BYTES), new QStandardItem(QString::number(drive.fileInfo().size())));
 	row.insert(int(ColunmsOrder::FULL_PATH), new QStandardItem(drive.fileInfo().absoluteFilePath()));
 	row.insert(int(ColunmsOrder::MD5), new QStandardItem(QString("")));
+
+	return row;
+}
+
+QList<QStandardItem*> QFileInfoModel::packGoogleDriveFile(const QJsonValue& file) const
+{
+	QList<QStandardItem*> row;
+
+	// visible data 
+	row.reserve(columnsNumber);
+	row.insert(int(ColunmsOrder::NAME), new QStandardItem(file["name"].toString()));
+	row.insert(int(ColunmsOrder::SIZE), new QStandardItem(fileSize(file["size"].toString().toLongLong())));
+
+	QMimeType mime = db.mimeTypeForFile(QFileInfo(file["name"].toString()));
+	row.insert(int(ColunmsOrder::TYPE), new QStandardItem(mime.comment()));
+	row.insert(int(ColunmsOrder::DATE_MODIDFIED), new QStandardItem(file["modifiedTime"].toString()));
+
+	//unvisible data
+	row.insert(int(ColunmsOrder::ICON_NAME), new QStandardItem(file["mimeType"].toString()));
+	row.insert(int(ColunmsOrder::DATE_CREATED), new QStandardItem(file["createdTime"].toString()));
+	row.insert(int(ColunmsOrder::GROUP), new QStandardItem(QString()));
+	row.insert(int(ColunmsOrder::OWNER), new QStandardItem(file["owners"][0]["emailAddress"].toString()));
+	row.insert(int(ColunmsOrder::OWNER_ID), new QStandardItem(file["permissionId"].toString()));
+	row.insert(int(ColunmsOrder::CUSTOM_METHADATA), new QStandardItem(QString()));
+	row.insert(int(ColunmsOrder::SIZE_BYTES), new QStandardItem(file["size"].toInteger()));
+	row.insert(int(ColunmsOrder::FULL_PATH), new QStandardItem(file["webContentLink"].toString()));
+	row.insert(int(ColunmsOrder::MD5), new QStandardItem(file["md5Checksum"].toString()));
 
 	return row;
 }

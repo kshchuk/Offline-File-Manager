@@ -96,9 +96,11 @@ private:
 	QList<QStandardItem*> fromFileInfo(const QFileInfo& info) const;
 	QList<QStandardItem*> packLink(const QModelIndex& index) const;
 	QList<QStandardItem*> packDrive(const QDirIterator& drive) const;
+	QList<QStandardItem*> packGoogleDriveFile(const QJsonValue& file) const;
 
 	void initFileModelHeaders(QFileInfoModel* model) const;
 	QString fileSize(const QFileInfo& info) const;
+	QString fileSize(qint64 size) const;
 	void setIcons(const QModelIndex& index = QModelIndex(), int depth = 0);
 	QModelIndex byPathRecursive(QStringList::const_iterator piece,
 		QStringList::const_iterator end, const QModelIndex& parent) const;

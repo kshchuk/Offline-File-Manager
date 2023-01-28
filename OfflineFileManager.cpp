@@ -32,7 +32,7 @@ OfflineFileManager::OfflineFileManager(QWidget* parent)
 
     model = new QFileInfoModel();
 
-    treeViewInit(ui.fileSystemTree, model);
+    treeViewInit();
 
     this->setCentralWidget(ui.centralWidget);
 
@@ -66,6 +66,7 @@ OfflineFileManager::OfflineFileManager(QWidget* parent)
     connect(ui.actionGoogle_Drive, &QAction::triggered, this, &OfflineFileManager::ConnectGoogleDrive);
     connect(ui.actionrobocopy, &QAction::triggered, this, &OfflineFileManager::robocopyOpen);
     connect(ui.actionGoogle_Drive_2, &QAction::triggered, this, &OfflineFileManager::ConnectGoogleDrive);
+    connect(model, &QFileInfoModel::loaded, this, &OfflineFileManager::treeViewInit);
 
     on_homeButton_clicked();
 }
@@ -246,17 +247,17 @@ void OfflineFileManager::on_updateButton_clicked()
     {
     case OfflineFileManager::FILESYSTEM:
     {
-        treeViewInit(ui.fileSystemTree, model);
+        treeViewInit();
         runProgressBar();
         this->model->genStaticSystemModel(maxDepth);
-        treeViewInit(ui.fileSystemTree, model);
+        treeViewInit();
         break;
     }
     case OfflineFileManager::EXTERNAL_DRIVES:
     {
         runProgressBar();
         this->model->genExternalDrivesModel(maxDepth);
-        treeViewInit(ui.fileSystemTree, model);
+        treeViewInit();
         break;
     }
     default:
@@ -306,7 +307,7 @@ void OfflineFileManager::on_openAction_triggered()
         QMessageBox::critical(this, tr("Offline File Manager"),
             tr(e.what()), QMessageBox::Close);
     }
-    treeViewInit(ui.fileSystemTree, model);
+    treeViewInit();
     on_homeButton_clicked();
 }
 
@@ -359,7 +360,7 @@ void OfflineFileManager::on_addFolderButton_clicked()
         QModelIndex appended = model->appendFolder(QFileInfo(name), cur);
         ui.fileSystemTree->expand(appended.parent());
         editFileName(appended);
-        treeViewInit(ui.fileSystemTree, model);
+        treeViewInit();
     }
     else QMessageBox::warning(this, "Adding error",
         "Unable to insert a folder into a non-folder",
@@ -498,21 +499,21 @@ void OfflineFileManager::robocopyOpen()
     robocopy->show();
 }
 
-void OfflineFileManager::treeViewInit(QTreeView* tree, QFileInfoModel* model1)
+void OfflineFileManager::treeViewInit()
 {
-    tree->setModel(model1);
+    ui.fileSystemTree->setModel(model);
 
-    for (size_t i = 4; i < tree->model()->columnCount(); i++)
-        tree->hideColumn(i); // only 4 columns need to be displayed
+    for (size_t i = 4; i < ui.fileSystemTree->model()->columnCount(); i++)
+        ui.fileSystemTree->hideColumn(i); // only 4 columns need to be displayed
 
-    tree->setAnimated(false);
-    tree->setIndentation(20);
-    tree->setSortingEnabled(true);
-    const QSize availableSize = tree->screen()->availableGeometry().size();
-    tree->setColumnWidth(0, tree->width() / 2);
-    QScroller::grabGesture(tree, QScroller::TouchGesture);
-    tree->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    tree->setContextMenuPolicy(Qt::CustomContextMenu);
+    ui.fileSystemTree->setAnimated(false);
+    ui.fileSystemTree->setIndentation(20);
+    ui.fileSystemTree->setSortingEnabled(true);
+    const QSize availableSize = ui.fileSystemTree->screen()->availableGeometry().size();
+    ui.fileSystemTree->setColumnWidth(0, ui.fileSystemTree->width() / 2);
+    QScroller::grabGesture(ui.fileSystemTree, QScroller::TouchGesture);
+    ui.fileSystemTree->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui.fileSystemTree->setContextMenuPolicy(Qt::CustomContextMenu);
 }
 
 void OfflineFileManager::runProgressBar()
