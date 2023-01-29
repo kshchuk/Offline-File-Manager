@@ -154,9 +154,10 @@ void OfflineFileManager::action_openFile()
         QFileInfo info(spath);
         if (info.exists())
             QDesktopServices::openUrl(QUrl::fromLocalFile(spath));
-        else
-            QMessageBox::critical(this, tr("Offline File Manager"),
-                tr("No access"), QMessageBox::Close);
+        else 
+            if (!QDesktopServices::openUrl(QUrl(spath)))
+                QMessageBox::critical(this, tr("Offline File Manager"),
+                    tr("No access"), QMessageBox::Close);
     }
 }
 
