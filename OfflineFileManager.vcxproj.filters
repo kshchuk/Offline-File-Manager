@@ -20,6 +20,9 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{24b60e93-1a04-442a-85c2-d42cb7abacb3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Unit Tests">
+      <UniqueIdentifier>{7a49bebe-ac59-4230-8641-64f7e0426e3b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="OfflineFileManager.qrc">
@@ -71,6 +74,12 @@
     <QtMoc Include="MyExplorer.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="QFileInfoModel_test.h">
+      <Filter>Unit Tests</Filter>
+    </QtMoc>
+    <QtMoc Include="ModelSerializer_test.h">
+      <Filter>Unit Tests</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="AddDataToFolder.ui">
@@ -116,6 +125,12 @@
     </ClCompile>
     <ClCompile Include="MyExplorer.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="QFileInfoModel_test.cpp">
+      <Filter>Unit Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelSerializer_test.cpp">
+      <Filter>Unit Tests</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
