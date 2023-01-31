@@ -11,7 +11,8 @@ class ModelSerializer_test : public QObject
 	Q_OBJECT
 
 private slots:
-	void save();
-	void load();
+	void save_loadHeaders();
+	void save_loadData();
+	void save_load();
 };
 

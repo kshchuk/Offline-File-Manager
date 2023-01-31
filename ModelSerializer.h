@@ -67,6 +67,9 @@ template <class Tr = BasicTraits> class ModelSerializer {
                 if (!st(loadData(s, model, model->index(i, j, parent), st))) return st;
         return st;
     }
+
+    friend class ModelSerializer_test;
+
 public:
     ModelSerializer() {}
     ModelSerializer(const Tr& traits) : m_traits(traits) {}
