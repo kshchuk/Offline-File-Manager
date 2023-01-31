@@ -6,8 +6,10 @@
 
 int main(int argc, char *argv[])
 {
+#ifdef _DEBUG
     freopen("testing.log", "w", stdout);
     QTest::qExec(new ModelSerializer_test, argc, argv);
+#endif
 
     QApplication a(argc, argv);
     QFile styleFile("res/css/Combinear.qss");
