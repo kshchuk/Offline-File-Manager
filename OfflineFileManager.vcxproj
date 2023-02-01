@@ -30,7 +30,7 @@
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
     <QtInstall>6.5.0_msvc2019_64</QtInstall>
-    <QtModules>core;gui;network;testlib;testlib;widgets;webchannel;webenginecore;networkauth</QtModules>
+    <QtModules>core;gui;network;testlib;widgets;webchannel;webenginecore;networkauth</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
@@ -115,6 +115,7 @@
     <QtMoc Include="Robocopy.h" />
     <QtMoc Include="MyExplorer.h" />
     <QtMoc Include="ModelSerializer_test.h" />
+    <QtMoc Include="QFileInfoModel_test.h" />
     <ClInclude Include="system_depend_functions.h" />
   </ItemGroup>
   <ItemGroup>
@@ -127,12 +128,19 @@
     <ClCompile Include="PropertiesLogic.cpp" />
     <ClCompile Include="PropertiesWindow.cpp" />
     <ClCompile Include="QFileInfoModel.cpp" />
+    <ClCompile Include="QFileInfoModel_test.cpp" />
     <ClCompile Include="Robocopy.cpp" />
     <ClCompile Include="Searcher.cpp" />
     <ClCompile Include="SearchWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="client.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xsd Include="tests\test-response.json">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </Xsd>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

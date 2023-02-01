@@ -106,4 +106,8 @@ private:
 		QStringList::const_iterator end, const QModelIndex& parent) const;
 	static QByteArray hash(const QFileInfo& info);
 	void genFromGoogleDriveResponse(const QJsonDocument& response);
+
+	friend class QFileInfoModel_test;
 };
+
+QDateTime FromRfc3339(const QString& s);

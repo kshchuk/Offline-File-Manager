@@ -77,6 +77,9 @@
     <QtMoc Include="ModelSerializer_test.h">
       <Filter>Unit Tests</Filter>
     </QtMoc>
+    <QtMoc Include="QFileInfoModel_test.h">
+      <Filter>Unit Tests</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="AddDataToFolder.ui">
@@ -126,8 +129,16 @@
     <ClCompile Include="ModelSerializer_test.cpp">
       <Filter>Unit Tests</Filter>
     </ClCompile>
+    <ClCompile Include="QFileInfoModel_test.cpp">
+      <Filter>Unit Tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="client.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xsd Include="tests\test-response.json">
+      <Filter>Unit Tests</Filter>
+    </Xsd>
   </ItemGroup>
 </Project>
