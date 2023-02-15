@@ -80,6 +80,12 @@
     <QtMoc Include="QFileInfoModel_test.h">
       <Filter>Unit Tests</Filter>
     </QtMoc>
+    <QtMoc Include="Searcher_test.h">
+      <Filter>Unit Tests</Filter>
+    </QtMoc>
+    <QtMoc Include="PropertiesLogic_test.h">
+      <Filter>Unit Tests</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="AddDataToFolder.ui">
@@ -130,6 +136,12 @@
       <Filter>Unit Tests</Filter>
     </ClCompile>
     <ClCompile Include="QFileInfoModel_test.cpp">
+      <Filter>Unit Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="PropertiesLogic_test.cpp">
+      <Filter>Unit Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="Searcher_test.cpp">
       <Filter>Unit Tests</Filter>
     </ClCompile>
   </ItemGroup>

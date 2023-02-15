@@ -116,6 +116,8 @@
     <QtMoc Include="MyExplorer.h" />
     <QtMoc Include="ModelSerializer_test.h" />
     <QtMoc Include="QFileInfoModel_test.h" />
+    <QtMoc Include="PropertiesLogic_test.h" />
+    <QtMoc Include="Searcher_test.h" />
     <ClInclude Include="system_depend_functions.h" />
   </ItemGroup>
   <ItemGroup>
@@ -126,11 +128,13 @@
     <ClCompile Include="MyExplorer.cpp" />
     <ClCompile Include="OfflineFileManager.cpp" />
     <ClCompile Include="PropertiesLogic.cpp" />
+    <ClCompile Include="PropertiesLogic_test.cpp" />
     <ClCompile Include="PropertiesWindow.cpp" />
     <ClCompile Include="QFileInfoModel.cpp" />
     <ClCompile Include="QFileInfoModel_test.cpp" />
     <ClCompile Include="Robocopy.cpp" />
     <ClCompile Include="Searcher.cpp" />
+    <ClCompile Include="Searcher_test.cpp" />
     <ClCompile Include="SearchWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
