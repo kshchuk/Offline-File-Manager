@@ -9,9 +9,8 @@ class QFileInfoModel_test  : public QObject
 {
 	Q_OBJECT
 
+
 private slots:
-	void byPathRecursive();
-	void readHierarchyRecursive();
 	void genFromGoogleDriveResponse();
 
 	void genExternalDrivesModel();
@@ -31,4 +30,8 @@ private slots:
 
 	void readFile();
 	void writeFile();
+
+private:
+	//bool compareRecursive(QStandardItem* item1, QStandardItem* item2, 
+									//size_t maxDepth,size_t curDepth = 0);
 };

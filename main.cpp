@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     freopen("testing.log", "w", stdout);
     QTest::qExec(new ModelSerializer_test, argc, argv);
     QTest::qExec(new Searcher_test, argc, argv);
-    //QTest::qExec(new QFileInfoModel_test, argc, argv);
+    QTest::qExec(new QFileInfoModel_test, argc, argv);
 #endif
 
     w.show();
