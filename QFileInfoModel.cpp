@@ -10,559 +10,554 @@
 #include <QStyle>
 
 #include <functional>
+#include <cassert>
 
 #include "ModelSerializer.h"
 #include "GoogleGateway.h"
 #include "system_depend_functions.h"
 
 
-
-QFileInfoModel::QFileInfoModel(QObject *parent)
-	: QStandardItemModel(parent)
+namespace model
 {
-	QFileSystemModel temp;
-	for (size_t i = 0; i < temp.columnCount(); i++)
+
+	QFileInfoModel::QFileInfoModel(QObject* parent)
+		: QStandardItemModel(parent)
 	{
-		QStandardItem* header = new QStandardItem(
-			temp.headerData(i, Qt::Horizontal).toString());
+		QFileSystemModel temp;
+		for (size_t i = 0; i < temp.columnCount(); i++)
+		{
+			QStandardItem* header = new QStandardItem(
+				temp.headerData(i, Qt::Horizontal).toString());
 
-		this->setHorizontalHeaderItem(i, header);
+			this->setHorizontalHeaderItem(i, header);
+		}
 	}
-}
 
-QFileInfoModel::~QFileInfoModel()
-{
-}
-
-QList<QString> QFileInfoModel::getPath(QModelIndex index) const
-{
-	QList<QString> path;
-	while (index.isValid())
+	QList<QString> QFileInfoModel::getPath(QModelIndex index) const
 	{
-		path.append(index.data().toString());
-		index = index.parent();
-	}
-	std::reverse(path.begin(), path.end());
+		QList<QString> path;
+		while (index.isValid())
+		{
+			path.append(index.data().toString());
+			index = index.parent();
+		}
+		std::reverse(path.begin(), path.end());
 
-	return path;
-}
-
-QString QFileInfoModel::getPathfFromInfo(const QModelIndex& index) const
-{
-	return index.siblingAtColumn((int)ColunmsOrder::FULL_PATH).data().toString();
-}
-
-QAbstractItemModel* QFileInfoModel::readFile(QString fileName)
-{
-	allSize = 0; readSize = 0;
-	QFile file(fileName);
-	if (file.open(QIODevice::ReadOnly)) {
-		QDataStream stream(&file);
-		this->clear();
-		ModelSerializer<> ser;
-		Status st = ser.load(stream, this);
-		setIcons();
-		if (!st.ok()) throw std::runtime_error("Reading error:" + fileName.toStdString());
-		this->initFileModelHeaders(this);
-
-
-		file.close();
-		return this;
-	}
-	else
-		throw std::runtime_error("Unable to open file:" + fileName.toStdString());
-
-	emit loaded();
-	return nullptr;
-}
-
-void QFileInfoModel::writeFile(QString fileName, size_t maxDepth) const
-{
-	QFile file(fileName);
-	if (file.open(QIODevice::WriteOnly)) {
-		QDataStream stream(&file);
-
-		ModelSerializer<> ser;
-		Status st = ser.save(stream, this);
-		if (!st.ok()) throw std::runtime_error("Writing error:" + fileName.toStdString());
-
-		file.flush();
-		file.close();
-	}
-	else
-		throw std::runtime_error("Unable to open file: " + fileName.toStdString());
-}
-
-void QFileInfoModel::deleteFile(const QModelIndex& index)
-{
-	this->removeRow(index.row(), index.parent());
-}
-
-bool QFileInfoModel::isLink(const QModelIndex& index)
-{
-	return (!index.siblingAtColumn((int)ColunmsOrder::TYPE).data().toString().compare(linkToFileType));
-}
-
-bool QFileInfoModel::isFolder(const QModelIndex& index)
-{
-	QFileInfo info(index.data().toString());
-	return (info.suffix().isEmpty());
-}
-
-QAbstractItemModel* QFileInfoModel::genStaticSystemModel(size_t maxDepth)
-{
-	this->clear();
-	initFileModelHeaders(this);
-	allSize = 0; readSize = 0; isRunning = true;
-	foreach(auto drive, QDir::drives()) {
-		storageInfo.setPath(drive.filePath());
-		allSize += storageInfo.bytesTotal() - storageInfo.bytesFree();
+		return path;
 	}
 
-	foreach(auto drive, QDir::drives())
+	inline QString QFileInfoModel::getPathfFromInfo(const QModelIndex& index) const
 	{
-		QDirIterator it(drive.absoluteFilePath());
-
-		QList<QStandardItem*> preparedRow = packDrive(it);
-		this->appendRow(preparedRow);
-
-		int row = this->rowCount() - 1;
-		QModelIndex index = this->index(row, 0);
-			//root->child(row)->index();
-
-		readHierarchyRecursive(index, it.path(), maxDepth);
-	}
-	emit loaded();
-	return this;
-}
-
-QAbstractItemModel* QFileInfoModel::genExternalDrivesModel(size_t maxDepth)
-{
-	this->clear();
-	allSize = 0; readSize = 0; isRunning = true;
-	QStandardItem* root = this->invisibleRootItem();
-
-	initFileModelHeaders(this);
-	QList<QString> externalDrives = removableDrives();
-	foreach(auto drive, externalDrives) {
-		storageInfo.setPath(drive);
-		allSize += storageInfo.bytesTotal() - storageInfo.bytesFree();
+		return dynamic_cast<Record*>(this->itemFromIndex(index))->getFullPath();
 	}
 
-	foreach(auto drive, externalDrives)
+	QAbstractItemModel* QFileInfoModel::readFile(QString fileName)
 	{
-		QDirIterator it(drive);
+		QFile file(fileName);
+		if (file.open(QIODevice::ReadOnly)) {
+			QDataStream stream(&file);
+			this->clear();
+			ModelSerializer<> ser;
+			Status st = ser.load(stream, this);
+			//setIcons();
+			if (!st.ok()) throw std::runtime_error("Reading error:" + fileName.toStdString());
+			this->initHeaders();
 
-		QList<QStandardItem*> preparedRow = packDrive(it);
-		root->appendRow(preparedRow);
 
-		int row = root->rowCount() - 1;
-		QModelIndex index = root->child(row)->index();
+			file.close();
+			return this;
+		}
+		else
+			throw std::runtime_error("Unable to open file:" + fileName.toStdString());
 
-		readHierarchyRecursive(index, it.path(), maxDepth);
+		emit loaded();
+		return nullptr;
 	}
-	emit loaded();
-	return this;
-}
 
-QAbstractItemModel* QFileInfoModel::genGoogleDriveModel(size_t maxDepth)
-{
-	this->clear();
-	initFileModelHeaders(this);
-	GoogleGateway *gateway = new GoogleGateway(this);
-	connect(gateway, &GoogleGateway::authorized, gateway, &GoogleGateway::loadFileListPage);
-	connect(gateway, &GoogleGateway::loadedFileListPage, this, &QFileInfoModel::genFromGoogleDriveResponse);
-	gateway->authorize();
-
-	return this;
-}
-
-void QFileInfoModel::genFromGoogleDriveResponse(const QJsonDocument& response)
-{
-	QJsonArray files = response["files"].toArray();
-	foreach(const QJsonValue &file, files)
+	void QFileInfoModel::writeFile(QString fileName, size_t maxDepth) const
 	{
-		qDebug() << file["name"].toString();
-		this->invisibleRootItem()->appendRow(this->packGoogleDriveFile(file));
+		QFile file(fileName);
+		if (file.open(QIODevice::WriteOnly)) {
+			QDataStream stream(&file);
+
+			ModelSerializer<> ser;
+			Status st = ser.save(stream, this);
+			if (!st.ok()) throw std::runtime_error("Writing error:" + fileName.toStdString());
+
+			file.flush();
+			file.close();
+		}
+		else
+			throw std::runtime_error("Unable to open file: " + fileName.toStdString());
 	}
-	// HACK: Don't update all icons when a new page is added
-	this->setIcons();
-	emit loaded();
-}
 
-QModelIndex QFileInfoModel::appendFolder(const QFileInfo& info, QModelIndex parent)
-{
-	QList<QStandardItem*> erow = fromFileInfo(info);
-	erow[(int)ColunmsOrder::NAME]->setData(iconProvider.icon(QFileIconProvider::Folder), Qt::DecorationRole);
-	erow[(int)ColunmsOrder::ICON_NAME]->setData(iconProvider.icon(QFileIconProvider::Folder).name(), Qt::DisplayRole);
-	erow[(int)ColunmsOrder::TYPE]->setData(virtualFolderType, Qt::DisplayRole);
-
-	if (parent.isValid())
+	void QFileInfoModel::deleteFile(const QModelIndex& index)
 	{
-		QStandardItem* iparent = this->itemFromIndex(parent);
-		iparent->appendRow(erow);
-		int row = iparent->rowCount() - 1;
-		return iparent->child(row)->index();
+		this->removeRow(index.row(), index.parent());
 	}
-	else {
-		this->appendRow(erow);
-		int row = this->rowCount() - 1;
-		return this->index(row, 0);
-	}
-}
 
-void QFileInfoModel::setName(QString newName, QModelIndex index)
-{
-	QStandardItem* item = this->itemFromIndex(index);
-	item->setData(newName, 0);
-}
-
-QModelIndex QFileInfoModel::byPath(QString path) const
-{
-	QStringList pieces = path.split("/");
-	pieces.removeAll(QString(""));
-
-	if (pieces.isEmpty()) return QModelIndex();
-	
-	int rows = this->rowCount();
-	for (size_t i = 0; i < rows; ++i)
+	bool QFileInfoModel::isLink(const QModelIndex& index) const
 	{
-		QString drive = this->index(i, 0).data().toString();
-		drive.removeIf([](QChar c) { return c == QChar('/') || c == QChar('\\'); });
-		if (!QString::compare(*pieces.constBegin(), drive))
-			return byPathRecursive(pieces.constBegin() + 1, 
-				pieces.constEnd(), this->index(i, 0));
+		return typeid(this->itemFromIndex(index)) == typeid(Link*);
 	}
-	return QModelIndex();
-}
 
-quint64 QFileInfoModel::fileSize(const QModelIndex& index) const
-{
-	quint64 sum = 0;
-	if (index.isValid())
+	bool QFileInfoModel::isFolder(const QModelIndex& index) const
 	{
-		QStandardItem* item = this->itemFromIndex(index);
-		if (item->hasChildren()) {
-			int rows = item->rowCount();
-			for (size_t i = 0; i < rows; ++i)
-				sum += fileSize(item->child(i)->index());
+		return typeid(this->itemFromIndex(index)) == typeid(Folder*);
+	}
+
+
+	QModelIndex QFileInfoModel::appendVirtualFolder(const QFileInfo& info, QModelIndex parent)
+	{
+		//QList<QStandardItem*> erow = fromFileInfo(info);
+		//erow[(int)ColunmsOrder::NAME]->setData(iconProvider.icon(QFileIconProvider::Folder), Qt::DecorationRole);
+		//erow[(int)ColunmsOrder::ICON_NAME]->setData(iconProvider.icon(QFileIconProvider::Folder).name(), Qt::DisplayRole);
+		//erow[(int)ColunmsOrder::TYPE]->setData(virtualFolderType, Qt::DisplayRole);
+
+		if (parent.isValid())
+		{
+			QStandardItem* iparent = this->itemFromIndex(parent);
+			iparent->appendRow(new VirtualFolder("virtual"));
+			int row = iparent->rowCount() - 1;
+			return iparent->child(row)->index();
 		}
 		else {
-			sum = index.siblingAtColumn((int)ColunmsOrder::SIZE_BYTES).data().toLongLong();
+			this->appendRow(new VirtualFolder("virtual"));
+			int row = this->rowCount() - 1;
+			return this->index(row, 0);
 		}
 	}
-	else {
+
+	void QFileInfoModel::setName(QString newName, QModelIndex index)
+	{
+		dynamic_cast<Record*>(this->itemFromIndex(index))->setName(newName);
+	}
+
+	QModelIndex QFileInfoModel::byPath(QString path) const
+	{
+		QStringList pieces = path.split("/");
+		pieces.removeAll(QString(""));
+
+		if (pieces.isEmpty()) return QModelIndex();
+
 		int rows = this->rowCount();
 		for (size_t i = 0; i < rows; ++i)
-			sum = fileSize(this->index(i, 0));
+		{
+			QString drive = this->index(i, 0).data().toString();
+			drive.removeIf([](QChar c) { return c == QChar('/') || c == QChar('\\'); });
+			if (!QString::compare(*pieces.constBegin(), drive))
+				return byPathRecursive(pieces.constBegin() + 1,
+					pieces.constEnd(), this->index(i, 0));
+		}
+		return QModelIndex();
 	}
-	return sum;
-}
 
-void QFileInfoModel::insertFileLinkToTheFolder(QModelIndex toInsert, QModelIndex destination)
-{
-	QStandardItem* dest = this->itemFromIndex(destination);
-	dest->appendRow(packLink(toInsert));
-}
-
-void QFileInfoModel::insertFileToTheFolder(const QString& path, QModelIndex destination)
-{
-	QStandardItem* dest = this->itemFromIndex(destination);
-	QFileInfo info(path);
-	dest->appendRow(fromFileInfo(info));
-}
-
-QString QFileInfoModel::pathFromStringList(const QStringList& list)
-{
-	QString spath;
-	foreach(auto file, list) {
-		file.removeIf([](QChar c) {return c == QChar('/') || c == QChar('\\'); });
-		spath += '/' + file;
-	};
-	return spath;
-}
-
-void QFileInfoModel::setIcons(const QModelIndex& index, int depth)
-{
-	if (index.isValid())
+	quint64 QFileInfoModel::fileSize(const QModelIndex& index) const
 	{
-		QString name = index.data().toString();
-		// QString iconName = index.siblingAtColumn((int)ColunmsOrder::ICON_NAME).data().toString();
-		QStandardItem* item = this->itemFromIndex(index);
+		quint64 sum = 0;
+		if (index.isValid())
+		{
+			QStandardItem* item = this->itemFromIndex(index);
+			if (item->hasChildren()) {
+				int rows = item->rowCount();
+				for (size_t i = 0; i < rows; ++i)
+					sum += fileSize(item->child(i)->index());
+			}
+			else {
+				sum = dynamic_cast<Record*>(item)->getSizeInBytes().toLongLong();
+			}
+		}
+		else {
+			int rows = this->rowCount();
+			for (size_t i = 0; i < rows; ++i)
+				sum = fileSize(this->index(i, 0));
+		}
+		return sum;
+	}
+
+	void QFileInfoModel::insertFileLinkToTheFolder(QModelIndex toInsert, QModelIndex destination)
+	{
+		QStandardItem* dest = this->itemFromIndex(destination);
+		dest->appendRow(new Link(toInsert));
+	}
+
+	void QFileInfoModel::insertFileToTheFolder(const QString& path, QModelIndex destination)
+	{
+		QStandardItem* dest = this->itemFromIndex(destination);
+		QFileInfo info(path);
 		
-		QFileInfo info(name);
-		if (!index.siblingAtColumn((int)ColunmsOrder::TYPE).data().toString().compare(virtualFolderType) ||
-			!index.siblingAtColumn((int)ColunmsOrder::TYPE).data().toString().compare(linkToFileType) && info.suffix().isEmpty())
-			item->setData(iconProvider.icon(QFileIconProvider::Folder), Qt::DecorationRole);
+		if (info.isDir())
+			dest->appendRow(new Folder(info));
 		else
-			item->setData(iconProvider.icon(info), Qt::DecorationRole);
+			dest->appendRow(new File(info));
 	}
 
-	if ((index.flags() & Qt::ItemNeverHasChildren) || !this->hasChildren(index));
-
-	int rows = this->rowCount(index);
-
-	// Folders
-	if (this->hasChildren(index) && index.parent().isValid()) {
-		QStandardItem* item = this->itemFromIndex(index);
-		item->setData(iconProvider.icon(QFileIconProvider::Folder), Qt::DecorationRole);
-	}
-	//else if (index.siblingAtColumn((int)ColunmsOrder::DATE_MODIDFIED).data().toString().isEmpty() &&
-	//	!index.parent().isValid() && index.isValid())
-	//{
-	//	QStandardItem* item = this->item(rows - 1);
-	//	item->setData(iconProvider.icon(QFileIconProvider::Folder), Qt::DecorationRole);
-	//}
-
-	for (int i = 0; i < rows; ++i)
-		setIcons(this->index(i, 0, index), depth + 1);
-}
-
-QModelIndex QFileInfoModel::byPathRecursive(QStringList::const_iterator piece, 
-	QStringList::const_iterator end, const QModelIndex& parent) const
-{
-	if (piece == end) return parent;
-
-	if (parent.isValid())
+	QString QFileInfoModel::pathFromStringList(const QStringList& list)
 	{
-		int rows = this->rowCount(parent);
-		for (size_t i = 0; i < rows; i++)
-		{
-			QString childData = this->index(i, 0, parent).data().toString();
-			if (!QString::compare(*piece, childData, Qt::CaseInsensitive))
-				return byPathRecursive(piece + 1, end, this->index(i, 0, parent));
-		}
+		QString spath;
+		foreach(auto file, list) {
+			file.removeIf([](QChar c) {return c == QChar('/') || c == QChar('\\'); });
+			spath += '/' + file;
+		};
+		return spath;
 	}
-	return parent;
-}
 
-QByteArray QFileInfoModel::hash(const QFileInfo& info)
-{
-	QCryptographicHash crypto(QCryptographicHash::Md5);
-
-	QByteArray qb; qlonglong size = info.size();
-	qb.setNum(size); crypto.addData(qb);
-
-	QString path = info.filePath();
-	QFile file(path);
-
-	const int steps = 10;
-	const int chunkSize = 10000;
-	const qlonglong chunkStep = size / steps;
-
-	crypto.addData(file.read(chunkSize));
-	file.seek(size - chunkSize);
-	crypto.addData(file.read(chunkSize));
-
-	if (chunkSize <= size)
+	void QFileInfoModel::setIcons(const QModelIndex& index, int depth)
 	{
-		qlonglong cur = chunkSize;
-		file.seek(cur);
-		for (size_t i = 0; i < steps - 2; ++i)
+		if (index.isValid())
 		{
-			crypto.addData(file.read(chunkSize));
-			if (chunkSize * i < size)
-				file.seek(chunkSize * i);
+			QString name = index.data().toString();
+			Record* item = dynamic_cast<Record*>(this->itemFromIndex(index));
+
+			QFileInfo info(name);
+
+			if (typeid(item) == typeid(Drive*)) item->setIcon(iconProvider.icon(QFileIconProvider::Drive));
+			else if (typeid(item) == typeid(VirtualFolder*) || typeid(item) == typeid(Folder*)) item->setIcon(iconProvider.icon(QFileIconProvider::Folder));
+			else if (typeid(item) == typeid(Link*)) item->setIcon(iconProvider.icon(QFileInfo("example.lnk")));		
 			else
-				break;
+				item->setData(iconProvider.icon(info), Qt::DecorationRole);
+		}
+
+		// if ((index.flags() & Qt::ItemNeverHasChildren) || !this->hasChildren(index));
+
+		int rows = this->rowCount(index);
+
+		// Folders
+		//if (this->hasChildren(index) && index.parent().isValid()) {
+		//	QStandardItem* item = this->itemFromIndex(index);
+		//	item->setData(iconProvider.icon(QFileIconProvider::Folder), Qt::DecorationRole);
+		//}hf
+
+		for (int i = 0; i < rows; ++i)
+			setIcons(this->index(i, 0, index), depth + 1);
+	}
+
+	void QFileInfoModel::initHeaders()
+	{
+		for (size_t i = 0; i < system_model.columnCount(); i++)
+		{
+			QStandardItem* header = new QStandardItem();
+			header->setText(system_model.headerData(i, Qt::Horizontal).toString());
+			this->setHorizontalHeaderItem(i, header);
 		}
 	}
 
-	QByteArray hash = crypto.result();
-	file.close();
-	return hash;
-}
-
-void QFileInfoModel::readHierarchyRecursive(QModelIndex parent, const QString& path, 
-	size_t maxDepth, size_t curDepth)
-{
-	if (curDepth > maxDepth)
-		return;
-
-	QStandardItem* parentItem = this->itemFromIndex(parent);
-
-	QDirIterator it(path, QDir::NoDotAndDotDot | QDir::AllEntries);
-	while (it.hasNext() && isRunning)
+	QModelIndex QFileInfoModel::byPathRecursive(QStringList::const_iterator piece,
+		QStringList::const_iterator end, const QModelIndex& parent) const
 	{
-		it.next();
-		emit currentReadingFile(it.filePath());
+		if (piece == end) return parent;
 
-		QFileInfo info(it.fileInfo()); 
-		QList<QStandardItem*> preparedRow = fromFileInfo(info);
-		parentItem->appendRow(preparedRow);
-
-		readSize += info.size();
-		emit fileRead(100 * readSize / allSize);
-
-		int row = parentItem->rowCount() - 1;
-		QModelIndex index = parentItem->child(row)->index();
-
-
-		if (it.fileInfo().isDir())
-			readHierarchyRecursive(index, it.filePath(), maxDepth, curDepth + 1);
+		if (parent.isValid())
+		{
+			int rows = this->rowCount(parent);
+			for (size_t i = 0; i < rows; i++)
+			{
+				QString childData = this->index(i, 0, parent).data().toString();
+				if (!QString::compare(*piece, childData, Qt::CaseInsensitive))
+					return byPathRecursive(piece + 1, end, this->index(i, 0, parent));
+			}
+		}
+		return parent;
 	}
-}
 
-void QFileInfoModel::initFileModelHeaders(QFileInfoModel* model) const
-{
-	QFileSystemModel temp;
-	for (size_t i = 0; i < temp.columnCount(); i++)
-	{
-		QStandardItem* header = new QStandardItem(
-			temp.headerData(i, Qt::Horizontal).toString());
 
-		model->setHorizontalHeaderItem(i, header);
+	QDateTime FromRfc3339(const QString& s) {
+		auto datetime = s.split("T");
+		datetime.append(datetime[1].split(".")); datetime.removeAt(1); datetime.removeLast();
+		QString str; foreach(const auto & t, datetime) str += t + " ";
+		auto date = datetime[0].split("-");
+		auto time = datetime[1].split(":");
+		QDateTime dt(QDate(date[0].toInt(), date[1].toInt(), date[2].toInt()), QTime(time[0].toInt(), time[1].toInt(), time[2].toInt()));
+		return dt;
 	}
-}
 
-QString QFileInfoModel::fileSize(const QFileInfo& info) const
-{
-	if (info.isFile())
+	Record::Record(const QStandardItem& item)
+		: QStandardItem(item)
 	{
-		quint64 size = info.size();
-		QLocale locale;
+		assert(item.columnCount() == 13);
+		
+		this->size = item.model()->itemFromIndex(item.index().siblingAtColumn(1));
+		this->type = item.model()->itemFromIndex(item.index().siblingAtColumn(2));
+		this->dateModified = item.model()->itemFromIndex(item.index().siblingAtColumn(3));
+		this->iconName = item.model()->itemFromIndex(item.index().siblingAtColumn(4));
+		this->dateCreated = item.model()->itemFromIndex(item.index().siblingAtColumn(5));
+		this->group = item.model()->itemFromIndex(item.index().siblingAtColumn(6));
+		this->owner = item.model()->itemFromIndex(item.index().siblingAtColumn(7));
+		this->ownerId = item.model()->itemFromIndex(item.index().siblingAtColumn(8));
+		this->sizeInBytes = item.model()->itemFromIndex(item.index().siblingAtColumn(9));
+		this->fullPath = item.model()->itemFromIndex(item.index().siblingAtColumn(10));
+		this->hash = item.model()->itemFromIndex(item.index().siblingAtColumn(11));
+		this->customMetadata = item.model()->itemFromIndex(item.index().siblingAtColumn(12));
+	}
+
+	Record::Record(const QIcon& icon, const QString& name)
+		: QStandardItem(icon, name)
+
+	{
+		this->appendColumn({
+			size,
+			type,
+			dateModified,
+			iconName,
+			dateCreated,
+			group,
+			owner,
+			ownerId,
+			sizeInBytes,
+			fullPath,
+			hash,
+			customMetadata 
+			});
+
+		size = new QStandardItem();
+		type = new QStandardItem();
+		dateModified = new QStandardItem();
+		iconName = new QStandardItem();
+		dateCreated = new QStandardItem();
+		group = new QStandardItem();
+		owner = new QStandardItem();
+		ownerId = new QStandardItem();
+		sizeInBytes = new QStandardItem();
+		fullPath = new QStandardItem();
+		hash = new QStandardItem();
+		customMetadata = new QStandardItem();
+	}
+
+	QString Record::fileSize(const QFileInfo& info)
+	{
+		if (info.isFile())
+		{
+			quint64 size = info.size();
+			return locale.formattedDataSize(size);
+		}
+		return QString();
+	}
+
+	inline QString File::fileSize(qint64 size)
+	{
 		return locale.formattedDataSize(size);
 	}
-	return QString();
-}
 
-QString QFileInfoModel::fileSize(qint64 size) const
-{
-	QLocale locale;
-	return locale.formattedDataSize(size);
-}
-
-QList<QStandardItem*> QFileInfoModel::packLink(const QModelIndex& index) const
-{
-	QFileInfo info(index.data().toString());
-	QList<QStandardItem*> row;
-	if (!info.suffix().isEmpty())
-		row.append(new QStandardItem(iconProvider.icon(info), 
-			index.siblingAtColumn(0).data(Qt::DisplayRole).toString()));
-	else
-		row.append(new QStandardItem(iconProvider.icon(QFileIconProvider::Folder),
-			index.siblingAtColumn(0).data(Qt::DisplayRole).toString()));
-
-	for (size_t i = 1; i < this->columnCount(); ++i) 
+	QByteArray File::hashFile(const QFileInfo& info)
 	{
-		row.append(new QStandardItem(index.siblingAtColumn(i).data(Qt::DisplayRole).toString()));
+		QByteArray qb; qlonglong size = info.size();
+		qb.setNum(size); crypto.addData(qb);
+
+		QString path = info.filePath();
+		QFile file(path);
+
+		const int steps = 10;
+		const int chunkSize = 10000;
+		const qlonglong chunkStep = size / steps;
+
+		crypto.addData(file.read(chunkSize));
+		file.seek(size - chunkSize);
+		crypto.addData(file.read(chunkSize));
+
+		if (chunkSize <= size)
+		{
+			qlonglong cur = chunkSize;
+			file.seek(cur);
+			for (size_t i = 0; i < steps - 2; ++i)
+			{
+				crypto.addData(file.read(chunkSize));
+				if (chunkSize * i < size)
+					file.seek(chunkSize * i);
+				else
+					break;
+			}
+		}
+
+		QByteArray hash = crypto.result();
+		file.close();
+		return hash;
 	}
-	row[(int)ColunmsOrder::TYPE]->setData(linkToFileType, Qt::DisplayRole); // For link files
-
-	return row;
-}
-
-void QFileInfoModel::stopRunning()
-{
-	isRunning = false;
-	this->clear();
-}
-
-
-QList<QStandardItem*> QFileInfoModel::packDrive(const QDirIterator& drive) const
-{
-	// Is drive?
-	Q_ASSERT(([&]() -> bool {
-		foreach(auto curDrive, QDir::drives())
-		{
-			QString p1 = curDrive.absolutePath(), p2 = drive.path();
-			if (p1 == p2) return true;
-		}
-		QStringList d = removableDrives();
-		foreach(auto curDrive, d)
-		{
-			curDrive[curDrive.size() - 1] = '/';
-			QString p1 = curDrive, p2 = drive.path();
-			if (p1 == p2) return true;
-		}
-		return false;
-		})());
-
-	QList<QStandardItem*> row;
-	row.reserve(columnsNumber);
 	
-	row.insert(int(ColunmsOrder::NAME), new QStandardItem(this->iconProvider.icon(drive.fileInfo()), drive.path()));
-	row.insert(int(ColunmsOrder::SIZE), new QStandardItem(fileSize(drive.fileInfo())));
-	QMimeType mime = db.mimeTypeForFile(drive.path());
-	row.insert(int(ColunmsOrder::TYPE), new QStandardItem(mime.comment()));
-	row.insert(int(ColunmsOrder::DATE_MODIDFIED), new QStandardItem(drive.fileInfo().lastModified().toString()));
 
-	row.insert(int(ColunmsOrder::ICON_NAME), new QStandardItem(mime.iconName()));
-	row.insert(int(ColunmsOrder::DATE_CREATED), new QStandardItem(drive.fileInfo().birthTime().toString()));
-	row.insert(int(ColunmsOrder::GROUP), new QStandardItem(drive.fileInfo().group()));
-	row.insert(int(ColunmsOrder::OWNER), new QStandardItem(drive.fileInfo().owner()));
-	row.insert(int(ColunmsOrder::OWNER_ID), new QStandardItem(QString::number(drive.fileInfo().ownerId())));
-	row.insert(int(ColunmsOrder::CUSTOM_METHADATA), new QStandardItem(QString()));
-	row.insert(int(ColunmsOrder::SIZE_BYTES), new QStandardItem(QString::number(drive.fileInfo().size())));
-	row.insert(int(ColunmsOrder::FULL_PATH), new QStandardItem(drive.fileInfo().absoluteFilePath()));
-	row.insert(int(ColunmsOrder::MD5), new QStandardItem(QString("")));
+	Drive::Drive(const QDirIterator& drive)
+		: Record(iconProvider.icon(QFileIconProvider::Drive), drive.fileName())
+	{
+		size->setText(fileSize(drive.fileInfo()));
+		type->setText(mimeDatabase.mimeTypeForFile(drive.path()).comment());
+		dateModified->setText(drive.fileInfo().lastModified().toString());
+		iconName->setText(mimeDatabase.mimeTypeForFile(drive.path()).iconName());
+		dateCreated->setText(drive.fileInfo().birthTime().toString());
+		group->setText(drive.fileInfo().group());
+		owner->setText(drive.fileInfo().owner());
+		ownerId->setText(QString::number(drive.fileInfo().ownerId()));
+		sizeInBytes->setText(QString::number(drive.fileInfo().size()));
+		fullPath->setText(drive.fileInfo().absoluteFilePath());
+	}
 
-	return row;
-}
+	Folder::Folder(const QFileInfo& folder)
+		: Record(iconProvider.icon(QFileIconProvider::Folder), folder.fileName())
+	{
+		size->setText(fileSize(folder));
+		type->setText(mimeDatabase.mimeTypeForFile(folder).comment());
+		dateModified->setText(folder.lastModified().toString());
+		iconName->setText(iconProvider.icon(QFileIconProvider::Folder).name());
+		dateCreated->setText(folder.birthTime().toString());
+		group->setText(folder.group());
+		owner->setText(folder.owner());
+		ownerId->setText(QString::number(folder.ownerId()));
+		sizeInBytes->setText(QString::number(folder.size()));
+		fullPath->setText(folder.absoluteFilePath());
+	}
 
-QDateTime FromRfc3339(const QString &s) {
-	auto datetime = s.split("T");
-	datetime.append(datetime[1].split(".")); datetime.removeAt(1); datetime.removeLast();
-	QString str; foreach(const auto & t, datetime) str += t + " ";
-	auto date = datetime[0].split("-");
-	auto time = datetime[1].split(":");
-	QDateTime dt(QDate(date[0].toInt(), date[1].toInt(), date[2].toInt()), QTime(time[0].toInt(), time[1].toInt(), time[2].toInt()));
-	return dt;
-}
+	File::File(const QFileInfo& file)
+		: Record(iconProvider.icon(file), file.fileName())
+	{
+		size->setText(fileSize(file));
+		type->setText(mimeDatabase.mimeTypeForFile(file).comment());
+		dateModified->setText(file.lastModified().toString());
+		iconName->setText(iconProvider.icon(file).name());
+		dateCreated->setText(file.birthTime().toString());
+		group->setText(file.group());
+		owner->setText(file.owner());
+		ownerId->setText(QString::number(file.ownerId()));
+		sizeInBytes->setText(QString::number(file.size()));
+		fullPath->setText(file.absoluteFilePath());
+		hash->setText(hashFile(file));
+	}
 
-QList<QStandardItem*> QFileInfoModel::packGoogleDriveFile(const QJsonValue& file) const
-{
-	QList<QStandardItem*> row;
+	Link::Link(const QModelIndex& index)
+		:	Record(*this->model()->itemFromIndex(index))
 
-	// visible data 
-	row.reserve(columnsNumber);
-	row.insert(int(ColunmsOrder::NAME), new QStandardItem(file["name"].toString()));
-	row.insert(int(ColunmsOrder::SIZE), new QStandardItem(fileSize(file["size"].toString().toLongLong())));
+	{
+		this->setIcon(iconProvider.icon(QFileInfo("example.lnk")));
+		this->type->setText(linkToFileType);
+	}
 
-	QMimeType mime = db.mimeTypeForFile(QFileInfo(file["name"].toString()));
-	row.insert(int(ColunmsOrder::TYPE), new QStandardItem(mime.comment()));
-	row.insert(int(ColunmsOrder::DATE_MODIDFIED), new QStandardItem(FromRfc3339(file["modifiedTime"].toString()).toString()));
+	VirtualFolder::VirtualFolder(const QString& name)
+		: Record(iconProvider.icon(QFileIconProvider::Folder), name)
+	{
+		type->setText(virtualFolderType);
+		dateCreated->setText(QDateTime::currentDateTime().toString());
+	}
 
-	//unvisible data
-	row.insert(int(ColunmsOrder::ICON_NAME), new QStandardItem(file["mimeType"].toString()));
-	row.insert(int(ColunmsOrder::DATE_CREATED), new QStandardItem(FromRfc3339(file["createdTime"].toString()).toString()));
-	row.insert(int(ColunmsOrder::GROUP), new QStandardItem(QString()));
-	row.insert(int(ColunmsOrder::OWNER), new QStandardItem(file["owners"][0]["emailAddress"].toString()));
-	row.insert(int(ColunmsOrder::OWNER_ID), new QStandardItem(file["permissionId"].toString()));
-	row.insert(int(ColunmsOrder::CUSTOM_METHADATA), new QStandardItem(QString()));
-	row.insert(int(ColunmsOrder::SIZE_BYTES), new QStandardItem(file["size"].toString()));
-	//qDebug() << file["webViewLink"];
-	row.insert(int(ColunmsOrder::FULL_PATH), new QStandardItem(file["webViewLink"].toString()));
-	//qDebug() << file["md5Checksum"];
-	row.insert(int(ColunmsOrder::MD5), new QStandardItem(file["md5Checksum"].toString()));
+	NetworkFile::NetworkFile(const QJsonValue& file)
+		: Record(iconProvider.icon(QFileInfo(file["name"].toString())), file["name"].toString())
+	{
+		size->setText(fileSize(file["size"].toString().toLongLong()));
+		type->setText(mimeDatabase.mimeTypeForFile(QFileInfo(file["name"].toString())).comment());
+		dateModified->setText(FromRfc3339(file["modifiedTime"].toString()).toString());
+		iconName->setText(file["mimeType"].toString());
+		dateCreated->setText(FromRfc3339(file["createdTime"].toString()).toString());
+		owner->setText(file["owners"][0]["emailAddress"].toString());
+		ownerId->setText(file["permissionId"].toString());
+		sizeInBytes->setText(file["size"].toString());
+		fullPath->setText(file["webViewLink"].toString());
+		hash->setText(file["md5Checksum"].toString());
+	}
 
-	return row;
-}
+	void DrivesModel::readFilesRecursive(QModelIndex parent, const QString& path, size_t maxDepth, size_t curDepth)
+	{
+		if (curDepth > maxDepth)
+			return;
 
-QList<QStandardItem*> QFileInfoModel::fromFileInfo(const QFileInfo& info) const	
-{
-	QList<QStandardItem*> row;
+		QStandardItem* parentItem = this->itemFromIndex(parent);
 
-	// visible data 
-	row.reserve(columnsNumber);
-	row.insert(int(ColunmsOrder::NAME), new QStandardItem(this->iconProvider.icon(info), info.fileName()));
-	row.insert(int(ColunmsOrder::SIZE), new QStandardItem(fileSize(info)));
+		QDirIterator it(path, QDir::NoDotAndDotDot | QDir::AllEntries);
+		while (it.hasNext() && isRunning)
+		{
+			it.next();
+			emit currentReadingFile(it.filePath());
 
-	QMimeType mime = db.mimeTypeForFile(info);
-	row.insert(int(ColunmsOrder::TYPE), new QStandardItem(mime.comment()));
-	row.insert(int(ColunmsOrder::DATE_MODIDFIED), new QStandardItem(info.lastModified().toString()));
-	
-	//unvisible data
-	row.insert(int(ColunmsOrder::ICON_NAME), new QStandardItem(iconProvider.icon(info).name()));
-	row.insert(int(ColunmsOrder::DATE_CREATED), new QStandardItem(info.birthTime().toString()));
-	row.insert(int(ColunmsOrder::GROUP), new QStandardItem(info.group()));
-	row.insert(int(ColunmsOrder::OWNER), new QStandardItem(info.owner()));
-	row.insert(int(ColunmsOrder::OWNER_ID), new QStandardItem(QString::number(info.ownerId())));
-	row.insert(int(ColunmsOrder::CUSTOM_METHADATA), new QStandardItem(QString()));
-	row.insert(int(ColunmsOrder::SIZE_BYTES), new QStandardItem(QString::number(info.size())));
-	row.insert(int(ColunmsOrder::FULL_PATH), new QStandardItem(info.absoluteFilePath()));
-	if (info.isFile())
-	row.insert(int(ColunmsOrder::MD5), new QStandardItem(QString(hash(info).toHex())));
+			auto info = it.fileInfo();
+			if (info.isDir())
+				parentItem->appendRow(new Folder(info));
+			else
+				parentItem->appendRow(new File(info));
 
-	return row;
+			readSize += info.size();
+			emit fileRead(100 * readSize / allSize);
+
+			int row = parentItem->rowCount() - 1;
+			QModelIndex index = parentItem->child(row)->index();
+
+
+			if (info.isDir())
+				readFilesRecursive(index, it.filePath(), maxDepth, curDepth + 1);
+		}
+	}
+
+
+	ExternalDrivesModel* ExternalDrivesModel::generate(size_t maxDepth)
+	{
+		this->clear();
+		allSize = 0; readSize = 0; isRunning = true;
+		QStandardItem* root = this->invisibleRootItem();
+
+		this->initHeaders();
+		QList<QString> externalDrives = removableDrives();
+		foreach(auto drive, externalDrives) {
+			storageInfo.setPath(drive);
+			allSize += storageInfo.bytesTotal() - storageInfo.bytesFree();
+		}
+
+		foreach(auto drive, externalDrives)
+		{
+			QDirIterator it(drive);
+
+			root->appendRow(new Drive(it));
+
+			int row = root->rowCount() - 1;
+			QModelIndex index = root->child(row)->index();
+
+			readFilesRecursive(index, it.path(), maxDepth);
+		}
+		emit loaded();
+		return this;
+	}
+
+	AllDrivesModel* model::AllDrivesModel::generate(size_t maxDepth)
+	{
+		this->clear();
+		this->initHeaders();
+		allSize = 0; readSize = 0; isRunning = true;
+		foreach(auto drive, QDir::drives()) {
+			storageInfo.setPath(drive.filePath());
+			allSize += storageInfo.bytesTotal() - storageInfo.bytesFree();
+		}
+
+		foreach(auto drive, QDir::drives())
+		{
+			QDirIterator it(drive.absoluteFilePath());
+
+			this->appendRow(new Drive(it));
+
+			int row = this->rowCount() - 1;
+			QModelIndex index = this->index(row, 0);
+
+			readFilesRecursive(index, it.path(), maxDepth);
+		}
+		emit loaded();
+		return this;
+	}
+
+	GoogleDriveModel* GoogleDriveModel::generate(size_t maxDepth)
+	{
+		this->clear();
+		this->initHeaders();
+
+		GoogleGateway* gateway = new GoogleGateway(this);
+		connect(gateway, &GoogleGateway::authorized, gateway, &GoogleGateway::loadFileListPage);
+		connect(gateway, &GoogleGateway::loadedFileListPage, this, &GoogleDriveModel::generateFromResponse);
+		gateway->authorize();
+
+		return this;
+	}
+
+	void GoogleDriveModel::generateFromResponse(const QJsonDocument& response)
+	{
+		QJsonArray files = response["files"].toArray();
+		foreach(const QJsonValue & file, files)
+		{
+			qDebug() << file["name"].toString();
+			this->invisibleRootItem()->appendRow(new NetworkFile(file));
+		}
+		// HACK: Don't update all icons when a new page is added
+		//this->setIcons();
+		emit loaded();
+	}
 }

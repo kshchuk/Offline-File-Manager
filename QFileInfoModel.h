@@ -3,111 +3,259 @@
 #include <QCryptographicHash>
 #include <QStandardItemModel>
 #include <QFileIconProvider>
+#include <QFileSystemModel>
 #include <QStorageInfo>
 #include <QMimeDatabase>
 #include <QStandardItem>
 #include <QDirIterator>
 #include <QFileInfo>
+#include <QLocale>
 #include <QString>
 #include <QList>
 #include <QIcon>
 
 
-enum class ColunmsOrder
+namespace model
 {
-	NAME,
-	SIZE,
-	TYPE,
-	DATE_MODIDFIED,
-	ICON_NAME,
-	DATE_CREATED,
-	GROUP,
-	OWNER,
-	OWNER_ID,
-	CUSTOM_METHADATA,
-	SIZE_BYTES,
-	FULL_PATH,
-	MD5
-};
+	 
+	//const size_t columnsNumber = 12;
 
-const size_t columnsNumber = 12;
+	static const QString virtualFolderType = "Virtual folder";
+	static const QString linkToFileType = "Link";
+
+	class FolderFileManipulator
+	{
+	public:
+		virtual void insertFileLinkToTheFolder(QModelIndex toInsert, QModelIndex destination) = 0;
+		virtual void insertFileToTheFolder(const QString& path, QModelIndex destination) = 0;
+		virtual QModelIndex appendVirtualFolder(const QFileInfo& info, QModelIndex parent) = 0;
+		virtual void deleteFile(const QModelIndex& index) = 0;
+	};
 
 
-static const QString virtualFolderType = "virtual folder";
-static const QString linkToFileType = "link to file/folder";
+	class ModelIO 
+	{
+	public:
+		virtual QAbstractItemModel* readFile(QString fileName) = 0;
+		virtual void writeFile(QString fileName, size_t maxDepth) const = 0;
+	};
 
 
-class QFileInfoModel  : public QStandardItemModel
-{
-	Q_OBJECT
 
-public:
-	QFileInfoModel(QObject *parent = nullptr);
-	~QFileInfoModel();
+	class QFileInfoModel : protected QStandardItemModel, public FolderFileManipulator, public ModelIO
+	{
 
-	QList<QString> getPath(QModelIndex index) const;
-	QString getPathfFromInfo(const QModelIndex &index) const;
-	QModelIndex byPath(QString path) const;
-	static QString pathFromStringList(const QStringList& list);
+		Q_OBJECT
 
-	QAbstractItemModel* readFile(QString fileName);
-	void writeFile(QString fileName, size_t maxDepth) const;
-	void deleteFile(const QModelIndex& index);
+	public:
+		explicit QFileInfoModel(QObject* parent = nullptr);
+		virtual ~QFileInfoModel() {}
 
-	QAbstractItemModel* genStaticSystemModel(size_t maxDepth);
-	QAbstractItemModel* genExternalDrivesModel(size_t maxDepth);
-	QAbstractItemModel* genGoogleDriveModel(size_t maxDepth);
+		virtual QFileInfoModel* generate(size_t maxDepth) = 0;
 
+		QAbstractItemModel* readFile(QString fileName) override;
+		void writeFile(QString fileName, size_t maxDepth) const override;
 
-	QModelIndex appendFolder(const QFileInfo& info, QModelIndex parent);
-	void setName(QString newName, QModelIndex index);
-	quint64 fileSize(const QModelIndex& index) const;
+		QList<QString> getPath(QModelIndex index) const noexcept;
+		inline QString getPathfFromInfo(const QModelIndex& index) const noexcept;
+		QModelIndex byPath(QString path) const noexcept;
+		static QString pathFromStringList(const QStringList& list);
 
-	void insertFileLinkToTheFolder(QModelIndex toInsert, QModelIndex destination);
-	void insertFileToTheFolder(const QString& path, QModelIndex destination);
+		inline void insertFileLinkToTheFolder(QModelIndex toInsert, QModelIndex destination) override;
+		inline void insertFileToTheFolder(const QString& path, QModelIndex destination) override;
+		QModelIndex appendVirtualFolder(const QFileInfo& info, QModelIndex parent) override;
+		void deleteFile(const QModelIndex& index) override;
 
-	static bool isLink(const QModelIndex& index);
-	static bool isFolder(const QModelIndex& index);
+		inline void setName(QString newName, QModelIndex index);
 
-public slots:
-	void stopRunning();
+		inline bool isLink(const QModelIndex& index) const;
+		inline bool isFolder(const QModelIndex& index) const;
 
-signals:
-	void currentReadingFile(const QString& path);
-	void fileRead(int curPercentage);
-	void loaded();
+		quint64 fileSize(const QModelIndex& index) const;
 
 
-private:
-	QMimeDatabase db;
-	QFileIconProvider iconProvider;
-	QStorageInfo storageInfo;
-	quint64 allSize = 0;
-	quint64 readSize = 0;
 
-	bool isRunning = true;
+	signals:
+		void loaded();
 
-	void readHierarchyRecursive(QModelIndex parent, const QString& path,
-		size_t maxDepth, size_t curDepth = 1);
+	protected:
+		void setIcons(const QModelIndex& index = QModelIndex(), int depth = 0);
+		void initHeaders();
 
-	// List of columns:
-	// Name | Size | Type | Date Modified | Icon Name | Birth Time |
-	// Group | Owner | OwnerID | Custom metadata | Size in bytes | Full path | HASH
-	QList<QStandardItem*> fromFileInfo(const QFileInfo& info) const;
-	QList<QStandardItem*> packLink(const QModelIndex& index) const;
-	QList<QStandardItem*> packDrive(const QDirIterator& drive) const;
-	QList<QStandardItem*> packGoogleDriveFile(const QJsonValue& file) const;
+		static QFileSystemModel system_model;
 
-	void initFileModelHeaders(QFileInfoModel* model) const;
-	QString fileSize(const QFileInfo& info) const;
-	QString fileSize(qint64 size) const;
-	void setIcons(const QModelIndex& index = QModelIndex(), int depth = 0);
-	QModelIndex byPathRecursive(QStringList::const_iterator piece,
+	private:
+		QModelIndex byPathRecursive(QStringList::const_iterator piece,
 		QStringList::const_iterator end, const QModelIndex& parent) const;
-	static QByteArray hash(const QFileInfo& info);
-	void genFromGoogleDriveResponse(const QJsonDocument& response);
 
-	friend class QFileInfoModel_test;
-};
+		static QFileIconProvider iconProvider;
+	};
 
-QDateTime FromRfc3339(const QString& s);
+
+	class DrivesModel : public QFileInfoModel
+	{
+		Q_OBJECT
+
+	public:
+		explicit DrivesModel(QObject* parent = nullptr)
+			: QFileInfoModel(parent) {}
+		virtual ~DrivesModel() {}
+
+		DrivesModel* generate(size_t maxDepth) override = 0;
+
+	signals:
+		void currentReadingFile(const QString& path);
+		void fileRead(int currentPercentage);
+
+
+	protected:
+		void readFilesRecursive(QModelIndex parent, const QString& path,
+				size_t maxDepth, size_t curDepth = 1);
+		quint64 allSize = 0;
+		quint64 readSize = 0;
+		bool isRunning = true;
+
+		static QStorageInfo storageInfo;
+	};
+
+
+	class ExternalDrivesModel : public DrivesModel
+	{
+		Q_OBJECT
+
+	public:
+		explicit ExternalDrivesModel(QObject* parent = nullptr)
+			: DrivesModel(parent) {}
+
+		virtual ~ExternalDrivesModel() {}
+
+		ExternalDrivesModel* generate(size_t maxDepth) override;
+	};
+
+
+	class AllDrivesModel : public DrivesModel
+	{
+		Q_OBJECT
+
+	public:
+		explicit AllDrivesModel(QObject* parent = nullptr)
+			: DrivesModel(parent) {}
+
+		virtual	~AllDrivesModel() {}
+
+		AllDrivesModel* generate(size_t maxDepth) override;
+	};
+
+
+
+	class GoogleDriveModel : public QFileInfoModel
+	{
+		Q_OBJECT
+
+	public:
+		explicit GoogleDriveModel(QObject* parent = nullptr)
+			: QFileInfoModel(parent) {}
+
+		virtual ~GoogleDriveModel() {}
+
+		GoogleDriveModel* generate(size_t maxDepth) override;
+
+	private:
+		void generateFromResponse(const QJsonDocument& response);
+	};
+	
+
+	class Record : public QStandardItem
+	{
+	public:
+		Record(const QStandardItem& item);
+		virtual ~Record() {}
+
+		inline QString getName() const { return this->data().toString(); }
+		inline QString getSize() const { return size->data().toString(); }
+		inline QString getType() const { return type->data().toString(); }
+		inline QString getDateModified() const { return dateModified->data().toString(); }
+		inline QString getIconName() const { return iconName->data().toString(); }
+		inline QString getDateCreated() const { return dateCreated->data().toString(); }
+		inline QString getGroup() const { return group->data().toString(); }
+		inline QString getOwner() const { return owner->data().toString(); }
+		inline QString getOwnerId() const { return ownerId->data().toString(); }
+		inline QString getSizeInBytes() const { return sizeInBytes->data().toString(); }
+		inline QString getFullPath() const { return fullPath->data().toString(); }
+		inline QString getHash() const { return hash->data().toString(); }
+		inline QString getCustomMetadata() const { return customMetadata->data().toString(); }
+
+		inline void setCustomMetadata(const QString& str) { customMetadata->setData(str, Qt::DisplayRole); }
+		inline void setName(const QString& name) { this->setText(name); }
+
+	protected:
+		explicit Record(const QIcon& icon, const QString& name);
+
+		QStandardItem *size, *type, *dateModified, *iconName, *dateCreated,
+			*group, *owner, *ownerId, *sizeInBytes, *fullPath, *hash, *customMetadata;
+
+		static QLocale locale;
+		static QMimeDatabase mimeDatabase;
+		static QFileIconProvider iconProvider;
+
+		static inline QString fileSize(const QFileInfo& info);
+	};
+
+
+	class Drive : public Record
+	{
+	public:
+		explicit Drive(const QDirIterator& drive);
+		virtual ~Drive() { }
+	};
+
+
+	class Folder : public Record
+	{
+	public:
+		explicit Folder(const QFileInfo& folder);
+		virtual ~Folder() { }
+	};
+
+
+	class File : public Record
+	{
+	public:
+		explicit File(const QFileInfo& file);
+		virtual ~File() {}
+	
+	private:
+		static 	QCryptographicHash crypto;
+
+		static QByteArray hashFile(const QFileInfo& info);
+		static inline QString fileSize(qint64 size);
+	};
+
+	QCryptographicHash File::crypto(QCryptographicHash::Md5);
+
+	class Link : public Record
+	{
+	public:
+		explicit Link(const QModelIndex& index);
+		virtual ~Link() {}
+	};
+
+
+	class VirtualFolder : public Record
+	{
+	public:
+		explicit VirtualFolder(const QString& name);
+		virtual ~VirtualFolder() {}
+	};
+
+
+	class NetworkFile : public Record
+	{
+	public:
+		explicit NetworkFile(const QJsonValue& file);
+		virtual ~NetworkFile() {}
+	};
+
+
+	QDateTime FromRfc3339(const QString& str);
+}
