@@ -199,6 +199,7 @@ namespace model
 		static QFileIconProvider iconProvider;
 
 		static inline QString fileSize(const QFileInfo& info);
+		static inline QString fileSize(qint64 size);
 	};
 
 
@@ -228,10 +229,10 @@ namespace model
 		static 	QCryptographicHash crypto;
 
 		static QByteArray hashFile(const QFileInfo& info);
-		static inline QString fileSize(qint64 size);
 	};
 
 	QCryptographicHash File::crypto(QCryptographicHash::Md5);
+
 
 	class Link : public Record
 	{

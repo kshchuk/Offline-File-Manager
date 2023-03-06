@@ -333,7 +333,7 @@ namespace model
 		return QString();
 	}
 
-	inline QString File::fileSize(qint64 size)
+	inline QString Record::fileSize(qint64 size)
 	{
 		return locale.formattedDataSize(size);
 	}
