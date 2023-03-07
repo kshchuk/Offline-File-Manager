@@ -15,7 +15,7 @@
 #include <QIcon>
 
 
-namespace model
+namespace manager
 {
 	 
 	//const size_t columnsNumber = 12;
@@ -42,19 +42,14 @@ namespace model
 
 
 
-	class QFileInfoModel : protected QStandardItemModel, public FolderFileManipulator, public ModelIO
+	class QFileInfoModel : public QStandardItemModel, public FolderFileManipulator, public ModelIO
 	{
 
-		Q_OBJECT
+		Q_OBJEC
 
 	public:
 		explicit QFileInfoModel(QObject* parent = nullptr);
 		virtual ~QFileInfoModel() {}
-
-		virtual QFileInfoModel* generate(size_t maxDepth) = 0;
-
-		QAbstractItemModel* readFile(QString fileName) override;
-		void writeFile(QString fileName, size_t maxDepth) const override;
 
 		QList<QString> getPath(QModelIndex index) const noexcept;
 		inline QString getPathfFromInfo(const QModelIndex& index) const noexcept;
@@ -73,8 +68,6 @@ namespace model
 
 		quint64 fileSize(const QModelIndex& index) const;
 
-
-
 	signals:
 		void loaded();
 
@@ -83,6 +76,13 @@ namespace model
 		void initHeaders();
 
 		static QFileSystemModel system_model;
+
+	private slots:
+		virtual QFileInfoModel* generate(size_t maxDepth) = 0;
+
+		QAbstractItemModel* readFile(QString fileName) override;
+		void writeFile(QString fileName, size_t maxDepth) const override;
+
 
 	private:
 		QModelIndex byPathRecursive(QStringList::const_iterator piece,
@@ -101,12 +101,13 @@ namespace model
 			: QFileInfoModel(parent) {}
 		virtual ~DrivesModel() {}
 
-		DrivesModel* generate(size_t maxDepth) override = 0;
 
 	signals:
 		void currentReadingFile(const QString& path);
 		void fileRead(int currentPercentage);
 
+	private slots:
+		DrivesModel* generate(size_t maxDepth) override = 0;
 
 	protected:
 		void readFilesRecursive(QModelIndex parent, const QString& path,
@@ -129,6 +130,7 @@ namespace model
 
 		virtual ~ExternalDrivesModel() {}
 
+	private slots:
 		ExternalDrivesModel* generate(size_t maxDepth) override;
 	};
 
@@ -143,6 +145,7 @@ namespace model
 
 		virtual	~AllDrivesModel() {}
 
+	private slots:
 		AllDrivesModel* generate(size_t maxDepth) override;
 	};
 
@@ -158,6 +161,7 @@ namespace model
 
 		virtual ~GoogleDriveModel() {}
 
+	private slots:
 		GoogleDriveModel* generate(size_t maxDepth) override;
 
 	private:

@@ -17,7 +17,7 @@
 #include "system_depend_functions.h"
 
 
-namespace model
+namespace manager
 {
 
 	QFileInfoModel::QFileInfoModel(QObject* parent)
