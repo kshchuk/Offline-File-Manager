@@ -7,6 +7,7 @@
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkAccessManager>
 
+namespace manager {
 class GoogleGateway : public QObject
 {
     Q_OBJECT
@@ -28,3 +29,5 @@ private:
     static bool isAuthorised;
     static QString accessToken;
 };
+
+}

@@ -11,6 +11,10 @@
 #include <QTNetworkAuth/QOAuthHttpServerReplyHandler>
 #include <QDesktopServices>
 
+namespace manager {
+
+
+
 
 bool GoogleGateway::isAuthorised = false;
 QString GoogleGateway::accessToken;
@@ -98,5 +102,7 @@ void GoogleGateway::loadFileListPage()
         if (!nextPageToken.isEmpty())
             loadFileListPage();
         });
+
+}
 
 }

@@ -4,6 +4,7 @@
 #include <QStandardItemModel>
 
 
+namespace manager {
 
 
 struct BasicTraits {
@@ -80,3 +81,5 @@ struct Status {
         return ok();
     }
 };
+
+}
