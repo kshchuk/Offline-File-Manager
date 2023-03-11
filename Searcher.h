@@ -1,26 +1,20 @@
 #pragma once
+
+#include <QList>
+
 #include "QFileInfoModel.h"
 
-#include <QDateTime>
 
+namespace manager {
 
-//using Name = QString;
-//using Type = QString;
-//using CreationTime = QDateTime;
-//using EditTime = QDateTime;
-//using Hash = QString;
-//using CustomMeta = QString;
-
-
-class Searcher : public QObject
+class Searcher : QObject
 {
-	Q_OBJECT
-
+    Q_OBJECT
 
 public:
 	Searcher(QFileInfoModel* model) : model(model) {};
 
-	enum CriteriaOrder
+    enum CriteriaOrder
 	{
 		NAME,
 		TYPE,
@@ -34,17 +28,17 @@ public:
 
 	const size_t criteriasCount = 8;
 
-	QModelIndexList search(QVariant criterias[], QString path);
-
+    QList<manager::Record*> search(QVariant criterias[], QString path);
 
 signals:
-	void found(QModelIndex);
-	void finished(QModelIndexList);
+    void found(manager::Record*);
+    void finished(QList<manager::Record*>);
 
 
 private:
-	const QFileInfoModel* model;
+    QFileInfoModel* model;
 
-	QModelIndexList searchRecursive(QVariant criterias[], const QModelIndex& index);
+    QList<manager::Record*> searchRecursive(QVariant criterias[], Record* record);
 };
+}
 
