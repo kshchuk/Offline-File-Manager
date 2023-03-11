@@ -29,9 +29,7 @@ namespace manager
         void goUpper();
         void addFolder();
         void setMaximumReadingDepth();
-        void search() {
-            // TODO
-        };
+        void search();
         void openRobocopyTool() {
             // TODO
         };

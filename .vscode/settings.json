@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "atomic": "cpp",
+        "qmessagebox": "cpp",
+        "cassert": "cpp",
+        "algorithm": "cpp",
+        "sstream": "cpp"
+    }
+}

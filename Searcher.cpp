@@ -11,7 +11,6 @@ namespace manager
 		if (index.isValid())
 		{
 			recordList = searchRecursive(criterias, dynamic_cast<Record *>(model->itemFromIndex(index)));
-			emit finished(recordList);
 			return recordList;
 		}
 		else

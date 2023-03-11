@@ -31,9 +31,7 @@ public:
     QList<manager::Record*> search(QVariant criterias[], QString path);
 
 signals:
-    void found(manager::Record*);
-    void finished(QList<manager::Record*>);
-
+    void found(const manager::Record*);
 
 private:
     QFileInfoModel* model;

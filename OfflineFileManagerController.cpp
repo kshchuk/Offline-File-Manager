@@ -7,8 +7,9 @@
 #include "ContextMenuPresenter.h"
 #include "ContextMenuView.h"
 
-
-
+#include "Searcher.h"
+#include "SearchController.h"
+#include "SearchWindow.h"
 
 /*#include "OfflineFileManagerController.h"
 
@@ -168,7 +169,7 @@ void OfflineFileManager::action_openInFileExplorer()
         QFileInfo info(spath);
         if (info.exists())
             QDesktopServices::openUrl(QUrl::fromLocalFile(spath));
-        else 
+        else
             if (!QDesktopServices::openUrl(QUrl(spath)))
                 QMessageBox::critical(this, tr("Offline File Manager"),
                     tr("No access"), QMessageBox::Close);
@@ -568,7 +569,6 @@ void OfflineFileManager::runProgressBar()
     widget->deleteLater();
 }*/
 
-
 manager::OfflineFileManagerController::OfflineFileManagerController(QFileInfoModel *model, OfflineFileManagerView *view, QObject *parent)
     : QObject(parent), model(model), view(view)
 {
@@ -623,22 +623,22 @@ void manager::OfflineFileManagerController::saveModelToFile()
 
 void manager::OfflineFileManagerController::loadModelFromFile()
 {
-           SaveMessage message(this);
-           message.show();
+    SaveMessage message(this);
+    message.show();
 
-           QString fileName = QFileDialog::getOpenFileName(view, ("Open File"),
-                                                           "", ("File system hierarchy (*.fsh)"));
-           try
-           {
-               emit load(fileName, maxReadingDepth);
-           }
-           catch (const std::exception &e)
-           {
-               QMessageBox::critical(view, tr("Offline File Manager"),
-                                     tr(e.what()), QMessageBox::Close);
-           }
+    QString fileName = QFileDialog::getOpenFileName(view, ("Open File"),
+                                                    "", ("File system hierarchy (*.fsh)"));
+    try
+    {
+        emit load(fileName, maxReadingDepth);
+    }
+    catch (const std::exception &e)
+    {
+        QMessageBox::critical(view, tr("Offline File Manager"),
+                              tr(e.what()), QMessageBox::Close);
+    }
 
-           this->goHome();
+    this->goHome();
 }
 
 void manager::OfflineFileManagerController::update()
@@ -684,38 +684,47 @@ void manager::OfflineFileManagerController::goUpper()
 
 void manager::OfflineFileManagerController::addFolder()
 {
-           QModelIndex cur = view->getCurrentIndex();
+    QModelIndex cur = view->getCurrentIndex();
 
-           if (model->isFolder(cur) || cur == QModelIndex())
-           {
-               QModelIndex appended = model->appendVirtualFolder(cur);
+    if (model->isFolder(cur) || cur == QModelIndex())
+    {
+        QModelIndex appended = model->appendVirtualFolder(cur);
 
-               view->expandFolder(appended.parent());
-               view->editItemName(appended);
-           }
-           else
-               QMessageBox::warning(view, "Adding error",
-                                    "Unable to insert a folder into a non-folder",
-                                    QMessageBox::Close);
+        view->expandFolder(appended.parent());
+        view->editItemName(appended);
+    }
+    else
+        QMessageBox::warning(view, "Adding error",
+                             "Unable to insert a folder into a non-folder",
+                             QMessageBox::Close);
 }
 
 void manager::OfflineFileManagerController::setMaximumReadingDepth()
 {
-           MaximumReadingDepthDialog dialog(this);
-           dialog.exec();
+    MaximumReadingDepthDialog dialog(this);
+    dialog.exec();
+}
+
+void manager::OfflineFileManagerController::search()
+{
+    Searcher searcher(model);
+    SearchWindow window;
+    SearchController controller(&searcher, &window);
+    window.setController(&controller);
+    window.exec();
 }
 
 void manager::OfflineFileManagerController::openCustomContextMenu(const QPoint &point)
 {
-            ContextMenuPresenter presenter(model, view);
-            ContextMenuView view(&presenter, this->view);
-            presenter.setView(&view);
+    ContextMenuPresenter presenter(model, view);
+    ContextMenuView view(&presenter, this->view);
+    presenter.setView(&view);
 
-            view.exec(this->view->getGlobalPos(point));
+    view.exec(this->view->getGlobalPos(point));
 }
 
 void manager::OfflineFileManagerController::alertUser()
 {
-            SaveMessage mes(this);
-            mes.show();
-        }
+    SaveMessage mes(this);
+    mes.show();
+}
