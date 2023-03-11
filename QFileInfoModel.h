@@ -28,8 +28,21 @@ namespace manager
 	public:
 		virtual void insertFileLinkToTheFolder(QModelIndex toInsert, QModelIndex destination) = 0;
 		virtual void insertFileToTheFolder(const QString& path, QModelIndex destination) = 0;
-		virtual QModelIndex appendVirtualFolder(const QFileInfo& info, QModelIndex parent) = 0;
+		virtual QModelIndex appendVirtualFolder(QModelIndex parent) = 0;
 		virtual void deleteFile(const QModelIndex& index) = 0;
+	};
+
+
+	class FileInfoModelHelper 
+	{
+	public:
+		virtual QList<QString> getPath(QModelIndex index) const noexcept = 0;
+		virtual QString getPathfFromInfo(const QModelIndex& index) const noexcept = 0;
+		virtual QModelIndex byPath(QString path) const noexcept = 0;
+		static QString pathFromStringList(const QStringList& list);
+
+		virtual bool isLink(const QModelIndex& index) const = 0;
+		virtual bool isFolder(const QModelIndex& index) const = 0;
 	};
 
 
@@ -42,47 +55,46 @@ namespace manager
 
 
 
-	class QFileInfoModel : public QStandardItemModel, public FolderFileManipulator, public ModelIO
+	class QFileInfoModel : public QStandardItemModel, public FolderFileManipulator, public ModelIO, public FileInfoModelHelper
 	{
 
-		Q_OBJEC
+		Q_OBJECT
 
 	public:
 		explicit QFileInfoModel(QObject* parent = nullptr);
 		virtual ~QFileInfoModel() {}
 
-		QList<QString> getPath(QModelIndex index) const noexcept;
-		inline QString getPathfFromInfo(const QModelIndex& index) const noexcept;
-		QModelIndex byPath(QString path) const noexcept;
+		QList<QString> getPath(QModelIndex index) const noexcept override;
+		inline QString getPathfFromInfo(const QModelIndex& index) const noexcept override;
+		QModelIndex byPath(QString path) const noexcept override;
 		static QString pathFromStringList(const QStringList& list);
+
+		inline bool isLink(const QModelIndex& index) const override;
+		inline bool isFolder(const QModelIndex& index) const override;
 
 		inline void insertFileLinkToTheFolder(QModelIndex toInsert, QModelIndex destination) override;
 		inline void insertFileToTheFolder(const QString& path, QModelIndex destination) override;
-		QModelIndex appendVirtualFolder(const QFileInfo& info, QModelIndex parent) override;
+		QModelIndex appendVirtualFolder(QModelIndex parent) override;
 		void deleteFile(const QModelIndex& index) override;
 
 		inline void setName(QString newName, QModelIndex index);
-
-		inline bool isLink(const QModelIndex& index) const;
-		inline bool isFolder(const QModelIndex& index) const;
 
 		quint64 fileSize(const QModelIndex& index) const;
 
 	signals:
 		void loaded();
 
-	protected:
-		void setIcons(const QModelIndex& index = QModelIndex(), int depth = 0);
-		void initHeaders();
-
-		static QFileSystemModel system_model;
-
-	private slots:
+	public slots:
 		virtual QFileInfoModel* generate(size_t maxDepth) = 0;
 
 		QAbstractItemModel* readFile(QString fileName) override;
 		void writeFile(QString fileName, size_t maxDepth) const override;
 
+	protected:
+		void setIcons(const QModelIndex& index = QModelIndex(), int depth = 0);
+		void initHeaders();
+
+		static QFileSystemModel system_model;
 
 	private:
 		QModelIndex byPathRecursive(QStringList::const_iterator piece,
@@ -106,7 +118,7 @@ namespace manager
 		void currentReadingFile(const QString& path);
 		void fileRead(int currentPercentage);
 
-	private slots:
+    public slots:
 		DrivesModel* generate(size_t maxDepth) override = 0;
 
 	protected:
@@ -130,7 +142,7 @@ namespace manager
 
 		virtual ~ExternalDrivesModel() {}
 
-	private slots:
+    public slots:
 		ExternalDrivesModel* generate(size_t maxDepth) override;
 	};
 
@@ -145,7 +157,7 @@ namespace manager
 
 		virtual	~AllDrivesModel() {}
 
-	private slots:
+    public slots:
 		AllDrivesModel* generate(size_t maxDepth) override;
 	};
 
@@ -161,7 +173,7 @@ namespace manager
 
 		virtual ~GoogleDriveModel() {}
 
-	private slots:
+    public slots:
 		GoogleDriveModel* generate(size_t maxDepth) override;
 
 	private:
@@ -234,8 +246,6 @@ namespace manager
 
 		static QByteArray hashFile(const QFileInfo& info);
 	};
-
-	QCryptographicHash File::crypto(QCryptographicHash::Md5);
 
 
 	class Link : public Record

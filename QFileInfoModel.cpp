@@ -19,6 +19,14 @@
 
 namespace manager
 {
+    QFileIconProvider QFileInfoModel::iconProvider = QFileIconProvider();
+    QFileSystemModel QFileInfoModel::system_model = QFileSystemModel();
+    QStorageInfo DrivesModel::storageInfo = QStorageInfo();
+    QLocale Record::locale = QLocale();
+    QMimeDatabase Record::mimeDatabase = QMimeDatabase();
+    QFileIconProvider Record::iconProvider = QFileIconProvider();
+    QCryptographicHash File::crypto = QCryptographicHash(QCryptographicHash::Md5);
+
 
 	QFileInfoModel::QFileInfoModel(QObject* parent)
 		: QStandardItemModel(parent)
@@ -33,7 +41,7 @@ namespace manager
 		}
 	}
 
-	QList<QString> QFileInfoModel::getPath(QModelIndex index) const
+    QList<QString> QFileInfoModel::getPath(QModelIndex index) const noexcept
 	{
 		QList<QString> path;
 		while (index.isValid())
@@ -46,7 +54,7 @@ namespace manager
 		return path;
 	}
 
-	inline QString QFileInfoModel::getPathfFromInfo(const QModelIndex& index) const
+    inline QString QFileInfoModel::getPathfFromInfo(const QModelIndex& index) const noexcept
 	{
 		return dynamic_cast<Record*>(this->itemFromIndex(index))->getFullPath();
 	}
@@ -107,7 +115,7 @@ namespace manager
 	}
 
 
-	QModelIndex QFileInfoModel::appendVirtualFolder(const QFileInfo& info, QModelIndex parent)
+	QModelIndex QFileInfoModel::appendVirtualFolder(QModelIndex parent)
 	{
 		//QList<QStandardItem*> erow = fromFileInfo(info);
 		//erow[(int)ColunmsOrder::NAME]->setData(iconProvider.icon(QFileIconProvider::Folder), Qt::DecorationRole);
@@ -133,7 +141,7 @@ namespace manager
 		dynamic_cast<Record*>(this->itemFromIndex(index))->setName(newName);
 	}
 
-	QModelIndex QFileInfoModel::byPath(QString path) const
+    QModelIndex QFileInfoModel::byPath(QString path) const noexcept
 	{
 		QStringList pieces = path.split("/");
 		pieces.removeAll(QString(""));
@@ -192,7 +200,7 @@ namespace manager
 			dest->appendRow(new File(info));
 	}
 
-	QString QFileInfoModel::pathFromStringList(const QStringList& list)
+	QString FileInfoModelHelper::pathFromStringList(const QStringList& list)
 	{
 		QString spath;
 		foreach(auto file, list) {
@@ -510,7 +518,7 @@ namespace manager
 		return this;
 	}
 
-	AllDrivesModel* model::AllDrivesModel::generate(size_t maxDepth)
+    AllDrivesModel* AllDrivesModel::generate(size_t maxDepth)
 	{
 		this->clear();
 		this->initHeaders();
