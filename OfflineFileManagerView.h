@@ -7,20 +7,17 @@
 #include <QList>
 
 #include "ui_OfflineFileManager.h"
+
 #include "QFileInfoModel.h"
 
 
 namespace manager
 {
-    class OfflineFileManagerView : public QMainWindow
+    class OfflineFileManagerViewActions : public QObject
     {
-       Q_OBJECT
+        Q_OBJECT
 
-    public:
-        explicit OfflineFileManagerView(QWidget* parent = nullptr);
-
-        void setModel(QFileInfoModel* model);
-
+   public:
     signals:
         void actionSaveToFile();
         void actionLoadFromFile();
@@ -36,26 +33,94 @@ namespace manager
         void actionGoogleDriveRegime();
 
         void actionSetMaxReadingDepth();
+        
+    };
 
-        void onTreeWidgetClicked(const QModelIndex&);
-        void onTreeWidgetDoubleClicked(const QModelIndex&);
-        void onCustomContextMenuRequested(const QPoint& point);
+    class OfflineFileManagerViewButtons : public QObject
+    {
+        Q_OBJECT
+
+    public:
+     signals:
         void onUpdateButtonClicked();
         void onHomeButtonClicked();
         void onUpButtonClicked();
         void onAddFolderButtonClicked();
         void onSearchButtonClicked();
+    };
 
+
+    class OfflineFileManagerViewTree : public QObject
+    {
+        Q_OBJECT
+
+    public:
+     signals:
+        void onTreeWidgetClicked(const QModelIndex &);
+        void onTreeWidgetDoubleClicked(const QModelIndex &);
+        void onCustomContextMenuRequested(const QPoint &point);
+    };
+
+    class OfflineFileManagerView : public QMainWindow
+    {
+        Q_OBJECT
+
+    public:
+        explicit OfflineFileManagerView(QWidget *parent = nullptr);
+
+        inline void setModel(QFileInfoModel *model){
+            this->model = model;
+            ui.fileSystemTree->setModel(model);
+            this->update();
+        };
+        inline const QModelIndex &getCurrentIndex() {
+            
+            return ui.fileSystemTree->currentIndex();
+        };
+        inline const QPoint &getGlobalPos(const QPoint& point) {
+            return this->ui.fileSystemTree->mapToGlobal(point);
+        }
+        inline const QString& getEditLineText() {
+            return this->ui.addressLine->text();
+        };
+
+    signals:
         void onEditLineEditingFinished();
-                
-    private slots:
+
+    public slots:
         void update();
-        void expandFolder(const QModelIndex&);
-        void rollUpFolder(const QModelIndex&);
-        void setEditLineText(const QString& text);
+        inline void highlightItem(const QModelIndex &index) {
+            ui.fileSystemTree->setCurrentIndex(index);
+        }
+        inline void expandFolder(const QModelIndex &index) {
+            model->fetchMore(index);
+        };
+        inline void rollUpFolder(const QModelIndex &index) {
+            ui.fileSystemTree->collapseAll();
+            ui.fileSystemTree->setCurrentIndex(index.parent());
+        };
+        inline void hideAllItems()
+        {
+            ui.addressLine->setText("");
+            ui.fileSystemTree->setCurrentIndex(QModelIndex());
+            ui.fileSystemTree->collapseAll();
+        }
+        inline void setEditLineText(const QString &text) {
+            ui.addressLine->blockSignals(true);
+            ui.addressLine->setText(text);
+            ui.addressLine->blockSignals(false);
+        };
+        inline void editItemName(const QModelIndex& index){
+            ui.fileSystemTree->edit(index);
+        };
+
+    public:
+        OfflineFileManagerViewActions actionsSignals;
+        OfflineFileManagerViewButtons buttonsSignals;
+        OfflineFileManagerViewTree treeSignals;
 
     private:
-        QFileInfoModel* model = nullptr;
+        QFileInfoModel *model = nullptr;
         Ui::OfflineFileManagerClass ui;
     };
 }

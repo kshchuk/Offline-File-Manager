@@ -1,53 +1,48 @@
 #include "OfflineFileManagerView.h"
 
 #include <QScroller>
-#include<QScreen>
+#include <QScreen>
 
 #include <cassert>
 
-
 namespace manager
 {
-    OfflineFileManagerView::OfflineFileManagerView(QWidget *parent = nullptr)
+    OfflineFileManagerView::OfflineFileManagerView(QWidget *parent)
         : QMainWindow(parent)
     {
-        connect(ui.actionSave, &QAction::triggered, this, &OfflineFileManagerView::actionSaveToFile);
-        connect(ui.actionOpen, &QAction::triggered, this, &OfflineFileManagerView::actionLoadFromFile);
-        connect(ui.actionUpdate, &QAction::triggered, this, &OfflineFileManagerView::actionUpdate);
-        connect(ui.updateButton, &QToolButton::clicked, this, &OfflineFileManagerView::onUpdateButtonClicked);
-        connect(ui.actionReturn_Up_Folder, &QAction::triggered, this, &OfflineFileManagerView::actionGoUpper);
-        connect(ui.upButton, &QToolButton::clicked, this, &OfflineFileManagerView::onUpButtonClicked);
-        connect(ui.actionReturn_Home_Folder, &QAction::triggered, this, &OfflineFileManagerView::actionGoHome);
-        connect(ui.homeButton, &QToolButton::clicked, this, &OfflineFileManagerView::onHomeButtonClicked);
-        connect(ui.actionCreate_virtual_foulder, &QAction::triggered, this, &OfflineFileManagerView::actionAddFolder);
-        connect(ui.addFolderButton, &QToolButton::clicked, this, &OfflineFileManagerView::onAddFolderButtonClicked);
-        connect(ui.actionSearch, &QAction::triggered, this, &OfflineFileManagerView::actionSearch);
-        connect(ui.searchButton, &QToolButton::clicked, this, &OfflineFileManagerView::onSearchButtonClicked);
-        connect(ui.actionrobocopy, &QAction::triggered, this, &OfflineFileManagerView::actionOpenRobocopy);
+        ui.setupUi(this);
 
-        connect(ui.actionExternal_drives, &QAction::triggered, this, &OfflineFileManagerView::actionExternalDrivesRegime);
-        connect(ui.actionAll_drives, &QAction::triggered, this, &OfflineFileManagerView::actionAllDrivesRegime);
-        connect(ui.actionGoogle_Drive, &QAction::triggered, this, &OfflineFileManagerView::actionGoogleDriveRegime);
-        connect(ui.actionGoogle_Drive_2, &QAction::triggered, this, &OfflineFileManagerView::actionGoogleDriveRegime);
+        this->setCentralWidget(ui.layoutWidget);
 
-        connect(ui.actionMaximum_depth, &QAction::triggered, this, &OfflineFileManagerView::actionSetMaxReadingDepth);
+        connect(ui.actionSave, &QAction::triggered, &this->actionsSignals, &OfflineFileManagerViewActions::actionSaveToFile);
+        connect(ui.actionOpen, &QAction::triggered, &this->actionsSignals, &OfflineFileManagerViewActions::actionLoadFromFile);
+        connect(ui.actionUpdate, &QAction::triggered, &this->actionsSignals, &OfflineFileManagerViewActions::actionUpdate);
+        connect(ui.updateButton, &QToolButton::clicked, &this->buttonsSignals, &OfflineFileManagerViewButtons::onUpdateButtonClicked);
+        connect(ui.actionReturn_Up_Folder, &QAction::triggered, &this->actionsSignals, &OfflineFileManagerViewActions::actionGoUpper);
+        connect(ui.upButton, &QToolButton::clicked, &this->buttonsSignals, &OfflineFileManagerViewButtons::onUpButtonClicked);
+        connect(ui.actionReturn_Home_Folder, &QAction::triggered, &this->actionsSignals, &OfflineFileManagerViewActions::actionGoHome);
+        connect(ui.homeButton, &QToolButton::clicked, &this->buttonsSignals, &OfflineFileManagerViewButtons::onHomeButtonClicked);
+        connect(ui.actionCreate_virtual_foulder, &QAction::triggered, &this->actionsSignals, &OfflineFileManagerViewActions::actionAddFolder);
+        connect(ui.addFolderButton, &QToolButton::clicked, &this->buttonsSignals, &OfflineFileManagerViewButtons::onAddFolderButtonClicked);
+        connect(ui.actionSearch, &QAction::triggered, &this->actionsSignals, &OfflineFileManagerViewActions::actionSearch);
+        connect(ui.searchButton, &QToolButton::clicked, &this->buttonsSignals, &OfflineFileManagerViewButtons::onSearchButtonClicked);
+        connect(ui.actionrobocopy, &QAction::triggered, &this->actionsSignals, &OfflineFileManagerViewActions::actionOpenRobocopy);
 
-        connect(ui.fileSystemTree, &QTreeView::activated, this, &OfflineFileManagerView::onTreeWidgetClicked);
-        connect(ui.fileSystemTree, &QTreeView::clicked, this, &OfflineFileManagerView::onTreeWidgetClicked);
-        connect(ui.fileSystemTree, &QTreeView::doubleClicked, this, &OfflineFileManagerView::onTreeWidgetDoubleClicked);
+        connect(ui.actionExternal_drives, &QAction::triggered, &this->actionsSignals, &OfflineFileManagerViewActions::actionExternalDrivesRegime);
+        connect(ui.actionAll_drives, &QAction::triggered, &this->actionsSignals, &OfflineFileManagerViewActions::actionAllDrivesRegime);
+        connect(ui.actionGoogle_Drive, &QAction::triggered, &this->actionsSignals, &OfflineFileManagerViewActions::actionGoogleDriveRegime);
+        connect(ui.actionGoogle_Drive_2, &QAction::triggered, &this->actionsSignals, &OfflineFileManagerViewActions::actionGoogleDriveRegime);
 
-        connect(ui.fileSystemTree, &QTreeView::customContextMenuRequested, this, &OfflineFileManagerView::onCustomContextMenuRequested);
-        connect(ui.fileSystemTree, &QTreeView::customContextMenuRequested, this, &OfflineFileManagerView::onCustomContextMenuRequested);
+        connect(ui.actionMaximum_depth, &QAction::triggered, &this->actionsSignals, &OfflineFileManagerViewActions::actionSetMaxReadingDepth);
+
+        connect(ui.fileSystemTree, &QTreeView::activated, &this->treeSignals, &OfflineFileManagerViewTree::onTreeWidgetClicked);
+        connect(ui.fileSystemTree, &QTreeView::clicked, &this->treeSignals, &OfflineFileManagerViewTree::onTreeWidgetClicked);
+        connect(ui.fileSystemTree, &QTreeView::doubleClicked, &this->treeSignals, &OfflineFileManagerViewTree::onTreeWidgetDoubleClicked);
+
+        connect(ui.fileSystemTree, &QTreeView::customContextMenuRequested, &this->treeSignals, &OfflineFileManagerViewTree::onCustomContextMenuRequested);
 
         connect(ui.addressLine, &QLineEdit::editingFinished, this, &OfflineFileManagerView::onEditLineEditingFinished);
     };
-
-    void OfflineFileManagerView::setModel(QFileInfoModel *model)
-    {
-        this->model = model;
-        ui.fileSystemTree->setModel(model);
-        this->update();
-    }
 
     void OfflineFileManagerView::update()
     {
@@ -66,22 +61,5 @@ namespace manager
         QScroller::grabGesture(ui.fileSystemTree, QScroller::TouchGesture);
         ui.fileSystemTree->setEditTriggers(QAbstractItemView::NoEditTriggers);
         ui.fileSystemTree->setContextMenuPolicy(Qt::CustomContextMenu);
-    }
-
-    void OfflineFileManagerView::expandFolder(const QModelIndex &index)
-    {
-        model->fetchMore(index);
-    }
-
-    void OfflineFileManagerView::rollUpFolder(const QModelIndex &)
-    {
-        ui.addressLine->setText("");
-        ui.fileSystemTree->setCurrentIndex(QModelIndex());
-        ui.fileSystemTree->collapseAll();
-    }
-
-    void OfflineFileManagerView::setEditLineText(const QString &text)
-    {
-        ui.addressLine->setText(text);
     }
 }
