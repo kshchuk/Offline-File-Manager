@@ -22,6 +22,9 @@ public:
 
 public slots:
     void search();
+    void AppendRecordInTheList(Record*) {
+        // TODO
+    };
 
 private:
     Searcher* searcher;

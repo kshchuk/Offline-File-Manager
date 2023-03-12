@@ -4,28 +4,28 @@
 manager::SearchController::SearchController(Searcher *searcher, SearchWindow *view)
     : searcher(searcher), view(view)
 {
-    connect(searcher, &Searcher::found, view, &SearchWindow::AppendRecordInTheList);
+    connect(searcher, &Searcher::found, this, &SearchController::AppendRecordInTheList);
 }
 
 void manager::SearchController::search() 
 {
 	this->foundRecords.clear();
-	if (model->rowCount() > 0)
-	{
 	
 	QVariant* criterias = new QVariant[searcher->criteriasCount + 1];
 	
 	if (!view->getNameLine().isEmpty())
-		criterias[searcher->NAME] = ui.nameLine->text();
+		criterias[searcher->NAME] = view->getNameLine();
 	if (!view->getTypeLine().isEmpty())
-		criterias[searcher->TYPE] = ui.typeLine->text();
+		criterias[searcher->TYPE] = view->getTypeLine();
 
 	if (!view->getHashLine().isEmpty())
-		criterias[searcher->HASH] = ui.hashLine->text();
-	if (!view->getMetadataLine()->text().isEmpty())
-		criterias[searcher->CUSTOM_META] = ui.metadataLine->text();
+		criterias[searcher->HASH] = view->getHashLine();
+	if (!view->getMetadataLine().isEmpty())
+		criterias[searcher->CUSTOM_META] = view->getMetadataLine();
 
-	if (ui.timeCreatedMinCheckBox->isChecked())
+	// TODO: Get information about time
+
+	/*if (ui.timeCreatedMinCheckBox->isChecked())
 		criterias[searcher->CREATION_TIME_MIN] = view->getMinCreatedTime();
 	if (ui.timeCreatedMaxCheckBox->isChecked())
 		criterias[searcher->CREATION_TIME_MAX] = view->getMaxCreatedTime();
@@ -33,9 +33,8 @@ void manager::SearchController::search()
 	if (ui.timeEditedMinCheckBox->isChecked())
 		criterias[searcher->EDIT_TIME_MIN] = view->getMinEditedTime();
 	if (ui.timeEditedMaxCheckBox->isChecked())
-		criterias[searcher->EDIT_TIME_MAX] = view->getMaxEditedTime();
+		criterias[searcher->EDIT_TIME_MAX] = view->getMaxEditedTime();*/
 
 	    searcher->search(criterias, view->getPath());
-	}
 }
 
