@@ -27,6 +27,7 @@ namespace manager {
         ContextMenuView* view{ nullptr };
         QFileInfoModel* model{ nullptr };
         OfflineFileManagerView* managerView{ nullptr };
+        
         QModelIndex index;
         FileInteractor interactor;
     };

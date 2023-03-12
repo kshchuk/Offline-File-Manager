@@ -2,74 +2,95 @@
 
 #include <QHeaderView>
 
-PropertiesWindow::PropertiesWindow(QWidget* parent, QModelIndex index, QFileInfoModel* model)
-    : QTableWidget(parent), index(index)
+namespace manager {
+
+PropertiesWindow::PropertiesWindow(PropertiesLogic* logic, QWidget* parent)
+    : QDialog(parent), logic(logic)
 {
-    properties = new PropertiesLogic(index, model);
+    layout.setParent(this);
+    this->setWindowTitle("Properties");
+    this->setFixedHeight(550);
+    this->setFixedWidth(400);
 
-    //this->setFixedHeight(parent->height());
-    this->setFixedWidth(parent->width());
-    this->setColumnCount(2);
-    this->setRowCount(columnsNumber);
-    this->setColumnWidth(0, 2 * this->width() / 6);
-    this->setColumnWidth(1, 3 * this->width() / 5);
+    table.setParent(this);
 
-    //for (size_t i = 0; i < this->rowCount(); i++)
-    //    this->setRowHeight(i, this->height() / 70);
+    buttonOk.setParent(this);
+    buttonCancel.setParent(this);
+    buttonSave.setParent(this);
+    buttonCancel.setText("Cancel");
+    buttonOk.setText("OK");
+    buttonSave.setText("Save");
 
-    this->setRowHeight(columnsNumber, this->height() / 8);
-    this->setAttribute(Qt::WA_DeleteOnClose);
-    this->setCursor(QCursor(Qt::ArrowCursor));
+    connect(&buttonCancel, &QPushButton::clicked, this, &QWidget::close);
+    connect(&buttonOk, &QPushButton::clicked, this, &QWidget::close);
+    connect(&buttonOk, &QPushButton::clicked, this, &PropertiesWindow::save);
+    connect(&buttonSave, &QPushButton::clicked, this, &PropertiesWindow::save);
 
-    this->setItem((int)PropertiesOrder::NAME, 0, new QTableWidgetItem("Name:"));
-    this->setItem((int)PropertiesOrder::NAME, 1, new QTableWidgetItem(properties->getName()));
+    layout.addWidget(&table, 0);
+    layout.addWidget(&buttonCancel);
+    layout.addWidget(&buttonSave);
+    layout.addWidget(&buttonOk);
+    this->setLayout(&layout);
 
-    this->setItem((int)PropertiesOrder::FULL_PATH, 0, new QTableWidgetItem("Full path:"));
-    this->setItem((int)PropertiesOrder::FULL_PATH, 1, new QTableWidgetItem(properties->getFullPath()));
+    table.setFixedWidth(parent->width());
+    table.setColumnCount(2);
+    table.setRowCount(rowsNumber);
+    table.setColumnWidth(0, 2 * this->width() / 6);
+    table.setColumnWidth(1, 3 * this->width() / 5);
 
-    this->setItem((int)PropertiesOrder::TYPE, 0, new QTableWidgetItem("Type:"));
-    this->setItem((int)PropertiesOrder::TYPE, 1, new QTableWidgetItem(properties->getType()));
+    table.setRowHeight(rowsNumber, table.height() / 8);
+    table.setAttribute(Qt::WA_DeleteOnClose);
+    table.setCursor(QCursor(Qt::ArrowCursor));
 
-    this->setItem((int)PropertiesOrder::SIZE, 0, new QTableWidgetItem("Size:"));
-    this->setItem((int)PropertiesOrder::SIZE, 1, new QTableWidgetItem(properties->getSize()));
+    table.setItem(NAME, 0, new QTableWidgetItem("Name:"));
+    table.setItem(NAME, 1, new QTableWidgetItem(logic->getName()));
 
-    this->setItem((int)PropertiesOrder::ICON_NAME, 0, new QTableWidgetItem("Identical count:"));
-    this->setItem((int)PropertiesOrder::ICON_NAME, 1, new QTableWidgetItem(properties->getIndeticalCopiesNumber()));
+    table.setItem(FULL_PATH, 0, new QTableWidgetItem("Full path:"));
+    table.setItem(FULL_PATH, 1, new QTableWidgetItem(logic->getFullPath()));
 
-    this->setItem((int)PropertiesOrder::GROUP, 0, new QTableWidgetItem("Group:"));
-    this->setItem((int)PropertiesOrder::GROUP, 1, new QTableWidgetItem(properties->getGroup()));
+    table.setItem(TYPE, 0, new QTableWidgetItem("Type:"));
+    table.setItem(TYPE, 1, new QTableWidgetItem(logic->getType()));
 
-    this->setItem((int)PropertiesOrder::OWNER, 0, new QTableWidgetItem("Owner:"));
-    this->setItem((int)PropertiesOrder::OWNER, 1, new QTableWidgetItem(properties->getOwner()));
+    table.setItem(SIZE, 0, new QTableWidgetItem("Size:"));
+    table.setItem(SIZE, 1, new QTableWidgetItem(logic->getSize()));
 
-    this->setItem((int)PropertiesOrder::OWNER_ID, 0, new QTableWidgetItem("Owner ID:"));
-    this->setItem((int)PropertiesOrder::OWNER_ID, 1, new QTableWidgetItem(properties->getOwnerid()));
+    table.setItem(ICON_NAME, 0, new QTableWidgetItem("Identical count:"));
+    table.setItem(ICON_NAME, 1, new QTableWidgetItem(logic->getIndeticalCopiesNumber()));
 
-    this->setItem((int)PropertiesOrder::DATE_CREATED, 0, new QTableWidgetItem("Date created:"));
-    this->setItem((int)PropertiesOrder::DATE_CREATED, 1, new QTableWidgetItem(properties->getCreated()));
+    table.setItem(GROUP, 0, new QTableWidgetItem("Group:"));
+    table.setItem(GROUP, 1, new QTableWidgetItem(logic->getGroup()));
 
-    this->setItem((int)PropertiesOrder::DATE_MODIDFIED, 0, new QTableWidgetItem("Date modified:"));
-    this->setItem((int)PropertiesOrder::DATE_MODIDFIED, 1, new QTableWidgetItem(properties->getLastModified()));
+    table.setItem(OWNER, 0, new QTableWidgetItem("Owner:"));
+    table.setItem(OWNER, 1, new QTableWidgetItem(logic->getOwner()));
 
-    this->setItem((int)PropertiesOrder::MD5, 0, new QTableWidgetItem("Hash:"));
-    this->setItem((int)PropertiesOrder::MD5, 1, new QTableWidgetItem(properties->getMd5()));
+    table.setItem(OWNER_ID, 0, new QTableWidgetItem("Owner ID:"));
+    table.setItem(OWNER_ID, 1, new QTableWidgetItem(logic->getOwnerid()));
 
-    this->setItem((int)PropertiesOrder::CUSTOM_METHADATA, 0, new QTableWidgetItem("Custom metadata:"));
-    this->setItem((int)PropertiesOrder::CUSTOM_METHADATA, 1, new QTableWidgetItem(properties->getCustomMethadata()));
+    table.setItem(DATE_CREATED, 0, new QTableWidgetItem("Date created:"));
+    table.setItem(DATE_CREATED, 1, new QTableWidgetItem(logic->getCreated()));
 
-    this->setHorizontalHeaderItem(0, new QTableWidgetItem("Property"));
-    this->setHorizontalHeaderItem(1, new QTableWidgetItem("Value"));
-    this->verticalHeader()->hide();
+    table.setItem(DATE_MODIDFIED, 0, new QTableWidgetItem("Date modified:"));
+    table.setItem(DATE_MODIDFIED, 1, new QTableWidgetItem(logic->getLastModified()));
+
+    table.setItem(HASH, 0, new QTableWidgetItem("Hash:"));
+    table.setItem(HASH, 1, new QTableWidgetItem(logic->getHash()));
+
+    table.setItem(CUSTOM_METHADATA, 0, new QTableWidgetItem("Custom metadata:"));
+    table.setItem(CUSTOM_METHADATA, 1, new QTableWidgetItem(logic->getCustomMethadata()));
+
+    table.setHorizontalHeaderItem(0, new QTableWidgetItem("Property"));
+    table.setHorizontalHeaderItem(1, new QTableWidgetItem("Value"));
+    table.verticalHeader()->hide();
 
 
-    QTableWidgetItem* customItem = this->item(this->rowCount() - 1,
-        this->columnCount() - 1);
+    QTableWidgetItem* customItem = table.item(table.rowCount() - 1,
+        table.columnCount() - 1);
     Qt::ItemFlags writeFlag = customItem->flags();
 
     // Make readonly
-    for (size_t i = 0; i < this->rowCount(); ++i)
-        for (size_t j = 0; j < this->columnCount(); ++j) {
-            QTableWidgetItem* item = this->item(i, j);
+    for (size_t i = 0; i < table.rowCount(); ++i)
+        for (size_t j = 0; j < table.columnCount(); ++j) {
+            QTableWidgetItem* item = table.item(i, j);
             item->setFlags(item->flags() ^ Qt::ItemIsEditable);
         }
 
@@ -77,8 +98,10 @@ PropertiesWindow::PropertiesWindow(QWidget* parent, QModelIndex index, QFileInfo
     customItem->setFlags(writeFlag);
 }
 
-void PropertiesWindow::saveTextSlot()
+void PropertiesWindow::save()
 {
-    emit saveTextSignal(this->item(rowCount() - 1, 
-        columnCount() - 1)->data(0).toString(), this->index);
+    logic->setCustomMethadata(table.item(table.rowCount() - 1, table.columnCount() - 1)->data(0).toString());
+    logic->saveMeta();
+}
+
 }

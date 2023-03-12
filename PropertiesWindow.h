@@ -1,13 +1,13 @@
-#pragma once
-
 #include <QTableWidget>
-#include <QModelIndex>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QDialog>
 
 #include "PropertiesLogic.h"
-#include "QFileInfoModel.h"
 
+namespace manager {
 
-class PropertiesWindow : public QTableWidget
+class PropertiesWindow : public QDialog
 {
     Q_OBJECT
 
@@ -23,21 +23,28 @@ class PropertiesWindow : public QTableWidget
         OWNER_ID,
         DATE_CREATED,
         DATE_MODIDFIED,
-        MD5,
+        HASH,
         CUSTOM_METHADATA,
     };
 
 public:
-    explicit PropertiesWindow(QWidget* parent = 0,
-        QModelIndex index = QModelIndex(), QFileInfoModel* model = nullptr);
+    PropertiesWindow(PropertiesLogic* logic, QWidget* parent = nullptr);
 
-public slots:
-    void saveTextSlot();
+    inline size_t getRowsNumber() { return rowsNumber; }
 
-signals:
-    void saveTextSignal(const QString& message, const QModelIndex& index);
+private slots:
+    void save();
 
 private:
-    PropertiesLogic* properties;
-    QModelIndex index;
+    PropertiesLogic* logic;
+
+    QVBoxLayout layout;
+    QTableWidget table;
+    QPushButton buttonOk;
+    QPushButton buttonCancel;
+    QPushButton buttonSave;
+
+    size_t rowsNumber = 12;
 };
+
+}

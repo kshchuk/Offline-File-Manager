@@ -3,11 +3,11 @@
 #include <QString>
 #include <QList>
 #include <QStringList>
-#include <QModelIndex>
-
 #include "QFileInfoModel.h"
+
 #include "Searcher.h"
 
+namespace manager {
 
 class PropertiesLogic : public QObject
 {
@@ -25,16 +25,16 @@ private:
     QString customMeta;
     long identicalCopiesNumber = -1;
     QString fullPath;
-    QString md5Hash;
+    QString hash;
 
-    QModelIndex index;
+    Record* record;
     QFileInfoModel* model;
 
 private slots:
     void identicalFound();
 
 public:
-    PropertiesLogic(const QModelIndex& index, QFileInfoModel* model);
+    PropertiesLogic(Record* record, QFileInfoModel* model);
 
     QString getName() const;
     QString getType() const;
@@ -47,7 +47,7 @@ public:
     QString getFullPath() const;
     void setCustomMethadata(QString methadata);
     QString getCustomMethadata() const;
-    QString getMd5() const;
+    QString getHash() const;
     QString getIndeticalCopiesNumber() const;
 
     QList<QStringList> getAll(); // atributes and value
@@ -55,3 +55,4 @@ public:
     void saveMeta();
 };
 
+}

@@ -1,6 +1,9 @@
 #include "ContextMenuPresenter.h"
 #include "ContextMenuView.h"
 
+#include "PropertiesLogic.h"
+#include "PropertiesWindow.h"
+
 namespace manager {
 
     ContextMenuPresenter::ContextMenuPresenter(ContextMenuView* view, QFileInfoModel* model, OfflineFileManagerView* managerView)
@@ -67,7 +70,9 @@ namespace manager {
 
     void ContextMenuPresenter::properties()
     {
-        // TODO
+        PropertiesLogic logic(dynamic_cast<Record*>(model->itemFromIndex(index)), model);
+        PropertiesWindow window(&logic);
+        window.show();
     }
 
 } // namespace manager
