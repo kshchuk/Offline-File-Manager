@@ -29,12 +29,12 @@
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
-    <QtInstall>6.5.0_msvc2019_64</QtInstall>
+    <QtInstall>6.6.0_msvc2019_64</QtInstall>
     <QtModules>core;gui;network;testlib;widgets;webchannel;webenginecore;networkauth</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
-    <QtInstall>6.5.0_msvc2019_64</QtInstall>
+    <QtInstall>6.6.0_msvc2019_64</QtInstall>
     <QtModules>core;gui;network;testlib;widgets;webchannel;webenginecore;networkauth</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
   </PropertyGroup>
@@ -59,13 +59,13 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile />
     <ClCompile>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Qt\6.6.0\msvc2019_64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile />
     <ClCompile>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Qt\6.6.0\msvc2019_64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
@@ -118,6 +118,8 @@
     <QtMoc Include="QFileInfoModel_test.h" />
     <QtMoc Include="PropertiesLogic_test.h" />
     <QtMoc Include="Searcher_test.h" />
+    <QtMoc Include="OfflineFileManagerController.h" />
+    <QtMoc Include="OfflineFileManagerView.h" />
     <ClInclude Include="system_depend_functions.h" />
   </ItemGroup>
   <ItemGroup>
@@ -127,6 +129,8 @@
     <ClCompile Include="ModelSerializer_test.cpp" />
     <ClCompile Include="MyExplorer.cpp" />
     <ClCompile Include="OfflineFileManager.cpp" />
+    <ClCompile Include="OfflineFileManagerController.cpp" />
+    <ClCompile Include="OfflineFileManagerView.cpp" />
     <ClCompile Include="PropertiesLogic.cpp" />
     <ClCompile Include="PropertiesLogic_test.cpp" />
     <ClCompile Include="PropertiesWindow.cpp" />
