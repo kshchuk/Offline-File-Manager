@@ -5,7 +5,8 @@
 
 #include "QFileInfoModel.h"
 
-class QFileInfoModel_test  : public QObject
+// REDO:
+/*class QFileInfoModel_test  : public QObject
 {
 	Q_OBJECT
 
@@ -34,4 +35,4 @@ private slots:
 private:
 	//bool compareRecursive(QStandardItem* item1, QStandardItem* item2, 
 									//size_t maxDepth,size_t curDepth = 0);
-};
+};*/
