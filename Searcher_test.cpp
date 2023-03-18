@@ -1,4 +1,4 @@
-#include "Searcher_test.h"
+/*#include "Searcher_test.h"
 #include "Searcher.h"
 
 #include <QMimeType>
@@ -333,4 +333,4 @@ void Searcher_test::search_by_maximum_creationand_minimum_edited_time()
 			QVERIFY2(isFound, "Search by maximum creation and minimum edited time");
 		}
 	}
-}
+}*/

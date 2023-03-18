@@ -1,7 +1,8 @@
 #pragma once
 
 #include <QTest>
-#include "ModelSerializer.h"
+#include <QDataStream>
+#include "../ModelSerializer.h"
 
 class ModelSerializer_test : public QObject {
     Q_OBJECT
@@ -25,15 +26,15 @@ private slots:
         model.setItem(1, 0, mary);
 
         // Create a serializer and serialize the model to a QByteArray
-        manager::ModelSerializer<> serializer;
+        ModelSerializer<> serializer;
         QByteArray data;
         QDataStream stream(&data, QIODevice::WriteOnly);
-        QVERIFY(serializer.save(stream, &model).isOk());
+        QVERIFY(serializer.save(stream, &model).ok());
 
         // Deserialize the model from the QByteArray
         QStandardItemModel loadedModel;
         QDataStream loadStream(&data, QIODevice::ReadOnly);
-        QVERIFY(serializer.load(loadStream, &loadedModel).isOk());
+        QVERIFY(serializer.load(loadStream, &loadedModel).ok());
 
         // Compare the original and loaded models
         QCOMPARE(loadedModel.rowCount(), model.rowCount());

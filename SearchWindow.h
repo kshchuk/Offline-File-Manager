@@ -6,19 +6,17 @@
 
 #include "ui_SearchWindow.h"
 
-#include "SearchController.h"
-#include "QFileInfoModel.h"
-#include "Searcher.h"
-
 
 namespace manager {
+
+class SearchController;
 
 class SearchWindow : public QDialog
 {
 	Q_OBJECT
 
 public:
-	SearchWindow(QWidget* parent = nullptr);
+    SearchWindow(QWidget* parent = nullptr);
 	~SearchWindow();
 
 	inline void setController(SearchController* controller){
@@ -53,6 +51,8 @@ public:
 		return ui.pathLine->text();
 	}
 
+	// TODO: Create getters for Check boxes
+
 	void insertRow(QList<QTableWidgetItem*> data, size_t row);
 
 signals:
@@ -64,9 +64,7 @@ public slots:
 	};
 
 private slots:
-	void search(){
-		controller->search();
-	};
+    void search();
 
 private:
 	Ui::SearchWindowClass ui;

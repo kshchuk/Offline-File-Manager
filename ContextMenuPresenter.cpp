@@ -70,7 +70,9 @@ namespace manager {
 
     void ContextMenuPresenter::properties()
     {
-        PropertiesLogic logic(dynamic_cast<Record*>(model->itemFromIndex(index)), model);
+        Record* record = dynamic_cast<Record*>(model->itemFromIndex(index));
+        assert(record != nullptr);
+        PropertiesLogic logic(record, model);
         PropertiesWindow window(&logic);
         window.show();
     }

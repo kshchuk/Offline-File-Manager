@@ -24,12 +24,12 @@ struct BasicTraits
     /*
      * @brief Constructs a BasicTraits object.
      */
-    BasicTraits() = default {}
+    BasicTraits() {}
 
     /**
      * @brief Destroys the BasicTraits object.
      */
-    ~BasicTraits() = default {}
+    ~BasicTraits() {}
 
     // Type Definitions
     using Model = QAbstractItemModel;  /**< The model type */

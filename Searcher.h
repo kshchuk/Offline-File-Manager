@@ -7,7 +7,7 @@
 
 namespace manager {
 
-class Searcher : QObject
+class Searcher : public QObject
 {
     Q_OBJECT
 

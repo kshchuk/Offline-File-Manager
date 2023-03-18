@@ -17,15 +17,13 @@
 
 namespace manager
 {
-	 
-	//const size_t columnsNumber = 12;
 
 	static const QString virtualFolderType = "Virtual folder";
 	static const QString linkToFileType = "Link";
 
 	class FolderFileManipulator
 	{
-	public:
+    public:
 		virtual void insertFileLinkToTheFolder(QModelIndex toInsert, QModelIndex destination) = 0;
 		virtual void insertFileToTheFolder(const QString& path, QModelIndex destination) = 0;
 		virtual QModelIndex appendVirtualFolder(QModelIndex parent) = 0;
@@ -35,9 +33,9 @@ namespace manager
 
 	class FileInfoModelHelper 
 	{
-	public:
+    public:
 		virtual QList<QString> getPath(QModelIndex index) const noexcept = 0;
-		virtual QString getPathfFromInfo(const QModelIndex& index) const noexcept = 0;
+        virtual QString getPathFromInfo(const QModelIndex& index) const noexcept = 0;
 		virtual QModelIndex byPath(QString path) const noexcept = 0;
 		static QString pathFromStringList(const QStringList& list);
 
@@ -48,7 +46,7 @@ namespace manager
 
 	class ModelIO 
 	{
-	public:
+    public:
 		virtual QAbstractItemModel* readFile(QString fileName) = 0;
 		virtual void writeFile(QString fileName, size_t maxDepth) const = 0;
 	};
@@ -62,18 +60,18 @@ namespace manager
 
 	public:
 		explicit QFileInfoModel(QObject* parent = nullptr);
-		virtual ~QFileInfoModel() {}
+        virtual ~QFileInfoModel() {}
 
 		QList<QString> getPath(QModelIndex index) const noexcept override;
-		inline QString getPathfFromInfo(const QModelIndex& index) const noexcept override;
+        QString getPathFromInfo(const QModelIndex& index) const noexcept override;
 		QModelIndex byPath(QString path) const noexcept override;
 		static QString pathFromStringList(const QStringList& list);
 
-		inline bool isLink(const QModelIndex& index) const override;
-		inline bool isFolder(const QModelIndex& index) const override;
+        bool isLink(const QModelIndex& index) const override;
+        bool isFolder(const QModelIndex& index) const override;
 
-		inline void insertFileLinkToTheFolder(QModelIndex toInsert, QModelIndex destination) override;
-		inline void insertFileToTheFolder(const QString& path, QModelIndex destination) override;
+        void insertFileLinkToTheFolder(QModelIndex toInsert, QModelIndex destination) override;
+        void insertFileToTheFolder(const QString& path, QModelIndex destination) override;
 		QModelIndex appendVirtualFolder(QModelIndex parent) override;
 		void deleteFile(const QModelIndex& index) override;
 
@@ -85,7 +83,7 @@ namespace manager
 		void loaded();
 
 	public slots:
-		virtual QFileInfoModel* generate(size_t maxDepth) = 0;
+        virtual manager::QFileInfoModel* generate(size_t maxDepth) = 0;
 
 		QAbstractItemModel* readFile(QString fileName) override;
 		void writeFile(QString fileName, size_t maxDepth) const override;
@@ -111,7 +109,7 @@ namespace manager
 	public:
 		explicit DrivesModel(QObject* parent = nullptr)
 			: QFileInfoModel(parent) {}
-		virtual ~DrivesModel() {}
+        virtual ~DrivesModel() {}
 
 
 	signals:
@@ -119,7 +117,7 @@ namespace manager
 		void fileRead(int currentPercentage);
 
     public slots:
-		DrivesModel* generate(size_t maxDepth) override = 0;
+        manager::QFileInfoModel* generate(size_t maxDepth) override = 0;
 
 	protected:
 		void readFilesRecursive(QModelIndex parent, const QString& path,
@@ -139,11 +137,10 @@ namespace manager
 	public:
 		explicit ExternalDrivesModel(QObject* parent = nullptr)
 			: DrivesModel(parent) {}
-
-		virtual ~ExternalDrivesModel() {}
+        virtual ~ExternalDrivesModel()  {}
 
     public slots:
-		ExternalDrivesModel* generate(size_t maxDepth) override;
+        manager::QFileInfoModel* generate(size_t maxDepth) override;
 	};
 
 
@@ -158,7 +155,7 @@ namespace manager
 		virtual	~AllDrivesModel() {}
 
     public slots:
-		AllDrivesModel* generate(size_t maxDepth) override;
+        manager::QFileInfoModel* generate(size_t maxDepth) override;
 	};
 
 
@@ -174,7 +171,7 @@ namespace manager
 		virtual ~GoogleDriveModel() {}
 
     public slots:
-		GoogleDriveModel* generate(size_t maxDepth) override;
+        manager::QFileInfoModel* generate(size_t maxDepth) override;
 
 	private:
 		void generateFromResponse(const QJsonDocument& response);

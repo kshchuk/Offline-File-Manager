@@ -15,13 +15,13 @@ public:
     {
         if (helper->isLink(index))
         {
-            QString path = helper->getPathfFromInfo(index);
+            QString path = helper->getPathFromInfo(index);
             index = helper->byPath(path);
         }
 
         if (!helper->isFolder(index))
         {
-            QString spath = helper->getPathfFromInfo(index);
+            QString spath = helper->getPathFromInfo(index);
             QFileInfo info(spath);
             if (info.exists())
                 QDesktopServices::openUrl(QUrl::fromLocalFile(spath));
@@ -34,11 +34,11 @@ public:
     {
         if (helper->isLink(index))
         {
-            QString path = helper->getPathfFromInfo(index);
+            QString path = helper->getPathFromInfo(index);
             index = helper->byPath(path);
         }
 
-        QString path = helper->getPathfFromInfo(index);
+        QString path = helper->getPathFromInfo(index);
         if (!helper->isFolder(index))
         {
             int i = path.length() - 1, j = 0;

@@ -4,10 +4,12 @@
 #include <QFileInfo>
 #include <QMessageBox>
 
+#include "SearchController.h"
+
 namespace manager {
 
-SearchWindow::SearchWindow(SearchController* controller, QWidget* parent)
-	: QDialog(parent), controller(controller)
+SearchWindow::SearchWindow(QWidget* parent)
+    : QDialog(parent)
 {
 	ui.setupUi(this);
 	this->setFixedSize({ 661, 412 });
@@ -68,4 +70,10 @@ void SearchWindow::initTable()
 	ui.resultsTable->setColumnWidth(3, 3 * ui.resultsTable->width() / 12);
 
 	ui.resultsTable->setContextMenuPolicy(Qt::CustomContextMenu);
+}
+
+void SearchWindow::search(){
+    controller->search();
+};
+
 }

@@ -646,21 +646,7 @@ void manager::OfflineFileManagerController::update()
     SaveMessage message(this);
     message.show();
 
-    delete model;
-    switch (mode)
-    {
-    case Mode::FILESYSTEM:
-        model = new AllDrivesModel();
-        break;
-    case Mode::EXTERNAL_DRIVES:
-        model = new ExternalDrivesModel();
-        break;
-    case Mode::GOOGLE_DRIVE:
-        model = new GoogleDriveModel();
-        break;
-    default:
-        break;
-    }
+    model->generate(maxReadingDepth);
 }
 
 void manager::OfflineFileManagerController::goUpper()

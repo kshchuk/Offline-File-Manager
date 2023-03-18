@@ -54,7 +54,7 @@ namespace manager
 		return path;
 	}
 
-    inline QString QFileInfoModel::getPathfFromInfo(const QModelIndex& index) const noexcept
+    QString QFileInfoModel::getPathFromInfo(const QModelIndex& index) const noexcept
 	{
 		return dynamic_cast<Record*>(this->itemFromIndex(index))->getFullPath();
 	}
@@ -117,11 +117,6 @@ namespace manager
 
 	QModelIndex QFileInfoModel::appendVirtualFolder(QModelIndex parent)
 	{
-		//QList<QStandardItem*> erow = fromFileInfo(info);
-		//erow[(int)ColunmsOrder::NAME]->setData(iconProvider.icon(QFileIconProvider::Folder), Qt::DecorationRole);
-		//erow[(int)ColunmsOrder::ICON_NAME]->setData(iconProvider.icon(QFileIconProvider::Folder).name(), Qt::DisplayRole);
-		//erow[(int)ColunmsOrder::TYPE]->setData(virtualFolderType, Qt::DisplayRole);
-
 		if (parent.isValid())
 		{
 			QStandardItem* iparent = this->itemFromIndex(parent);
@@ -225,16 +220,7 @@ namespace manager
 			else
 				item->setData(iconProvider.icon(info), Qt::DecorationRole);
 		}
-
-		// if ((index.flags() & Qt::ItemNeverHasChildren) || !this->hasChildren(index));
-
 		int rows = this->rowCount(index);
-
-		// Folders
-		//if (this->hasChildren(index) && index.parent().isValid()) {
-		//	QStandardItem* item = this->itemFromIndex(index);
-		//	item->setData(iconProvider.icon(QFileIconProvider::Folder), Qt::DecorationRole);
-		//}hf
 
 		for (int i = 0; i < rows; ++i)
 			setIcons(this->index(i, 0, index), depth + 1);
@@ -284,6 +270,7 @@ namespace manager
 	{
 		assert(item.columnCount() == 13);
 		
+        this->setText(item.data(Qt::DisplayRole).toString());
 		this->size = item.model()->itemFromIndex(item.index().siblingAtColumn(1));
 		this->type = item.model()->itemFromIndex(item.index().siblingAtColumn(2));
 		this->dateModified = item.model()->itemFromIndex(item.index().siblingAtColumn(3));
@@ -299,36 +286,22 @@ namespace manager
 	}
 
 	Record::Record(const QIcon& icon, const QString& name)
-		: QStandardItem(icon, name)
-
+        : QStandardItem(icon, name)
 	{
-		this->appendColumn({
-			size,
-			type,
-			dateModified,
-			iconName,
-			dateCreated,
-			group,
-			owner,
-			ownerId,
-			sizeInBytes,
-			fullPath,
-			hash,
-			customMetadata 
+        this->parent()->appendRows({
+            size = new QStandardItem(),
+            type = new QStandardItem(),
+            dateModified = new QStandardItem(),
+            iconName = new QStandardItem(),
+            dateCreated = new QStandardItem(),
+            group = new QStandardItem(),
+            owner = new QStandardItem(),
+            ownerId = new QStandardItem(),
+            sizeInBytes = new QStandardItem(),
+            fullPath = new QStandardItem(),
+            hash = new QStandardItem(),
+            customMetadata  = new QStandardItem()
 			});
-
-		size = new QStandardItem();
-		type = new QStandardItem();
-		dateModified = new QStandardItem();
-		iconName = new QStandardItem();
-		dateCreated = new QStandardItem();
-		group = new QStandardItem();
-		owner = new QStandardItem();
-		ownerId = new QStandardItem();
-		sizeInBytes = new QStandardItem();
-		fullPath = new QStandardItem();
-		hash = new QStandardItem();
-		customMetadata = new QStandardItem();
 	}
 
 	QString Record::fileSize(const QFileInfo& info)
@@ -490,8 +463,8 @@ namespace manager
 	}
 
 
-	ExternalDrivesModel* ExternalDrivesModel::generate(size_t maxDepth)
-	{
+    QFileInfoModel* ExternalDrivesModel::generate(size_t maxDepth)
+    {
 		this->clear();
 		allSize = 0; readSize = 0; isRunning = true;
 		QStandardItem* root = this->invisibleRootItem();
@@ -518,7 +491,7 @@ namespace manager
 		return this;
 	}
 
-    AllDrivesModel* AllDrivesModel::generate(size_t maxDepth)
+    QFileInfoModel* AllDrivesModel::generate(size_t maxDepth)
 	{
 		this->clear();
 		this->initHeaders();
@@ -543,7 +516,7 @@ namespace manager
 		return this;
 	}
 
-	GoogleDriveModel* GoogleDriveModel::generate(size_t maxDepth)
+    QFileInfoModel* GoogleDriveModel::generate(size_t maxDepth)
 	{
 		this->clear();
 		this->initHeaders();

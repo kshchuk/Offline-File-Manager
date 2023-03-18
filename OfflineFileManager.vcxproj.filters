@@ -34,6 +34,9 @@
     <QtMoc Include="OfflineFileManager.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtRcc Include="Resource.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="system_depend_functions.h">
@@ -43,6 +46,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ModelSerializer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ContextMenuPresenter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FileInteractor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SaveMessage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -90,6 +102,15 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="OfflineFileManagerView.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="ContextMenuView.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="MaximumReadingDepthDialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="SearchController.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
@@ -156,6 +177,12 @@
     <ClCompile Include="OfflineFileManagerView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SearchController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ContextMenuPresenter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="client.json" />
@@ -164,5 +191,9 @@
     <Xsd Include="tests\test-response.json">
       <Filter>Unit Tests</Filter>
     </Xsd>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="testing.log" />
+    <Text Include="tmp.txt" />
   </ItemGroup>
 </Project>

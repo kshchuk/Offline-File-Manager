@@ -6,7 +6,7 @@
                 "${workspaceFolder}/**",
                 "${vcpkgRoot}/x64-windows/include",
                 "${vcpkgRoot}/x86-windows/include",
-                "C:/Qt/6.4.2/mingw_64/include/**"
+                "C:/Qt/6.3.2/mingw_64/include/**"
             ],
             "defines": [
                 "_DEBUG",
@@ -14,7 +14,7 @@
                 "_UNICODE"
             ],
             "windowsSdkVersion": "10.0.19041.0",
-            "compilerPath": "C:/msys64/mingw64/bin/gcc.exe",
+            "compilerPath": "C:/Qt/6.3.2/mingw_64/bin/qmake.exe",
             "cStandard": "c17",
             "cppStandard": "c++17",
             "intelliSenseMode": "gcc-x64"

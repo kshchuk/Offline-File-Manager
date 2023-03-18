@@ -150,7 +150,7 @@ public:
     {
         Status st;
         auto version = stream.version();
-        stream.setVersion(QDataStream::Qt_6_4);
+        stream.setVersion(QDataStream::Qt_6_3);
         if (!st(stream << (quint8)0))
             return st; // format
         if (!st(stream << m_traits.modelConfig(model)))
@@ -181,7 +181,7 @@ public:
     Status load(QDataStream &stream, typename Tr::Model *model, Status st = Status())
     {
         auto version = stream.version();
-        stream.setVersion(QDataStream::Qt_6_4);
+        stream.setVersion(QDataStream::Qt_6_3);
         quint8 format;
         if (!st(stream >> format))
             return st;

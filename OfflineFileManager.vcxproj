@@ -29,12 +29,10 @@
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
-    <QtInstall>6.6.0_msvc2019_64</QtInstall>
     <QtModules>core;gui;network;testlib;widgets;webchannel;webenginecore;networkauth</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
-    <QtInstall>6.6.0_msvc2019_64</QtInstall>
     <QtModules>core;gui;network;testlib;widgets;webchannel;webenginecore;networkauth</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
   </PropertyGroup>
@@ -59,13 +57,13 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile />
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Qt\6.6.0\msvc2019_64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Qt\6.4.3\msvc2019_64\include;.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;debug;/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile />
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Qt\6.6.0\msvc2019_64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Qt\6.4.3\msvc2019_64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
@@ -96,6 +94,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <QtRcc Include="OfflineFileManager.qrc" />
+    <QtRcc Include="Resource.qrc" />
     <QtUic Include="AddDataToFolder.ui" />
     <QtUic Include="OfflineFileManager.ui" />
     <QtMoc Include="OfflineFileManager.h" />
@@ -106,6 +105,10 @@
     <QtMoc Include="AddDataToFolder.h" />
     <ClInclude Include="BasicTraits.h" />
     <QtMoc Include="GoogleGateway.h" />
+    <ClInclude Include="ContextMenuPresenter.h" />
+    <QtMoc Include="ContextMenuView.h" />
+    <ClInclude Include="FileInteractor.h" />
+    <QtMoc Include="MaximumReadingDepthDialog.h" />
     <ClInclude Include="ModelSerializer.h" />
     <QtMoc Include="QFileInfoModel.h" />
     <QtMoc Include="PropertiesLogic.h" />
@@ -120,10 +123,13 @@
     <QtMoc Include="Searcher_test.h" />
     <QtMoc Include="OfflineFileManagerController.h" />
     <QtMoc Include="OfflineFileManagerView.h" />
+    <ClInclude Include="SaveMessage.h" />
+    <QtMoc Include="SearchController.h" />
     <ClInclude Include="system_depend_functions.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AddDataToFolder.cpp" />
+    <ClCompile Include="ContextMenuPresenter.cpp" />
     <ClCompile Include="GoogleGateway.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ModelSerializer_test.cpp" />
@@ -137,6 +143,7 @@
     <ClCompile Include="QFileInfoModel.cpp" />
     <ClCompile Include="QFileInfoModel_test.cpp" />
     <ClCompile Include="Robocopy.cpp" />
+    <ClCompile Include="SearchController.cpp" />
     <ClCompile Include="Searcher.cpp" />
     <ClCompile Include="Searcher_test.cpp" />
     <ClCompile Include="SearchWindow.cpp" />
@@ -149,6 +156,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </Xsd>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="testing.log" />
+    <Text Include="tmp.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

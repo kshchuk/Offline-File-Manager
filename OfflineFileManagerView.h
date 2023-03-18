@@ -73,14 +73,14 @@ namespace manager
             ui.fileSystemTree->setModel(model);
             this->update();
         };
-        inline const QModelIndex &getCurrentIndex() {
+        inline QModelIndex getCurrentIndex() {
             
             return ui.fileSystemTree->currentIndex();
         };
-        inline const QPoint &getGlobalPos(const QPoint& point) {
+        inline QPoint getGlobalPos(const QPoint& point) {
             return this->ui.fileSystemTree->mapToGlobal(point);
         }
-        inline const QString& getEditLineText() {
+        inline QString getEditLineText() {
             return this->ui.addressLine->text();
         };
 

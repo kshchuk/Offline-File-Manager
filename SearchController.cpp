@@ -1,4 +1,5 @@
 #include "SearchController.h"
+#include "SearchWindow.h"
 
 
 manager::SearchController::SearchController(Searcher *searcher, SearchWindow *view)

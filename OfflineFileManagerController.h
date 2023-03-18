@@ -39,12 +39,15 @@ namespace manager
         };
         void setExternalDrivesMode() {
             mode = Mode::EXTERNAL_DRIVES;
+            delete model; model = new ExternalDrivesModel();
         };
         void setAllDrivesMode() {
             mode = Mode::FILESYSTEM;
+            delete model; model = new AllDrivesModel();
         };
         void setGoogleDriveMode() {
             mode = Mode::GOOGLE_DRIVE;
+            delete model; model = new GoogleDriveModel();
         };
 
         void openCustomContextMenu(const QPoint& point);

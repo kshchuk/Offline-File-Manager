@@ -1,12 +1,13 @@
 #pragma once
 
 #include "Searcher.h"
-#include "SearchWindow.h"
 #include "QFileInfoModel.h"
 
 
 namespace manager 
 {
+
+class SearchWindow;
 
 class SearchController : public QObject
 {
@@ -22,7 +23,7 @@ public:
 
 public slots:
     void search();
-    void AppendRecordInTheList(Record*) {
+    void AppendRecordInTheList(const Record*) {
         // TODO
     };
 

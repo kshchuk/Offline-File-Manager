@@ -4,6 +4,7 @@
         "qmessagebox": "cpp",
         "cassert": "cpp",
         "algorithm": "cpp",
-        "sstream": "cpp"
+        "sstream": "cpp",
+        "qtablewidget": "cpp"
     }
 }
