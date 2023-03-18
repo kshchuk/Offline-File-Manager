@@ -3,8 +3,8 @@
 #include <QObject>
 #include <QTest>
 
-#include "Searcher.h"
-#include "QFileInfoModel.h"
+#include "../Searcher.h"
+#include "../model/DrivesModel.h"
 
 #include <chrono>
 
