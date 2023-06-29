@@ -18,3 +18,41 @@ Offline File Manager is a Qt-based application designed to manage files and dire
 - **Duplicate Information:** The application provides information about the number of exact copies of a file or directory on known media.
 - **Data Synchronization:** The application can generate and run commands to copy or synchronize data between different media, using tool robocopy
 - **Cloud Storage Support:** The application supports cloud storage service Google Drive
+
+## Screenshots
+
+### Offline Information Storage
+
+![Offline Information Storage Screenshot](https://github.com/kshchuk/Offline-File-Manager/blob/main/docs/Screenshots/menu.png)
+![Offline Information Storage Screenshot1](https://github.com/kshchuk/Offline-File-Manager/blob/main/docs/Screenshots/file.png)
+![Offline Information Storage Screenshot2](https://github.com/kshchuk/Offline-File-Manager/blob/main/docs/Screenshots/reg.png)
+
+
+### Persistent Data
+
+![Persistent Data Screenshot](https://github.com/kshchuk/Offline-File-Manager/blob/main/docs/Screenshots/persistent.png)
+
+### Custom Metadata
+
+![Custom Metadata Screenshot](https://github.com/kshchuk/Offline-File-Manager/blob/main/docs/Screenshots/metadata.png)
+
+### Virtual Directories
+
+![Virtual Directories Screenshot1](https://github.com/kshchuk/Offline-File-Manager/blob/main/docs/Screenshots/virtmenu.png)
+![Virtual Directories Screenshot2](https://github.com/kshchuk/Offline-File-Manager/blob/main/docs/Screenshots/add.png)
+
+### Search
+
+![Search Screenshot](https://github.com/kshchuk/Offline-File-Manager/blob/main/docs/Screenshots/search.png)
+
+### Data Synchronization
+
+![Data Synchronization Screenshot](https://github.com/kshchuk/Offline-File-Manager/blob/main/docs/Screenshots/robocopy.png)
+
+## Contributing
+
+Contributions to the Offline File Manager are welcome. Please create an account on GitHub to contribute to the development of this project.
+
+## License
+
+This project is licensed under the [Apache-2.0 license](https://github.com/kshchuk/Offline-File-Manager/blob/main/LICENSE).
