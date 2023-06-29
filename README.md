@@ -19,9 +19,7 @@ Offline File Manager is a Qt-based application designed to manage files and dire
 - **Data Synchronization:** The application can generate and run commands to copy or synchronize data between different media, using tool robocopy
 - **Cloud Storage Support:** The application supports cloud storage service Google Drive
 
-## User Guide
-
-This user guide provides step-by-step instructions on how to use the Offline File Manager.
+## Screenshots
 
 ### Offline Information Storage
 
@@ -36,7 +34,7 @@ This user guide provides step-by-step instructions on how to use the Offline Fil
 
 ### Custom Metadata
 
-![Custom Metadata Screenshot]((https://github.com/kshchuk/Offline-File-Manager/blob/main/docs/Screenshots/metadata.png))
+![Custom Metadata Screenshot](https://github.com/kshchuk/Offline-File-Manager/blob/main/docs/Screenshots/metadata.png)
 
 ### Virtual Directories
 
