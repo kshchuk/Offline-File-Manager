@@ -49,9 +49,6 @@ Offline File Manager is a Qt-based application designed to manage files and dire
 
 ![Data Synchronization Screenshot](https://github.com/kshchuk/Offline-File-Manager/blob/main/docs/Screenshots/robocopy.png)
 
-## Contributing
-
-Contributions to the Offline File Manager are welcome. Please create an account on GitHub to contribute to the development of this project.
 
 ## License
 
